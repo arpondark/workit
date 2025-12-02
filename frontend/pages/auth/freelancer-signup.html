@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freelancer Sign Up - WorkIT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        'primary-dark': '#4f46e5',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+    <div class="min-h-screen flex">
+        <!-- Left Side - Form -->
+        <div class="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+            <div class="max-w-md w-full">
+                <!-- Logo -->
+                <div class="text-center mb-8">
+                    <a href="/" class="inline-flex items-center">
+                        <span class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Work</span>
+                        <span class="text-3xl font-bold text-gray-800">IT</span>
+                    </a>
+                    <h2 class="mt-6 text-3xl font-bold text-gray-900">Create Freelancer Account</h2>
+                    <p class="mt-2 text-gray-600">Start your freelancing journey</p>
+                </div>
+
+                <!-- Skill Badge -->
+                <div id="skill-badge" class="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 flex items-center gap-4">
+                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="text-sm text-green-600 font-medium">Verified Skill</div>
+                        <div id="skill-name" class="font-semibold text-gray-900">Web Development</div>
+                    </div>
+                </div>
+
+                <!-- No Token Warning -->
+                <div id="no-token-warning" class="hidden bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        <div>
+                            <div class="font-semibold text-red-800">Quiz Pass Required</div>
+                            <div class="text-sm text-red-600">You must pass the skill quiz to register as a freelancer.</div>
+                        </div>
+                    </div>
+                    <a href="quiz.html" class="mt-4 block text-center bg-red-600 text-white py-2 rounded-lg font-medium hover:bg-red-700 transition">
+                        Take the Quiz
+                    </a>
+                </div>
+
+                <!-- Signup Form -->
+                <form id="signup-form" class="bg-white p-8 rounded-2xl shadow-xl">
+                    <div class="space-y-5">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                            <input 
+                                type="text" 
+                                id="name" 
+                                name="name" 
+                                required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                                placeholder="Enter your full name"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                                placeholder="Enter your email"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Professional Title</label>
+                            <input 
+                                type="text" 
+                                id="title" 
+                                name="title" 
+                                required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                                placeholder="e.g., Full Stack Developer, UI/UX Designer"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="hourly-rate" class="block text-sm font-medium text-gray-700 mb-2">Hourly Rate ($)</label>
+                            <input 
+                                type="number" 
+                                id="hourly-rate" 
+                                name="hourly-rate" 
+                                min="5"
+                                required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                                placeholder="Your hourly rate in USD"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="bio" class="block text-sm font-medium text-gray-700 mb-2">Short Bio</label>
+                            <textarea 
+                                id="bio" 
+                                name="bio" 
+                                rows="3"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition resize-none"
+                                placeholder="Tell clients about yourself and your experience..."
+                            ></textarea>
+                        </div>
+
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                            <div class="relative">
+                                <input 
+                                    type="password" 
+                                    id="password" 
+                                    name="password" 
+                                    required
+                                    minlength="6"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                                    placeholder="Create a password (min 6 characters)"
+                                >
+                                <button 
+                                    type="button" 
+                                    id="toggle-password"
+                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                >
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                            <input 
+                                type="password" 
+                                id="confirm-password" 
+                                name="confirm-password" 
+                                required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                                placeholder="Confirm your password"
+                            >
+                        </div>
+
+                        <div class="flex items-start">
+                            <input 
+                                type="checkbox" 
+                                id="terms" 
+                                required
+                                class="w-4 h-4 mt-1 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                            >
+                            <label for="terms" class="ml-2 text-sm text-gray-600">
+                                I agree to the 
+                                <a href="#" class="text-indigo-600 hover:text-indigo-700">Terms of Service</a>, 
+                                <a href="#" class="text-indigo-600 hover:text-indigo-700">Privacy Policy</a>, and the 
+                                <a href="#" class="text-indigo-600 hover:text-indigo-700">1% commission fee</a> on earnings
+                            </label>
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            id="submit-btn"
+                            class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition transform hover:-translate-y-0.5 shadow-lg shadow-indigo-200"
+                        >
+                            Create Account
+                        </button>
+                    </div>
+
+                    <div class="mt-6 text-center">
+                        <p class="text-gray-600">
+                            Already have an account? 
+                            <a href="login.html" class="text-indigo-600 hover:text-indigo-700 font-medium">Sign in</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Side - Image (hidden on mobile) -->
+        <div class="hidden lg:flex lg:flex-1 items-center justify-center bg-gradient-to-br from-purple-600 to-indigo-700 p-12">
+            <div class="max-w-lg text-center">
+                <div class="mb-8">
+                    <svg class="w-48 h-48 mx-auto text-white/20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/>
+                    </svg>
+                </div>
+                <h3 class="text-3xl font-bold text-white mb-4">Start Earning Today</h3>
+                <p class="text-xl text-purple-200">Join our community of verified freelancers and connect with clients worldwide.</p>
+                
+                <div class="mt-12 space-y-4 text-left">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="text-white">Set your own rates</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="text-white">Work from anywhere</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="text-white">Only 1% platform fee</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <span class="text-white">Verified skill badge</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/utils.js"></script>
+    <script>
+        let quizPassToken = null;
+        let passedSkillId = null;
+
+        // Check for quiz pass token
+        function checkToken() {
+            // Check URL params first, then sessionStorage
+            const urlParams = new URLSearchParams(window.location.search);
+            quizPassToken = urlParams.get('token') || sessionStorage.getItem('quizPassToken');
+            passedSkillId = sessionStorage.getItem('passedSkillId');
+            const skillName = sessionStorage.getItem('passedSkillName');
+            const passedEmail = sessionStorage.getItem('passedEmail');
+
+            if (!quizPassToken) {
+                document.getElementById('skill-badge').classList.add('hidden');
+                document.getElementById('no-token-warning').classList.remove('hidden');
+                document.getElementById('signup-form').classList.add('hidden');
+                return false;
+            }
+
+            if (skillName) {
+                document.getElementById('skill-name').textContent = skillName;
+            }
+            
+            // Pre-fill email from quiz
+            if (passedEmail) {
+                document.getElementById('email').value = passedEmail;
+                document.getElementById('email').readOnly = true;
+                document.getElementById('email').classList.add('bg-gray-50');
+            }
+
+            return true;
+        }
+
+        // Toggle password visibility
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+        });
+
+        // Handle form submission
+        document.getElementById('signup-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const title = document.getElementById('title').value.trim();
+            const hourlyRate = document.getElementById('hourly-rate').value;
+            const bio = document.getElementById('bio').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const terms = document.getElementById('terms').checked;
+
+            // Validation
+            if (!name || name.length < 2) {
+                toast.error('Please enter your full name');
+                return;
+            }
+
+            if (!validate.email(email)) {
+                toast.error('Please enter a valid email address');
+                return;
+            }
+
+            if (!title || title.length < 3) {
+                toast.error('Please enter your professional title');
+                return;
+            }
+
+            if (!hourlyRate || hourlyRate < 5) {
+                toast.error('Hourly rate must be at least $5');
+                return;
+            }
+
+            if (!validate.password(password)) {
+                toast.error('Password must be at least 6 characters');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                toast.error('Passwords do not match');
+                return;
+            }
+
+            if (!terms) {
+                toast.error('Please accept the terms and conditions');
+                return;
+            }
+
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading-spinner"></span> Creating account...';
+
+            try {
+                const data = await api.post('/auth/register/freelancer', { 
+                    name, 
+                    email, 
+                    password,
+                    title,
+                    hourlyRate: parseFloat(hourlyRate),
+                    bio: bio || undefined,
+                    quizPassToken,
+                    skillId: passedSkillId
+                });
+
+                if (data.token) {
+                    // Clear quiz session data
+                    sessionStorage.removeItem('quizPassToken');
+                    sessionStorage.removeItem('passedSkillId');
+                    sessionStorage.removeItem('passedSkillName');
+                    sessionStorage.removeItem('passedEmail');
+                    sessionStorage.removeItem('quizResult');
+
+                    auth.login(data.token, data.user);
+                    toast.success('Account created successfully!');
+
+                    setTimeout(() => {
+                        window.location.href = '/pages/freelancer/dashboard.html';
+                    }, 500);
+                }
+            } catch (error) {
+                toast.error(error.message || 'Failed to create account');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Create Account';
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', checkToken);
+    </script>
+</body>
+</html>

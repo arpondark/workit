@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - WorkIT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        'primary-dark': '#4f46e5',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center">
+                    <span class="text-2xl font-bold text-indigo-600">Work</span>
+                    <span class="text-2xl font-bold text-gray-800">IT</span>
+                </a>
+                <div class="flex items-center space-x-4">
+                    <a href="#" id="dashboard-link" class="text-gray-600 hover:text-indigo-600 transition">Dashboard</a>
+                    <button onclick="handleLogout()" class="text-gray-600 hover:text-red-600 transition">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden" style="height: calc(100vh - 140px);">
+            <div class="flex h-full">
+                <!-- Conversations List -->
+                <div id="conversations-panel" class="w-full md:w-80 border-r border-gray-200 flex flex-col">
+                    <div class="p-4 border-b border-gray-200">
+                        <h2 class="text-lg font-semibold text-gray-800">Messages</h2>
+                        <div class="mt-3 relative">
+                            <input 
+                                type="text" 
+                                id="search-conversations"
+                                placeholder="Search conversations..."
+                                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                            >
+                            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="conversations-list" class="flex-1 overflow-y-auto">
+                        <div class="p-4 text-center text-gray-500">Loading conversations...</div>
+                    </div>
+                </div>
+
+                <!-- Chat Area -->
+                <div id="chat-panel" class="hidden md:flex flex-1 flex-col">
+                    <!-- Empty State -->
+                    <div id="chat-empty" class="flex-1 flex items-center justify-center">
+                        <div class="text-center">
+                            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-800 mb-2">Select a conversation</h3>
+                            <p class="text-gray-500">Choose a conversation from the list to start messaging</p>
+                        </div>
+                    </div>
+
+                    <!-- Active Chat -->
+                    <div id="chat-active" class="hidden flex-1 flex flex-col">
+                        <!-- Chat Header -->
+                        <div id="chat-header" class="p-4 border-b border-gray-200 flex items-center">
+                            <button onclick="closeChat()" class="md:hidden p-2 mr-2 text-gray-500 hover:bg-gray-100 rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                            </button>
+                            <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-semibold mr-3" id="chat-avatar">
+                                U
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-800" id="chat-name">User Name</p>
+                                <p class="text-sm text-gray-500" id="chat-status">Online</p>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span id="typing-indicator" class="hidden text-sm text-gray-500 italic">typing...</span>
+                            </div>
+                        </div>
+
+                        <!-- Messages -->
+                        <div id="messages-container" class="flex-1 overflow-y-auto p-4 space-y-4">
+                            <!-- Messages will be inserted here -->
+                        </div>
+
+                        <!-- Message Input -->
+                        <div class="p-4 border-t border-gray-200">
+                            <form id="message-form" class="flex items-center space-x-3">
+                                <input 
+                                    type="text" 
+                                    id="message-input"
+                                    placeholder="Type a message..."
+                                    class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    autocomplete="off"
+                                >
+                                <button 
+                                    type="submit" 
+                                    class="bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition"
+                                >
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/utils.js"></script>
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
+    <script>
+        // Check auth
+        if (!auth.isLoggedIn()) {
+            window.location.href = 'auth/login.html';
+        }
+
+        const currentUser = auth.getUser();
+        let socket = null;
+        let activeChat = null;
+        let conversations = [];
+
+        // Set dashboard link based on role
+        const dashboardLink = document.getElementById('dashboard-link');
+        if (currentUser.role === 'client') {
+            dashboardLink.href = 'client/dashboard.html';
+        } else if (currentUser.role === 'freelancer') {
+            dashboardLink.href = 'freelancer/dashboard.html';
+        } else if (currentUser.role === 'admin') {
+            dashboardLink.href = 'admin/dashboard.html';
+        }
+
+        // Initialize Socket.IO
+        function initSocket() {
+            const token = auth.getToken();
+            socket = io('http://localhost:5000', {
+                auth: { token }
+            });
+
+            socket.on('connect', () => {
+                console.log('Connected to socket server');
+            });
+
+            socket.on('receive_message', (message) => {
+                if (activeChat && message.chat === activeChat._id) {
+                    appendMessage(message, false);
+                    scrollToBottom();
+                }
+                // Update conversation list
+                updateConversationPreview(message);
+            });
+
+            socket.on('user_typing', ({ chatId, userId }) => {
+                if (activeChat && chatId === activeChat._id && userId !== currentUser.id) {
+                    document.getElementById('typing-indicator').classList.remove('hidden');
+                }
+            });
+
+            socket.on('user_stop_typing', ({ chatId }) => {
+                if (activeChat && chatId === activeChat._id) {
+                    document.getElementById('typing-indicator').classList.add('hidden');
+                }
+            });
+
+            socket.on('user_online', ({ userId }) => {
+                // Update online status
+                const item = document.querySelector(`[data-user-id="${userId}"]`);
+                if (item) {
+                    const statusDot = item.querySelector('.status-dot');
+                    if (statusDot) statusDot.classList.add('bg-green-500');
+                }
+            });
+
+            socket.on('user_offline', ({ userId }) => {
+                const item = document.querySelector(`[data-user-id="${userId}"]`);
+                if (item) {
+                    const statusDot = item.querySelector('.status-dot');
+                    if (statusDot) statusDot.classList.remove('bg-green-500');
+                }
+            });
+        }
+
+        // Load Conversations
+        async function loadConversations() {
+            try {
+                const data = await api.get('/chat');
+                conversations = data.chats || [];
+                renderConversations();
+            } catch (error) {
+                console.error('Error loading conversations:', error);
+                document.getElementById('conversations-list').innerHTML = 
+                    '<div class="p-4 text-center text-gray-500">Error loading conversations</div>';
+            }
+        }
+
+        function renderConversations() {
+            const container = document.getElementById('conversations-list');
+
+            if (conversations.length === 0) {
+                container.innerHTML = `
+                    <div class="p-8 text-center">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-gray-500">No conversations yet</p>
+                        <p class="text-gray-400 text-sm mt-1">Start a conversation by applying to a job or accepting an application</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = conversations.map(chat => {
+                const otherUser = chat.participants.find(p => p._id !== currentUser.id);
+                const lastMessage = chat.lastMessage;
+                const unread = chat.unreadCount || 0;
+
+                return `
+                    <div 
+                        class="conversation-item p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition ${activeChat?._id === chat._id ? 'bg-indigo-50' : ''}"
+                        data-chat-id="${chat._id}"
+                        data-user-id="${otherUser?._id}"
+                        onclick="openChat('${chat._id}')"
+                    >
+                        <div class="flex items-center">
+                            <div class="relative">
+                                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-semibold">
+                                    ${otherUser?.name?.charAt(0)?.toUpperCase() || 'U'}
+                                </div>
+                                <span class="status-dot absolute bottom-0 right-0 w-3 h-3 bg-gray-300 border-2 border-white rounded-full"></span>
+                            </div>
+                            <div class="ml-3 flex-1 min-w-0">
+                                <div class="flex items-center justify-between">
+                                    <p class="font-medium text-gray-800 truncate">${otherUser?.name || 'Unknown User'}</p>
+                                    ${lastMessage ? `
+                                        <span class="text-xs text-gray-400">${formatTime(lastMessage.createdAt)}</span>
+                                    ` : ''}
+                                </div>
+                                <div class="flex items-center justify-between mt-1">
+                                    <p class="text-sm text-gray-500 truncate">${lastMessage?.content || 'No messages yet'}</p>
+                                    ${unread > 0 ? `
+                                        <span class="ml-2 bg-indigo-600 text-white text-xs rounded-full px-2 py-0.5">${unread}</span>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function openChat(chatId) {
+            try {
+                const chat = conversations.find(c => c._id === chatId);
+                if (!chat) return;
+
+                activeChat = chat;
+                const otherUser = chat.participants.find(p => p._id !== currentUser.id);
+
+                // Update UI
+                document.getElementById('chat-empty').classList.add('hidden');
+                document.getElementById('chat-active').classList.remove('hidden');
+                document.getElementById('chat-avatar').textContent = otherUser?.name?.charAt(0)?.toUpperCase() || 'U';
+                document.getElementById('chat-name').textContent = otherUser?.name || 'Unknown User';
+                document.getElementById('chat-status').textContent = otherUser?.role?.charAt(0)?.toUpperCase() + otherUser?.role?.slice(1) || '';
+
+                // Mobile: show chat panel
+                document.getElementById('conversations-panel').classList.add('hidden', 'md:flex');
+                document.getElementById('chat-panel').classList.remove('hidden');
+                document.getElementById('chat-panel').classList.add('flex');
+
+                // Mark conversation as active
+                document.querySelectorAll('.conversation-item').forEach(item => {
+                    item.classList.remove('bg-indigo-50');
+                });
+                document.querySelector(`[data-chat-id="${chatId}"]`)?.classList.add('bg-indigo-50');
+
+                // Load messages
+                await loadMessages(chatId);
+
+                // Join socket room
+                if (socket) {
+                    socket.emit('join_chat', chatId);
+                }
+
+                // Mark as read
+                await api.put(`/chat/${chatId}/read`);
+
+            } catch (error) {
+                console.error('Error opening chat:', error);
+                toast.error('Error loading chat');
+            }
+        }
+
+        async function loadMessages(chatId) {
+            try {
+                const data = await api.get(`/chat/${chatId}/messages`);
+                const messages = data.messages || [];
+                renderMessages(messages);
+                scrollToBottom();
+            } catch (error) {
+                console.error('Error loading messages:', error);
+            }
+        }
+
+        function renderMessages(messages) {
+            const container = document.getElementById('messages-container');
+
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <p class="text-gray-500">No messages yet. Start the conversation!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = messages.map(msg => {
+                const isOwn = msg.sender._id === currentUser.id || msg.sender === currentUser.id;
+                return createMessageHTML(msg, isOwn);
+            }).join('');
+        }
+
+        function createMessageHTML(msg, isOwn) {
+            return `
+                <div class="flex ${isOwn ? 'justify-end' : 'justify-start'}">
+                    <div class="max-w-xs lg:max-w-md">
+                        <div class="${isOwn ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-800'} px-4 py-2 rounded-2xl ${isOwn ? 'rounded-br-md' : 'rounded-bl-md'}">
+                            <p>${msg.content}</p>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-1 ${isOwn ? 'text-right' : ''}">${formatTime(msg.createdAt)}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function appendMessage(msg, isOwn) {
+            const container = document.getElementById('messages-container');
+            const emptyMessage = container.querySelector('.text-center');
+            if (emptyMessage) emptyMessage.remove();
+
+            container.insertAdjacentHTML('beforeend', createMessageHTML(msg, isOwn));
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('messages-container');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+            if (diff < 86400000) return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            return date.toLocaleDateString();
+        }
+
+        function updateConversationPreview(message) {
+            const chatIndex = conversations.findIndex(c => c._id === message.chat);
+            if (chatIndex > -1) {
+                conversations[chatIndex].lastMessage = message;
+                // Move to top
+                const chat = conversations.splice(chatIndex, 1)[0];
+                conversations.unshift(chat);
+                renderConversations();
+            }
+        }
+
+        function closeChat() {
+            activeChat = null;
+            document.getElementById('conversations-panel').classList.remove('hidden', 'md:flex');
+            document.getElementById('chat-panel').classList.add('hidden');
+            document.getElementById('chat-panel').classList.remove('flex');
+        }
+
+        // Handle message submission
+        document.getElementById('message-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const input = document.getElementById('message-input');
+            const content = input.value.trim();
+
+            if (!content || !activeChat) return;
+
+            try {
+                const message = await api.post(`/chat/${activeChat._id}/messages`, { content });
+                
+                appendMessage({ ...message, sender: { _id: currentUser.id } }, true);
+                scrollToBottom();
+                input.value = '';
+
+                // Emit via socket
+                if (socket) {
+                    socket.emit('send_message', {
+                        chatId: activeChat._id,
+                        content,
+                        receiverId: activeChat.participants.find(p => p._id !== currentUser.id)?._id
+                    });
+                }
+
+                // Update conversation preview
+                updateConversationPreview(message);
+            } catch (error) {
+                toast.error('Error sending message');
+            }
+        });
+
+        // Typing indicator
+        let typingTimeout;
+        document.getElementById('message-input').addEventListener('input', function() {
+            if (!socket || !activeChat) return;
+
+            socket.emit('typing', { chatId: activeChat._id });
+
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                socket.emit('stop_typing', { chatId: activeChat._id });
+            }, 2000);
+        });
+
+        // Search conversations
+        document.getElementById('search-conversations').addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase();
+            document.querySelectorAll('.conversation-item').forEach(item => {
+                const name = item.querySelector('.font-medium')?.textContent.toLowerCase();
+                if (name?.includes(query)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // Logout
+        function handleLogout() {
+            auth.logout();
+            window.location.href = 'auth/login.html';
+        }
+
+        // Initialize
+        initSocket();
+        loadConversations();
+    </script>
+</body>
+</html>

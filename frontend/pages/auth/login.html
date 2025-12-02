@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - WorkIT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        'primary-dark': '#4f46e5',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+    <div class="min-h-screen flex">
+        <!-- Left Side - Form -->
+        <div class="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
+            <div class="max-w-md w-full">
+                <!-- Logo -->
+                <div class="text-center mb-8">
+                    <a href="/" class="inline-flex items-center">
+                        <span class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Work</span>
+                        <span class="text-3xl font-bold text-gray-800">IT</span>
+                    </a>
+                    <h2 class="mt-6 text-3xl font-bold text-gray-900">Welcome back</h2>
+                    <p class="mt-2 text-gray-600">Sign in to your account</p>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="bg-white p-8 rounded-2xl shadow-xl">
+                    <div class="space-y-6">
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                                placeholder="Enter your email"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                            <div class="relative">
+                                <input 
+                                    type="password" 
+                                    id="password" 
+                                    name="password" 
+                                    required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                                    placeholder="Enter your password"
+                                >
+                                <button 
+                                    type="button" 
+                                    id="toggle-password"
+                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                >
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="remember" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                            </label>
+                            <a href="#" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">Forgot password?</a>
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            id="submit-btn"
+                            class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition transform hover:-translate-y-0.5 shadow-lg shadow-indigo-200"
+                        >
+                            Sign In
+                        </button>
+                    </div>
+
+                    <div class="mt-6">
+                        <div class="relative">
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="w-full border-t border-gray-300"></div>
+                            </div>
+                            <div class="relative flex justify-center text-sm">
+                                <span class="px-2 bg-white text-gray-500">New to WorkIT?</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 grid grid-cols-2 gap-4">
+                            <a href="client-signup.html" class="flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                                <span class="text-sm font-medium text-gray-700">I want to hire</span>
+                            </a>
+                            <a href="quiz.html" class="flex items-center justify-center py-3 px-4 border border-indigo-600 rounded-lg hover:bg-indigo-50 transition">
+                                <span class="text-sm font-medium text-indigo-600">I want to work</span>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+
+                <p class="mt-6 text-center text-sm text-gray-500">
+                    By signing in, you agree to our 
+                    <a href="#" class="text-indigo-600 hover:text-indigo-700">Terms of Service</a> 
+                    and 
+                    <a href="#" class="text-indigo-600 hover:text-indigo-700">Privacy Policy</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Right Side - Image (hidden on mobile) -->
+        <div class="hidden lg:flex lg:flex-1 items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700 p-12">
+            <div class="max-w-lg text-center">
+                <div class="mb-8">
+                    <svg class="w-48 h-48 mx-auto text-white/20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                </div>
+                <h3 class="text-3xl font-bold text-white mb-4">Start Your Journey</h3>
+                <p class="text-xl text-indigo-200">Connect with top talent or find your dream projects. Join the WorkIT community today.</p>
+                
+                <div class="mt-12 grid grid-cols-3 gap-6 text-center">
+                    <div>
+                        <div class="text-3xl font-bold text-white">500+</div>
+                        <div class="text-indigo-200">Freelancers</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-white">1000+</div>
+                        <div class="text-indigo-200">Jobs</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-white">98%</div>
+                        <div class="text-indigo-200">Success Rate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/utils.js"></script>
+    <script>
+        // Check if already logged in
+        if (auth.isLoggedIn()) {
+            const user = auth.getUser();
+            const dashboardUrl = user.role === 'admin' 
+                ? '/pages/admin/dashboard.html'
+                : `/pages/${user.role}/dashboard.html`;
+            window.location.href = dashboardUrl;
+        }
+
+        // Toggle password visibility
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.type === 'password' ? 'text' : 'password';
+            passwordInput.type = type;
+        });
+
+        // Handle form submission
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Validation
+            if (!validate.email(email)) {
+                toast.error('Please enter a valid email address');
+                return;
+            }
+
+            if (!password) {
+                toast.error('Please enter your password');
+                return;
+            }
+
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading-spinner"></span> Signing in...';
+
+            try {
+                const data = await api.post('/auth/login', { email, password });
+
+                if (data.token) {
+                    auth.login(data.token, data.user);
+                    toast.success('Login successful!');
+
+                    // Redirect based on role
+                    setTimeout(() => {
+                        const dashboardUrl = data.user.role === 'admin' 
+                            ? '/pages/admin/dashboard.html'
+                            : `/pages/${data.user.role}/dashboard.html`;
+                        window.location.href = dashboardUrl;
+                    }, 500);
+                }
+            } catch (error) {
+                toast.error(error.message || 'Invalid email or password');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Sign In';
+            }
+        });
+    </script>
+</body>
+</html>

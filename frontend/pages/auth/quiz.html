@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Assessment - WorkIT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        'primary-dark': '#4f46e5',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center">
+                    <span class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Work</span>
+                    <span class="text-2xl font-bold text-gray-800">IT</span>
+                </a>
+                <a href="login.html" class="text-gray-600 hover:text-indigo-600 font-medium">
+                    Already have an account? Login
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Skill Selection (Step 1) -->
+    <div id="skill-selection" class="max-w-4xl mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 rounded-full mb-4">
+                <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                </svg>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Freelancer Skill Assessment</h1>
+            <p class="mt-4 text-xl text-gray-600">Prove your expertise and join our freelancer community</p>
+        </div>
+
+        <!-- Email Input Card -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-2">Step 1: Enter Your Email</h2>
+            <p class="text-gray-600 mb-6">We'll use this email to create your account after you pass the quiz.</p>
+            <div class="max-w-md">
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    placeholder="your@email.com"
+                >
+                <p id="email-error" class="hidden text-red-500 text-sm mt-2">Please enter a valid email address</p>
+            </div>
+        </div>
+
+        <!-- Skill Selection Card -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-2">Step 2: Select Your Primary Skill</h2>
+            <p class="text-gray-600 mb-6">Choose the skill you want to be assessed on.</p>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" id="skills-grid">
+                <!-- Skills will be loaded dynamically -->
+                <div class="animate-pulse bg-gray-100 rounded-xl h-28"></div>
+                <div class="animate-pulse bg-gray-100 rounded-xl h-28"></div>
+                <div class="animate-pulse bg-gray-100 rounded-xl h-28"></div>
+                <div class="animate-pulse bg-gray-100 rounded-xl h-28"></div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button 
+                id="start-quiz-btn"
+                disabled
+                class="bg-indigo-600 text-white px-10 py-4 rounded-xl font-semibold text-lg hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-200 inline-flex items-center gap-2"
+            >
+                <span>Start Assessment</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-6">
+            <div class="flex items-start gap-4">
+                <div class="flex-shrink-0">
+                    <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-amber-800 mb-2">Assessment Rules</h3>
+                    <ul class="text-amber-700 space-y-1 text-sm">
+                        <li>• The quiz consists of <strong>10 multiple-choice questions</strong></li>
+                        <li>• You need to score <strong>at least 7/10</strong> to pass</li>
+                        <li>• Each question has a <strong>60-second time limit</strong></li>
+                        <li>• You <strong>cannot go back</strong> to previous questions</li>
+                        <li>• If you fail, learning resources will be suggested</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Section (Step 2) -->
+    <div id="quiz-section" class="hidden max-w-3xl mx-auto px-4 py-12">
+        <!-- Quiz Header -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900" id="skill-name"></h2>
+                    <p class="text-gray-600">Skill Assessment Quiz</p>
+                </div>
+                <div class="text-right">
+                    <div class="text-3xl font-bold text-indigo-600" id="timer">60</div>
+                    <div class="text-sm text-gray-500">seconds left</div>
+                </div>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="mt-6">
+                <div class="flex justify-between text-sm text-gray-600 mb-2">
+                    <span>Question <span id="current-question">1</span>/10</span>
+                    <span><span id="answered-count">0</span> answered</span>
+                </div>
+                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-300" style="width: 10%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question Card -->
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+            <div class="mb-8">
+                <span class="inline-block px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium" id="difficulty-badge">Medium</span>
+            </div>
+            
+            <h3 class="text-xl font-semibold text-gray-900 mb-8" id="question-text"></h3>
+
+            <div class="space-y-4" id="options-container">
+                <!-- Options will be loaded dynamically -->
+            </div>
+
+            <div class="mt-8 flex justify-between items-center">
+                <p class="text-sm text-gray-500">
+                    <span class="text-amber-600 font-medium">Note:</span> You cannot change your answer after submitting
+                </p>
+                <button 
+                    id="next-btn"
+                    disabled
+                    class="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Next Question
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="hidden fixed inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="loading-spinner w-12 h-12 mx-auto mb-4"></div>
+            <p class="text-gray-600">Loading quiz...</p>
+        </div>
+    </div>
+
+    <script src="../../js/utils.js"></script>
+    <script>
+        // Quiz State
+        let selectedSkill = null;
+        let userEmail = '';
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let answers = [];
+        let timerInterval = null;
+        let timeLeft = 60;
+        let startTime = null;
+
+        // Check if user can start quiz
+        function checkCanStart() {
+            const email = document.getElementById('email').value.trim();
+            const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            const errorEl = document.getElementById('email-error');
+            
+            if (email && !emailValid) {
+                errorEl.classList.remove('hidden');
+            } else {
+                errorEl.classList.add('hidden');
+            }
+            
+            document.getElementById('start-quiz-btn').disabled = !(emailValid && selectedSkill);
+        }
+
+        // Load skills
+        async function loadSkills() {
+            try {
+                const data = await api.get('/quiz/skills');
+                const grid = document.getElementById('skills-grid');
+                
+                if (!data.skills || data.skills.length === 0) {
+                    grid.innerHTML = `
+                        <div class="col-span-full text-center py-8 text-gray-500">
+                            <p>No skills available. Please try again later.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                grid.innerHTML = data.skills.map(skill => `
+                    <button 
+                        class="skill-card bg-white p-4 rounded-xl border-2 border-gray-200 hover:border-indigo-400 hover:shadow-md transition-all duration-200 text-center group"
+                        data-skill-id="${skill._id}"
+                        data-skill-name="${skill.name}"
+                        data-skill-icon="${skill.icon || '📚'}"
+                    >
+                        <div class="text-3xl mb-2">${skill.icon || '📚'}</div>
+                        <h3 class="font-semibold text-gray-900 text-sm group-hover:text-indigo-600 transition">${skill.name}</h3>
+                    </button>
+                `).join('');
+
+                // Add click listeners
+                document.querySelectorAll('.skill-card').forEach(card => {
+                    card.addEventListener('click', () => selectSkill(card));
+                });
+            } catch (error) {
+                console.error('Error loading skills:', error);
+                document.getElementById('skills-grid').innerHTML = `
+                    <div class="col-span-full text-center py-8 text-red-500">
+                        <p>Failed to load skills. Please refresh the page.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Select skill
+        function selectSkill(card) {
+            document.querySelectorAll('.skill-card').forEach(c => {
+                c.classList.remove('border-indigo-500', 'bg-indigo-50');
+            });
+            
+            card.classList.add('border-indigo-500', 'bg-indigo-50');
+            selectedSkill = {
+                id: card.dataset.skillId,
+                name: card.dataset.skillName,
+                icon: card.dataset.skillIcon
+            };
+            
+            checkCanStart();
+        }
+
+        // Start quiz
+        async function startQuiz() {
+            userEmail = document.getElementById('email').value.trim();
+            
+            if (!selectedSkill || !userEmail) {
+                toast.error('Please enter your email and select a skill');
+                return;
+            }
+
+            document.getElementById('loading-state').classList.remove('hidden');
+
+            try {
+                const data = await api.post('/quiz/start', { 
+                    skillId: selectedSkill.id,
+                    email: userEmail
+                });
+                
+                questions = data.questions;
+                currentQuestionIndex = 0;
+                answers = [];
+                startTime = Date.now();
+
+                document.getElementById('skill-name').textContent = selectedSkill.name;
+                document.getElementById('skill-selection').classList.add('hidden');
+                document.getElementById('quiz-section').classList.remove('hidden');
+                document.getElementById('loading-state').classList.add('hidden');
+
+                showQuestion();
+            } catch (error) {
+                document.getElementById('loading-state').classList.add('hidden');
+                toast.error(error.message || 'Failed to start quiz');
+            }
+        }
+
+        // Show question
+        function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            
+            document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+            document.getElementById('answered-count').textContent = answers.length;
+            document.getElementById('progress-bar').style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+            
+            // Set difficulty badge
+            const badge = document.getElementById('difficulty-badge');
+            const difficulty = question.difficulty || 'medium';
+            badge.textContent = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+            badge.className = 'inline-block px-3 py-1 rounded-full text-sm font-medium ' + 
+                (difficulty === 'easy' ? 'bg-green-100 text-green-700' :
+                 difficulty === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                 'bg-red-100 text-red-700');
+
+            document.getElementById('question-text').textContent = question.question;
+
+            // Render options (handle both {text} objects and plain strings)
+            const container = document.getElementById('options-container');
+            container.innerHTML = question.options.map((option, index) => {
+                const optionText = typeof option === 'object' ? option.text : option;
+                return `
+                    <label class="option-label flex items-center p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-indigo-300 hover:bg-indigo-50/50 transition-all duration-200 group">
+                        <input 
+                            type="radio" 
+                            name="answer" 
+                            value="${index}"
+                            class="w-5 h-5 text-indigo-600 border-gray-300 focus:ring-indigo-500"
+                        >
+                        <span class="ml-4 text-gray-700 group-hover:text-gray-900">${optionText}</span>
+                    </label>
+                `;
+            }).join('');
+
+            // Add change listener to options
+            document.querySelectorAll('input[name="answer"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    document.getElementById('next-btn').disabled = false;
+                    document.querySelectorAll('.option-label').forEach(label => {
+                        label.classList.remove('border-indigo-500', 'bg-indigo-50');
+                    });
+                    radio.closest('.option-label').classList.add('border-indigo-500', 'bg-indigo-50');
+                });
+            });
+
+            // Reset and start timer
+            startTimer();
+            document.getElementById('next-btn').disabled = true;
+            document.getElementById('next-btn').textContent = 
+                currentQuestionIndex === questions.length - 1 ? 'Submit Quiz' : 'Next Question';
+        }
+
+        // Timer
+        function startTimer() {
+            timeLeft = 60;
+            document.getElementById('timer').textContent = timeLeft;
+            
+            if (timerInterval) clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = timeLeft;
+                
+                if (timeLeft <= 10) {
+                    document.getElementById('timer').classList.add('text-red-600');
+                    document.getElementById('timer').classList.remove('text-indigo-600');
+                } else {
+                    document.getElementById('timer').classList.remove('text-red-600');
+                    document.getElementById('timer').classList.add('text-indigo-600');
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    toast.warning && toast.warning("Time's up! Moving to next question.");
+                    submitAnswer(null);
+                }
+            }, 1000);
+        }
+
+        // Submit answer and go to next
+        function submitAnswer(selectedOption) {
+            clearInterval(timerInterval);
+            
+            const question = questions[currentQuestionIndex];
+            answers.push({
+                questionId: question._id,
+                selectedOption: selectedOption
+            });
+
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                submitQuiz();
+            }
+        }
+
+        // Submit quiz
+        async function submitQuiz() {
+            document.getElementById('loading-state').classList.remove('hidden');
+
+            const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+
+            try {
+                const data = await api.post('/quiz/submit', {
+                    skillId: selectedSkill.id,
+                    email: userEmail,
+                    answers,
+                    timeTaken
+                });
+
+                // Store result for result page
+                const resultData = {
+                    ...data,
+                    skillName: selectedSkill.name,
+                    skillIcon: selectedSkill.icon,
+                    email: userEmail
+                };
+                
+                sessionStorage.setItem('quizResult', JSON.stringify(resultData));
+                window.location.href = 'quiz-result.html';
+            } catch (error) {
+                document.getElementById('loading-state').classList.add('hidden');
+                toast.error(error.message || 'Failed to submit quiz');
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('email').addEventListener('input', checkCanStart);
+        document.getElementById('start-quiz-btn').addEventListener('click', startQuiz);
+        
+        document.getElementById('next-btn').addEventListener('click', () => {
+            const selected = document.querySelector('input[name="answer"]:checked');
+            submitAnswer(selected ? parseInt(selected.value) : null);
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSkills();
+        });
+
+        // Prevent leaving quiz accidentally
+        window.addEventListener('beforeunload', (e) => {
+            if (questions.length > 0 && currentQuestionIndex > 0 && currentQuestionIndex < questions.length) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Resources - WorkIT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        'primary-dark': '#4f46e5',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center">
+                    <span class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Work</span>
+                    <span class="text-2xl font-bold text-gray-800">IT</span>
+                </a>
+                <a href="quiz.html" class="text-indigo-600 hover:text-indigo-700 font-medium">
+                    ← Back to Quiz
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-5xl mx-auto px-4 py-12">
+        <!-- Hero Section -->
+        <div class="text-center mb-12">
+            <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Level Up Your Skills</h1>
+            <p class="mt-4 text-xl text-gray-600">
+                Don't worry! Everyone starts somewhere. Here are curated resources to help you improve in
+                <span id="skill-name" class="font-semibold text-indigo-600">Web Development</span>
+            </p>
+            <div id="score-display" class="mt-6 inline-flex items-center bg-amber-50 px-6 py-3 rounded-full">
+                <span class="text-amber-700">Your score: <span id="user-score" class="font-bold">5</span>/10 • Need: 7/10 to pass</span>
+            </div>
+        </div>
+
+        <!-- Tips Section -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">📝 Tips for Success</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                        <span class="text-green-600 font-bold">1</span>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Practice Daily</h3>
+                        <p class="text-gray-600 text-sm">Consistent practice is more effective than cramming</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <span class="text-blue-600 font-bold">2</span>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Build Projects</h3>
+                        <p class="text-gray-600 text-sm">Apply what you learn through hands-on projects</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <span class="text-purple-600 font-bold">3</span>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Join Communities</h3>
+                        <p class="text-gray-600 text-sm">Learn from others and get help when stuck</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="flex-shrink-0 w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <span class="text-orange-600 font-bold">4</span>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Review Fundamentals</h3>
+                        <p class="text-gray-600 text-sm">Strong basics make advanced topics easier</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Free Resources -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">🆓 Free Learning Resources</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="free-resources">
+                <!-- Resources loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- Interactive Platforms -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">💻 Interactive Learning Platforms</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="interactive-platforms">
+                <!-- Platforms loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- YouTube Channels -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">📺 Recommended YouTube Channels</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="youtube-channels">
+                <!-- Channels loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- Practice Websites -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">🎯 Practice & Challenge Sites</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="practice-sites">
+                <!-- Sites loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-8 text-center">
+            <h2 class="text-2xl font-bold text-white mb-4">Ready to Try Again?</h2>
+            <p class="text-indigo-200 mb-6">Once you've practiced, come back and retake the quiz!</p>
+            <a href="quiz.html" class="inline-flex items-center bg-white text-indigo-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Retake the Quiz
+            </a>
+        </div>
+    </div>
+
+    <script src="../../js/utils.js"></script>
+    <script>
+        // Resource data for different skills
+        const resourcesBySkill = {
+            'web-development': {
+                free: [
+                    { name: 'MDN Web Docs', url: 'https://developer.mozilla.org/', desc: 'Complete web development reference', icon: '📚' },
+                    { name: 'W3Schools', url: 'https://www.w3schools.com/', desc: 'Beginner-friendly tutorials', icon: '🎓' },
+                    { name: 'JavaScript.info', url: 'https://javascript.info/', desc: 'Modern JavaScript tutorial', icon: '📖' },
+                    { name: 'CSS-Tricks', url: 'https://css-tricks.com/', desc: 'CSS tips and techniques', icon: '🎨' },
+                    { name: 'freeCodeCamp', url: 'https://www.freecodecamp.org/', desc: 'Free coding certifications', icon: '🏕️' },
+                    { name: 'The Odin Project', url: 'https://www.theodinproject.com/', desc: 'Full-stack curriculum', icon: '⚔️' }
+                ],
+                interactive: [
+                    { name: 'Codecademy', url: 'https://www.codecademy.com/', desc: 'Interactive coding lessons', icon: '💻' },
+                    { name: 'Scrimba', url: 'https://scrimba.com/', desc: 'Interactive video courses', icon: '🎬' },
+                    { name: 'Frontend Mentor', url: 'https://www.frontendmentor.io/', desc: 'Real-world projects', icon: '🏆' }
+                ],
+                youtube: [
+                    { name: 'Traversy Media', url: 'https://www.youtube.com/@TraversyMedia', desc: 'Web dev tutorials', icon: '▶️' },
+                    { name: 'Web Dev Simplified', url: 'https://www.youtube.com/@WebDevSimplified', desc: 'Simplified explanations', icon: '▶️' },
+                    { name: 'Fireship', url: 'https://www.youtube.com/@Fireship', desc: 'Quick tech concepts', icon: '▶️' }
+                ],
+                practice: [
+                    { name: 'LeetCode', url: 'https://leetcode.com/', desc: 'Coding challenges', icon: '🧩' },
+                    { name: 'Codewars', url: 'https://www.codewars.com/', desc: 'Code katas', icon: '⚔️' },
+                    { name: 'HackerRank', url: 'https://www.hackerrank.com/', desc: 'Skill certification', icon: '💼' }
+                ]
+            },
+            'default': {
+                free: [
+                    { name: 'Coursera', url: 'https://www.coursera.org/', desc: 'University courses online', icon: '🎓' },
+                    { name: 'edX', url: 'https://www.edx.org/', desc: 'Free university courses', icon: '📚' },
+                    { name: 'Khan Academy', url: 'https://www.khanacademy.org/', desc: 'Free learning platform', icon: '🏫' }
+                ],
+                interactive: [
+                    { name: 'Codecademy', url: 'https://www.codecademy.com/', desc: 'Interactive coding lessons', icon: '💻' },
+                    { name: 'Udemy', url: 'https://www.udemy.com/', desc: 'Affordable courses', icon: '🎬' },
+                    { name: 'Skillshare', url: 'https://www.skillshare.com/', desc: 'Creative skills', icon: '🎨' }
+                ],
+                youtube: [
+                    { name: 'freeCodeCamp', url: 'https://www.youtube.com/@freecodecamp', desc: 'Full courses', icon: '▶️' },
+                    { name: 'Programming with Mosh', url: 'https://www.youtube.com/@programmingwithmosh', desc: 'Quality tutorials', icon: '▶️' },
+                    { name: 'Corey Schafer', url: 'https://www.youtube.com/@coreyms', desc: 'Python tutorials', icon: '▶️' }
+                ],
+                practice: [
+                    { name: 'LeetCode', url: 'https://leetcode.com/', desc: 'Coding challenges', icon: '🧩' },
+                    { name: 'HackerRank', url: 'https://www.hackerrank.com/', desc: 'Skill certification', icon: '💼' },
+                    { name: 'Exercism', url: 'https://exercism.org/', desc: 'Code practice', icon: '🏋️' }
+                ]
+            }
+        };
+
+        function createResourceCard(resource) {
+            return `
+                <a href="${resource.url}" target="_blank" class="block p-6 bg-gray-50 rounded-xl hover:bg-indigo-50 hover:shadow-md transition group">
+                    <div class="text-3xl mb-3">${resource.icon}</div>
+                    <h3 class="font-semibold text-gray-900 group-hover:text-indigo-600 transition">${resource.name}</h3>
+                    <p class="text-sm text-gray-500 mt-1">${resource.desc}</p>
+                </a>
+            `;
+        }
+
+        function loadResources() {
+            const skillName = sessionStorage.getItem('failedSkillName') || 'Web Development';
+            const score = sessionStorage.getItem('failedScore') || '5';
+            
+            document.getElementById('skill-name').textContent = skillName;
+            document.getElementById('user-score').textContent = score;
+
+            const skillSlug = skillName.toLowerCase().replace(/\s+/g, '-');
+            const resources = resourcesBySkill[skillSlug] || resourcesBySkill.default;
+
+            document.getElementById('free-resources').innerHTML = resources.free.map(createResourceCard).join('');
+            document.getElementById('interactive-platforms').innerHTML = resources.interactive.map(createResourceCard).join('');
+            document.getElementById('youtube-channels').innerHTML = resources.youtube.map(createResourceCard).join('');
+            document.getElementById('practice-sites').innerHTML = resources.practice.map(createResourceCard).join('');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadResources);
+    </script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Jobs - WorkIT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        'primary-dark': '#4f46e5',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center">
+                    <span class="text-2xl font-bold text-indigo-600">Work</span>
+                    <span class="text-2xl font-bold text-gray-800">IT</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="dashboard.html" class="text-gray-600 hover:text-indigo-600 transition">Dashboard</a>
+                    <a href="my-jobs.html" class="text-indigo-600 font-medium">My Jobs</a>
+                    <a href="post-job.html" class="text-gray-600 hover:text-indigo-600 transition">Post Job</a>
+                    <a href="../messages.html" class="text-gray-600 hover:text-indigo-600 transition">Messages</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-700" id="user-name">Loading...</span>
+                    <button onclick="handleLogout()" class="text-gray-600 hover:text-red-600 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">My Jobs</h1>
+                <p class="text-gray-600 mt-1">Manage your posted jobs and view applications</p>
+            </div>
+            <a href="post-job.html" class="mt-4 md:mt-0 inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Post New Job
+            </a>
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 mb-6">
+            <div class="flex flex-wrap gap-4">
+                <div class="flex-1 min-w-[200px]">
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        placeholder="Search jobs..." 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    >
+                </div>
+                <select id="status-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                    <option value="">All Status</option>
+                    <option value="open">Open</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+                <button onclick="loadJobs()" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                    Search
+                </button>
+            </div>
+        </div>
+
+        <!-- Jobs List -->
+        <div id="jobs-container" class="space-y-4">
+            <div class="bg-white rounded-xl p-8 shadow-sm border border-gray-200 text-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+                <p class="text-gray-500 mt-4">Loading jobs...</p>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-6 flex justify-center space-x-2" id="pagination"></div>
+    </main>
+
+    <!-- Applications Modal -->
+    <div id="applications-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-hidden">
+            <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-800">Applications for <span id="modal-job-title"></span></h3>
+                <button onclick="closeApplicationsModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="applications-list" class="p-6 max-h-[60vh] overflow-y-auto">
+                Loading...
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/utils.js"></script>
+    <script>
+        // Auth check
+        if (!auth.isLoggedIn()) {
+            window.location.href = '../auth/login.html';
+        }
+        const user = auth.getUser();
+        if (user.role !== 'client') {
+            window.location.href = '../freelancer/dashboard.html';
+        }
+        document.getElementById('user-name').textContent = user.name;
+
+        let currentPage = 1;
+        const limit = 10;
+
+        function handleLogout() {
+            auth.logout();
+            window.location.href = '/';
+        }
+
+        async function loadJobs(page = 1) {
+            currentPage = page;
+            const search = document.getElementById('search-input').value;
+            const status = document.getElementById('status-filter').value;
+
+            const params = new URLSearchParams({
+                page,
+                limit,
+                ...(search && { search }),
+                ...(status && { status })
+            });
+
+            try {
+                const data = await api.get(`/jobs/client/my-jobs?${params}`);
+                renderJobs(data.jobs || []);
+                renderPagination(data.pages || 1);
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+                document.getElementById('jobs-container').innerHTML = `
+                    <div class="bg-white rounded-xl p-8 shadow-sm border border-gray-200 text-center">
+                        <p class="text-red-500">Error loading jobs</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderJobs(jobs) {
+            const container = document.getElementById('jobs-container');
+
+            if (jobs.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-xl p-12 shadow-sm border border-gray-200 text-center">
+                        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">No jobs posted yet</h3>
+                        <p class="text-gray-600 mb-6">Start by posting your first job to find talented freelancers.</p>
+                        <a href="post-job.html" class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            Post a Job
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = jobs.map(job => `
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition">
+                    <div class="flex flex-col md:flex-row md:items-start md:justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-2">
+                                <h3 class="text-lg font-semibold text-gray-800">${job.title}</h3>
+                                <span class="px-2 py-1 text-xs font-medium rounded-full ${getStatusClass(job.status)}">
+                                    ${job.status.charAt(0).toUpperCase() + job.status.slice(1).replace('-', ' ')}
+                                </span>
+                            </div>
+                            <p class="text-gray-600 mb-4 line-clamp-2">${job.description}</p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                ${job.skills.slice(0, 4).map(skill => `
+                                    <span class="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm">${skill.name || skill}</span>
+                                `).join('')}
+                                ${job.skills.length > 4 ? `<span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">+${job.skills.length - 4} more</span>` : ''}
+                            </div>
+                            <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    $${job.budget.min} - $${job.budget.max}
+                                </span>
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    ${new Date(job.createdAt).toLocaleDateString()}
+                                </span>
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    ${job.applicationCount || 0} applications
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex md:flex-col gap-2 mt-4 md:mt-0 md:ml-4">
+                            <button onclick="viewApplications('${job._id}', '${job.title.replace(/'/g, "\\'")}')" class="flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                                View Applications
+                            </button>
+                            ${job.status === 'open' ? `
+                                <button onclick="closeJob('${job._id}')" class="flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm">
+                                    Close Job
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'open': return 'bg-green-100 text-green-700';
+                case 'in-progress': return 'bg-blue-100 text-blue-700';
+                case 'completed': return 'bg-purple-100 text-purple-700';
+                case 'cancelled': return 'bg-red-100 text-red-700';
+                default: return 'bg-gray-100 text-gray-700';
+            }
+        }
+
+        function renderPagination(pages) {
+            const container = document.getElementById('pagination');
+            container.innerHTML = '';
+
+            if (pages <= 1) return;
+
+            for (let i = 1; i <= pages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `px-4 py-2 rounded-lg ${i === currentPage ? 'bg-indigo-600 text-white' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'}`;
+                btn.textContent = i;
+                btn.onclick = () => loadJobs(i);
+                container.appendChild(btn);
+            }
+        }
+
+        async function viewApplications(jobId, jobTitle) {
+            document.getElementById('modal-job-title').textContent = jobTitle;
+            document.getElementById('applications-modal').classList.remove('hidden');
+            document.getElementById('applications-list').innerHTML = '<div class="text-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto"></div></div>';
+
+            try {
+                const data = await api.get(`/applications/job/${jobId}`);
+                renderApplications(data.applications || [], jobId);
+            } catch (error) {
+                console.error('Error loading applications:', error);
+                document.getElementById('applications-list').innerHTML = '<p class="text-center text-red-500">Error loading applications</p>';
+            }
+        }
+
+        function renderApplications(applications, jobId) {
+            const container = document.getElementById('applications-list');
+
+            if (applications.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-gray-500">No applications yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = applications.map(app => `
+                <div class="border border-gray-200 rounded-lg p-4 mb-4">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
+                                <span class="text-indigo-600 font-semibold text-lg">${app.freelancer?.name?.charAt(0) || 'F'}</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">${app.freelancer?.name || 'Freelancer'}</h4>
+                                <p class="text-sm text-gray-500">${app.freelancer?.email || ''}</p>
+                                <div class="flex items-center mt-1">
+                                    <span class="text-sm font-medium text-indigo-600">Proposed: $${app.proposedBudget}</span>
+                                    <span class="mx-2 text-gray-300">|</span>
+                                    <span class="text-sm text-gray-500">${app.estimatedDuration || 'Not specified'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="px-2 py-1 text-xs font-medium rounded-full ${getAppStatusClass(app.status)}">
+                            ${app.status.charAt(0).toUpperCase() + app.status.slice(1)}
+                        </span>
+                    </div>
+                    <p class="text-gray-600 mt-3 text-sm">${app.coverLetter}</p>
+                    ${app.status === 'pending' ? `
+                        <div class="flex gap-2 mt-4">
+                            <button onclick="updateApplicationStatus('${app._id}', 'accepted', '${jobId}')" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm">
+                                Accept
+                            </button>
+                            <button onclick="updateApplicationStatus('${app._id}', 'rejected', '${jobId}')" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm">
+                                Reject
+                            </button>
+                            <button onclick="startChat('${app.freelancer?._id}')" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm">
+                                Message
+                            </button>
+                        </div>
+                    ` : app.status === 'accepted' ? `
+                        <div class="flex gap-2 mt-4">
+                            <button onclick="startChat('${app.freelancer?._id}')" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm">
+                                Message Freelancer
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function getAppStatusClass(status) {
+            switch (status) {
+                case 'pending': return 'bg-yellow-100 text-yellow-700';
+                case 'accepted': return 'bg-green-100 text-green-700';
+                case 'rejected': return 'bg-red-100 text-red-700';
+                default: return 'bg-gray-100 text-gray-700';
+            }
+        }
+
+        async function updateApplicationStatus(applicationId, status, jobId) {
+            try {
+                await api.put(`/applications/${applicationId}/status`, { status });
+                toast.success(`Application ${status} successfully`);
+                
+                // Reload applications
+                const data = await api.get(`/applications/job/${jobId}`);
+                renderApplications(data.applications || [], jobId);
+                
+                // Reload jobs to update application count
+                loadJobs(currentPage);
+            } catch (error) {
+                toast.error(error.message || 'Error updating application');
+            }
+        }
+
+        function closeApplicationsModal() {
+            document.getElementById('applications-modal').classList.add('hidden');
+        }
+
+        async function closeJob(jobId) {
+            if (!confirm('Are you sure you want to close this job?')) return;
+
+            try {
+                await api.put(`/jobs/${jobId}/status`, { status: 'cancelled' });
+                toast.success('Job closed successfully');
+                loadJobs(currentPage);
+            } catch (error) {
+                toast.error(error.message || 'Error closing job');
+            }
+        }
+
+        function startChat(freelancerId) {
+            window.location.href = `../messages.html?user=${freelancerId}`;
+        }
+
+        // Search on Enter
+        document.getElementById('search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') loadJobs();
+        });
+
+        // Initialize
+        loadJobs();
+    </script>
+</body>
+</html>

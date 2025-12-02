@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - WorkIT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        'primary-dark': '#4f46e5',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center">
+                    <span class="text-2xl font-bold text-indigo-600">Work</span>
+                    <span class="text-2xl font-bold text-gray-800">IT</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-6" id="nav-links">
+                    <!-- Dynamic nav links based on role -->
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-700" id="user-name">Loading...</span>
+                    <button onclick="handleLogout()" class="text-gray-600 hover:text-red-600 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">My Profile</h1>
+            <p class="text-gray-600 mt-1">Manage your profile information</p>
+        </div>
+
+        <!-- Profile Card -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-8">
+                <div class="flex items-center">
+                    <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg">
+                        <span class="text-4xl font-bold text-indigo-600" id="avatar-initial">?</span>
+                    </div>
+                    <div class="ml-6 text-white">
+                        <h2 class="text-2xl font-bold" id="profile-name">Loading...</h2>
+                        <p class="opacity-90" id="profile-role">Loading...</p>
+                        <p class="opacity-75 text-sm mt-1" id="profile-email">Loading...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Form -->
+            <form id="profile-form" class="p-6 space-y-6">
+                <!-- Basic Info -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input 
+                            type="text" 
+                            id="name" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            required
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                            readonly
+                        >
+                    </div>
+                </div>
+
+                <!-- Client/Freelancer Specific Fields -->
+                <div id="client-fields" class="hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+                            <input 
+                                type="text" 
+                                id="company" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                placeholder="Your company name"
+                            >
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                            <input 
+                                type="tel" 
+                                id="phone" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                placeholder="+1 (234) 567-8900"
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <div id="freelancer-fields" class="hidden space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Professional Title</label>
+                        <input 
+                            type="text" 
+                            id="title" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="e.g., Full Stack Developer"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                        <textarea 
+                            id="bio" 
+                            rows="4" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="Tell us about yourself, your experience, and what you can offer..."
+                        ></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Hourly Rate ($)</label>
+                            <input 
+                                type="number" 
+                                id="hourlyRate" 
+                                min="0" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                placeholder="50"
+                            >
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Experience Level</label>
+                            <select 
+                                id="experienceLevel" 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            >
+                                <option value="entry">Entry Level</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="expert">Expert</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Skills</label>
+                        <div id="skills-container" class="flex flex-wrap gap-2 p-4 border border-gray-300 rounded-lg min-h-[60px]">
+                            <!-- Skills will be added here -->
+                        </div>
+                        <div class="mt-2">
+                            <select id="skill-select" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                                <option value="">Add a skill...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Portfolio URL</label>
+                        <input 
+                            type="url" 
+                            id="portfolio" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="https://your-portfolio.com"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">LinkedIn URL</label>
+                        <input 
+                            type="url" 
+                            id="linkedin" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="https://linkedin.com/in/username"
+                        >
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">GitHub URL</label>
+                        <input 
+                            type="url" 
+                            id="github" 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="https://github.com/username"
+                        >
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="flex justify-end pt-4 border-t border-gray-200">
+                    <button 
+                        type="submit" 
+                        class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition flex items-center"
+                    >
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Change Password Section -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mt-6 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-800">Change Password</h3>
+            </div>
+            <form id="password-form" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+                    <input 
+                        type="password" 
+                        id="currentPassword" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        required
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                    <input 
+                        type="password" 
+                        id="newPassword" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        required
+                        minlength="6"
+                    >
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                    <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        required
+                        minlength="6"
+                    >
+                </div>
+                <div class="flex justify-end">
+                    <button 
+                        type="submit" 
+                        class="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition"
+                    >
+                        Update Password
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Quiz Score (Freelancers Only) -->
+        <div id="quiz-section" class="bg-white rounded-xl shadow-sm border border-gray-200 mt-6 overflow-hidden hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-800">Quiz Score</h3>
+            </div>
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600">Your skill assessment score</p>
+                        <p class="text-3xl font-bold text-indigo-600 mt-1" id="quiz-score">-</p>
+                    </div>
+                    <div class="w-20 h-20 rounded-full bg-indigo-100 flex items-center justify-center">
+                        <svg class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/utils.js"></script>
+    <script>
+        // Auth check
+        if (!auth.isLoggedIn()) {
+            window.location.href = 'auth/login.html';
+        }
+
+        const user = auth.getUser();
+        let selectedSkills = [];
+        let availableSkills = [];
+
+        // Set navigation based on role
+        function setNavigation() {
+            const navLinks = document.getElementById('nav-links');
+            
+            if (user.role === 'freelancer') {
+                navLinks.innerHTML = `
+                    <a href="freelancer/dashboard.html" class="text-gray-600 hover:text-indigo-600 transition">Dashboard</a>
+                    <a href="freelancer/find-jobs.html" class="text-gray-600 hover:text-indigo-600 transition">Find Jobs</a>
+                    <a href="freelancer/my-applications.html" class="text-gray-600 hover:text-indigo-600 transition">My Applications</a>
+                    <a href="messages.html" class="text-gray-600 hover:text-indigo-600 transition">Messages</a>
+                    <a href="profile.html" class="text-indigo-600 font-medium">Profile</a>
+                `;
+            } else if (user.role === 'client') {
+                navLinks.innerHTML = `
+                    <a href="client/dashboard.html" class="text-gray-600 hover:text-indigo-600 transition">Dashboard</a>
+                    <a href="client/my-jobs.html" class="text-gray-600 hover:text-indigo-600 transition">My Jobs</a>
+                    <a href="client/post-job.html" class="text-gray-600 hover:text-indigo-600 transition">Post Job</a>
+                    <a href="messages.html" class="text-gray-600 hover:text-indigo-600 transition">Messages</a>
+                    <a href="profile.html" class="text-indigo-600 font-medium">Profile</a>
+                `;
+            }
+        }
+
+        function handleLogout() {
+            auth.logout();
+            window.location.href = '/';
+        }
+
+        // Load profile data
+        async function loadProfile() {
+            try {
+                const profile = await api.get('/users/profile');
+                
+                document.getElementById('user-name').textContent = profile.name;
+                document.getElementById('avatar-initial').textContent = profile.name.charAt(0).toUpperCase();
+                document.getElementById('profile-name').textContent = profile.name;
+                document.getElementById('profile-role').textContent = profile.role.charAt(0).toUpperCase() + profile.role.slice(1);
+                document.getElementById('profile-email').textContent = profile.email;
+                
+                document.getElementById('name').value = profile.name;
+                document.getElementById('email').value = profile.email;
+
+                if (profile.role === 'client') {
+                    document.getElementById('client-fields').classList.remove('hidden');
+                    document.getElementById('company').value = profile.company || '';
+                    document.getElementById('phone').value = profile.phone || '';
+                } else if (profile.role === 'freelancer') {
+                    document.getElementById('freelancer-fields').classList.remove('hidden');
+                    document.getElementById('quiz-section').classList.remove('hidden');
+                    
+                    document.getElementById('title').value = profile.title || '';
+                    document.getElementById('bio').value = profile.bio || '';
+                    document.getElementById('hourlyRate').value = profile.hourlyRate || '';
+                    document.getElementById('experienceLevel').value = profile.experienceLevel || 'intermediate';
+                    document.getElementById('portfolio').value = profile.portfolio || '';
+                    document.getElementById('linkedin').value = profile.socialLinks?.linkedin || '';
+                    document.getElementById('github').value = profile.socialLinks?.github || '';
+                    document.getElementById('quiz-score').textContent = profile.quizScore ? `${profile.quizScore}/10` : 'Not taken';
+                    
+                    // Load skills
+                    selectedSkills = (profile.skills || []).map(s => s._id || s);
+                    await loadSkills();
+                    renderSelectedSkills();
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                toast.error('Error loading profile');
+            }
+        }
+
+        async function loadSkills() {
+            try {
+                const data = await api.get('/quiz/skills');
+                availableSkills = data.skills || [];
+                
+                const select = document.getElementById('skill-select');
+                select.innerHTML = '<option value="">Add a skill...</option>' + 
+                    availableSkills
+                        .filter(s => !selectedSkills.includes(s._id))
+                        .map(s => `<option value="${s._id}">${s.name}</option>`)
+                        .join('');
+            } catch (error) {
+                console.error('Error loading skills:', error);
+            }
+        }
+
+        function renderSelectedSkills() {
+            const container = document.getElementById('skills-container');
+            
+            if (selectedSkills.length === 0) {
+                container.innerHTML = '<p class="text-gray-400 text-sm">No skills added yet</p>';
+                return;
+            }
+
+            container.innerHTML = selectedSkills.map(skillId => {
+                const skill = availableSkills.find(s => s._id === skillId);
+                return `
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-700">
+                        ${skill?.name || skillId}
+                        <button type="button" onclick="removeSkill('${skillId}')" class="ml-2 hover:text-indigo-900">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </span>
+                `;
+            }).join('');
+        }
+
+        function removeSkill(skillId) {
+            selectedSkills = selectedSkills.filter(id => id !== skillId);
+            renderSelectedSkills();
+            loadSkills(); // Refresh dropdown
+        }
+
+        document.getElementById('skill-select').addEventListener('change', function() {
+            if (this.value && !selectedSkills.includes(this.value)) {
+                selectedSkills.push(this.value);
+                renderSelectedSkills();
+                loadSkills(); // Refresh dropdown
+            }
+            this.value = '';
+        });
+
+        // Handle profile form submission
+        document.getElementById('profile-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const data = {
+                name: document.getElementById('name').value
+            };
+
+            if (user.role === 'client') {
+                data.company = document.getElementById('company').value;
+                data.phone = document.getElementById('phone').value;
+            } else if (user.role === 'freelancer') {
+                data.title = document.getElementById('title').value;
+                data.bio = document.getElementById('bio').value;
+                data.hourlyRate = parseFloat(document.getElementById('hourlyRate').value) || 0;
+                data.experienceLevel = document.getElementById('experienceLevel').value;
+                data.skills = selectedSkills;
+                data.portfolio = document.getElementById('portfolio').value;
+                data.socialLinks = {
+                    linkedin: document.getElementById('linkedin').value,
+                    github: document.getElementById('github').value
+                };
+            }
+
+            try {
+                const updated = await api.put('/users/profile', data);
+                
+                // Update local storage
+                const storedUser = auth.getUser();
+                storedUser.name = updated.name;
+                localStorage.setItem('user', JSON.stringify(storedUser));
+                
+                toast.success('Profile updated successfully');
+                loadProfile();
+            } catch (error) {
+                toast.error(error.message || 'Error updating profile');
+            }
+        });
+
+        // Handle password change
+        document.getElementById('password-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                toast.error('New passwords do not match');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                toast.error('Password must be at least 6 characters');
+                return;
+            }
+
+            try {
+                await api.put('/users/change-password', {
+                    currentPassword,
+                    newPassword
+                });
+                
+                toast.success('Password updated successfully');
+                this.reset();
+            } catch (error) {
+                toast.error(error.message || 'Error updating password');
+            }
+        });
+
+        // Initialize
+        setNavigation();
+        loadProfile();
+    </script>
+</body>
+</html>

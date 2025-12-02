@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Applications - WorkIT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        'primary-dark': '#4f46e5',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="/" class="flex items-center">
+                    <span class="text-2xl font-bold text-indigo-600">Work</span>
+                    <span class="text-2xl font-bold text-gray-800">IT</span>
+                </a>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="dashboard.html" class="text-gray-600 hover:text-indigo-600 transition">Dashboard</a>
+                    <a href="find-jobs.html" class="text-gray-600 hover:text-indigo-600 transition">Find Jobs</a>
+                    <a href="my-applications.html" class="text-indigo-600 font-medium">My Applications</a>
+                    <a href="../messages.html" class="text-gray-600 hover:text-indigo-600 transition">Messages</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-700" id="user-name">Loading...</span>
+                    <button onclick="handleLogout()" class="text-gray-600 hover:text-red-600 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">My Applications</h1>
+            <p class="text-gray-600 mt-1">Track the status of your job applications</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-gray-900" id="total-count">0</p>
+                        <p class="text-sm text-gray-500">Total</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-gray-900" id="pending-count">0</p>
+                        <p class="text-sm text-gray-500">Pending</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-gray-900" id="accepted-count">0</p>
+                        <p class="text-sm text-gray-500">Accepted</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-gray-900" id="rejected-count">0</p>
+                        <p class="text-sm text-gray-500">Rejected</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 mb-6">
+            <div class="flex flex-wrap gap-4">
+                <select id="status-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                    <option value="">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="accepted">Accepted</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+                <select id="sort-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                    <option value="-createdAt">Newest First</option>
+                    <option value="createdAt">Oldest First</option>
+                    <option value="-proposedBudget">Highest Budget</option>
+                    <option value="proposedBudget">Lowest Budget</option>
+                </select>
+                <button onclick="loadApplications()" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                    Apply Filter
+                </button>
+            </div>
+        </div>
+
+        <!-- Applications List -->
+        <div id="applications-container" class="space-y-4">
+            <div class="bg-white rounded-xl p-8 shadow-sm border border-gray-200 text-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+                <p class="text-gray-500 mt-4">Loading applications...</p>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-6 flex justify-center space-x-2" id="pagination"></div>
+    </main>
+
+    <script src="../../js/utils.js"></script>
+    <script>
+        // Auth check
+        if (!auth.isLoggedIn()) {
+            window.location.href = '../auth/login.html';
+        }
+        const user = auth.getUser();
+        if (user.role !== 'freelancer') {
+            window.location.href = '../client/dashboard.html';
+        }
+        document.getElementById('user-name').textContent = user.name;
+
+        let currentPage = 1;
+        const limit = 10;
+
+        function handleLogout() {
+            auth.logout();
+            window.location.href = '/';
+        }
+
+        async function loadApplications(page = 1) {
+            currentPage = page;
+            const status = document.getElementById('status-filter').value;
+            const sort = document.getElementById('sort-filter').value;
+
+            const params = new URLSearchParams({
+                page,
+                limit,
+                sort,
+                ...(status && { status })
+            });
+
+            try {
+                const data = await api.get(`/applications/freelancer/my-applications?${params}`);
+                renderApplications(data.applications || []);
+                renderPagination(data.pages || 1);
+                updateStats(data.applications || []);
+            } catch (error) {
+                console.error('Error loading applications:', error);
+                document.getElementById('applications-container').innerHTML = `
+                    <div class="bg-white rounded-xl p-8 shadow-sm border border-gray-200 text-center">
+                        <p class="text-red-500">Error loading applications</p>
+                    </div>
+                `;
+            }
+        }
+
+        function updateStats(applications) {
+            // For full stats, we'd need a separate endpoint - using filtered data for now
+            document.getElementById('total-count').textContent = applications.length;
+            document.getElementById('pending-count').textContent = applications.filter(a => a.status === 'pending').length;
+            document.getElementById('accepted-count').textContent = applications.filter(a => a.status === 'accepted').length;
+            document.getElementById('rejected-count').textContent = applications.filter(a => a.status === 'rejected').length;
+        }
+
+        function renderApplications(applications) {
+            const container = document.getElementById('applications-container');
+
+            if (applications.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-xl p-12 shadow-sm border border-gray-200 text-center">
+                        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2">No applications yet</h3>
+                        <p class="text-gray-600 mb-6">Start applying to jobs to see them here.</p>
+                        <a href="find-jobs.html" class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            Browse Jobs
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = applications.map(app => `
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex flex-col md:flex-row md:items-start md:justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <h3 class="text-lg font-semibold text-gray-800">${app.job?.title || 'Job'}</h3>
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full ${getStatusClass(app.status)}">
+                                        ${app.status.charAt(0).toUpperCase() + app.status.slice(1)}
+                                    </span>
+                                </div>
+                                <p class="text-gray-500 text-sm mb-3">
+                                    <span class="font-medium">${app.job?.client?.name || 'Client'}</span>
+                                    ${app.job?.client?.company ? ` at ${app.job.client.company}` : ''}
+                                </p>
+                                <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-4">
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        Your Bid: $${app.proposedBudget}
+                                    </span>
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        Applied: ${new Date(app.createdAt).toLocaleDateString()}
+                                    </span>
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        ${app.estimatedDuration || 'Duration not specified'}
+                                    </span>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-3">
+                                    <p class="text-sm text-gray-600 font-medium mb-1">Your Cover Letter:</p>
+                                    <p class="text-sm text-gray-600">${app.coverLetter}</p>
+                                </div>
+                            </div>
+                            <div class="flex md:flex-col gap-2 mt-4 md:mt-0 md:ml-4">
+                                ${app.status === 'accepted' ? `
+                                    <button onclick="messageClient('${app.job?.client?._id}')" class="flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                        </svg>
+                                        Message Client
+                                    </button>
+                                ` : ''}
+                                ${app.status === 'pending' ? `
+                                    <button onclick="withdrawApplication('${app._id}')" class="flex items-center justify-center px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition text-sm">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                        Withdraw
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    ${app.status === 'accepted' ? `
+                        <div class="bg-green-50 px-6 py-3 border-t border-green-100">
+                            <p class="text-sm text-green-700">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Congratulations! Your application has been accepted. Contact the client to get started.
+                            </p>
+                        </div>
+                    ` : app.status === 'rejected' ? `
+                        <div class="bg-red-50 px-6 py-3 border-t border-red-100">
+                            <p class="text-sm text-red-700">
+                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                This application was not selected. Don't give up, keep applying!
+                            </p>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'pending': return 'bg-yellow-100 text-yellow-700';
+                case 'accepted': return 'bg-green-100 text-green-700';
+                case 'rejected': return 'bg-red-100 text-red-700';
+                default: return 'bg-gray-100 text-gray-700';
+            }
+        }
+
+        function renderPagination(pages) {
+            const container = document.getElementById('pagination');
+            container.innerHTML = '';
+
+            if (pages <= 1) return;
+
+            for (let i = 1; i <= pages; i++) {
+                const btn = document.createElement('button');
+                btn.className = `px-4 py-2 rounded-lg ${i === currentPage ? 'bg-indigo-600 text-white' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'}`;
+                btn.textContent = i;
+                btn.onclick = () => loadApplications(i);
+                container.appendChild(btn);
+            }
+        }
+
+        async function withdrawApplication(applicationId) {
+            if (!confirm('Are you sure you want to withdraw this application?')) return;
+
+            try {
+                await api.delete(`/applications/${applicationId}`);
+                toast.success('Application withdrawn successfully');
+                loadApplications(currentPage);
+            } catch (error) {
+                toast.error(error.message || 'Error withdrawing application');
+            }
+        }
+
+        function messageClient(clientId) {
+            if (clientId) {
+                window.location.href = `../messages.html?user=${clientId}`;
+            }
+        }
+
+        // Initialize
+        loadApplications();
+    </script>
+</body>
+</html>
