@@ -69,6 +69,11 @@ const auth = {
         localStorage.setItem('token', token);
     },
 
+    login(token, user) {
+        this.setToken(token);
+        this.setUser(user);
+    },
+
     getUser() {
         const user = localStorage.getItem('user');
         return user ? JSON.parse(user) : null;

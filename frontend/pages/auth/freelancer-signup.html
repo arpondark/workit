@@ -91,42 +91,6 @@
                         </div>
 
                         <div>
-                            <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Professional Title</label>
-                            <input 
-                                type="text" 
-                                id="title" 
-                                name="title" 
-                                required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                                placeholder="e.g., Full Stack Developer, UI/UX Designer"
-                            >
-                        </div>
-
-                        <div>
-                            <label for="hourly-rate" class="block text-sm font-medium text-gray-700 mb-2">Hourly Rate ($)</label>
-                            <input 
-                                type="number" 
-                                id="hourly-rate" 
-                                name="hourly-rate" 
-                                min="5"
-                                required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                                placeholder="Your hourly rate in USD"
-                            >
-                        </div>
-
-                        <div>
-                            <label for="bio" class="block text-sm font-medium text-gray-700 mb-2">Short Bio</label>
-                            <textarea 
-                                id="bio" 
-                                name="bio" 
-                                rows="3"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition resize-none"
-                                placeholder="Tell clients about yourself and your experience..."
-                            ></textarea>
-                        </div>
-
-                        <div>
                             <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
                             <div class="relative">
                                 <input 
@@ -295,9 +259,6 @@
             const submitBtn = document.getElementById('submit-btn');
             const name = document.getElementById('name').value.trim();
             const email = document.getElementById('email').value.trim();
-            const title = document.getElementById('title').value.trim();
-            const hourlyRate = document.getElementById('hourly-rate').value;
-            const bio = document.getElementById('bio').value.trim();
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
             const terms = document.getElementById('terms').checked;
@@ -310,16 +271,6 @@
 
             if (!validate.email(email)) {
                 toast.error('Please enter a valid email address');
-                return;
-            }
-
-            if (!title || title.length < 3) {
-                toast.error('Please enter your professional title');
-                return;
-            }
-
-            if (!hourlyRate || hourlyRate < 5) {
-                toast.error('Hourly rate must be at least $5');
                 return;
             }
 
@@ -347,9 +298,6 @@
                     name, 
                     email, 
                     password,
-                    title,
-                    hourlyRate: parseFloat(hourlyRate),
-                    bio: bio || undefined,
                     quizPassToken,
                     skillId: passedSkillId
                 });

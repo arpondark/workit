@@ -434,14 +434,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadSkills();
         });
-
-        // Prevent leaving quiz accidentally
-        window.addEventListener('beforeunload', (e) => {
-            if (questions.length > 0 && currentQuestionIndex > 0 && currentQuestionIndex < questions.length) {
-                e.preventDefault();
-                e.returnValue = '';
-            }
-        });
     </script>
 </body>
 </html>
