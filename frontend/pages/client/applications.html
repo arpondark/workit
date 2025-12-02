@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applications - WorkIT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        'primary-dark': '#4f46e5',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform z-50">
+            <div class="flex flex-col h-full">
+                <div class="p-6 border-b">
+                    <a href="/" class="flex items-center">
+                        <span class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Work</span>
+                        <span class="text-2xl font-bold text-gray-800">IT</span>
+                    </a>
+                </div>
+                <nav class="flex-1 p-4 space-y-2">
+                    <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                        </svg>
+                        Dashboard
+                    </a>
+                    <a href="post-job.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Post a Job
+                    </a>
+                    <a href="my-jobs.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                        My Jobs
+                    </a>
+                    <a href="applications.html" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-indigo-50 text-indigo-600 font-medium">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Applications
+                    </a>
+                    <a href="find-freelancers.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        Find Freelancers
+                    </a>
+                    <a href="../messages.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                        Messages
+                    </a>
+                    <a href="payments.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                        </svg>
+                        Payments
+                    </a>
+                </nav>
+                <div class="p-4 border-t">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold" id="sidebar-avatar"></div>
+                        <div class="flex-1 min-w-0">
+                            <div class="font-medium text-gray-900 truncate" id="sidebar-name"></div>
+                            <div class="text-sm text-gray-500">Client</div>
+                        </div>
+                        <button id="logout-btn" class="text-gray-400 hover:text-red-500 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 lg:hidden hidden"></div>
+
+        <!-- Main Content -->
+        <main class="flex-1 lg:ml-64">
+            <header class="bg-white shadow-sm sticky top-0 z-30">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <div class="flex items-center gap-4">
+                        <button id="menu-btn" class="lg:hidden p-2 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+                        <h1 class="text-xl font-bold text-gray-800">Applications</h1>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <select id="job-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                            <option value="">All Jobs</option>
+                        </select>
+                        <select id="status-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-6">
+                <!-- Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Total Applications</p>
+                                <p class="text-2xl font-bold text-gray-900 mt-1" id="total-apps">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Pending Review</p>
+                                <p class="text-2xl font-bold text-yellow-600 mt-1" id="pending-apps">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Accepted</p>
+                                <p class="text-2xl font-bold text-green-600 mt-1" id="accepted-apps">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Rejected</p>
+                                <p class="text-2xl font-bold text-red-600 mt-1" id="rejected-apps">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Applications List -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div id="applications-list" class="divide-y divide-gray-200">
+                        <div class="p-8 text-center text-gray-500">Loading applications...</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Application Detail Modal -->
+    <div id="app-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200 flex items-center justify-between">
+                <h2 class="text-xl font-bold text-gray-900">Application Details</h2>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="modal-content" class="p-6">
+                <!-- Content will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/utils.js"></script>
+    <script>
+        // Auth check
+        if (!auth.isLoggedIn()) {
+            window.location.href = '../auth/login.html';
+        }
+
+        const user = auth.getUser();
+        if (user.role !== 'client') {
+            window.location.href = '../' + user.role + '/dashboard.html';
+        }
+
+        // Set user info in sidebar
+        document.getElementById('sidebar-avatar').textContent = user.name?.charAt(0)?.toUpperCase() || 'U';
+        document.getElementById('sidebar-name').textContent = user.name || 'User';
+
+        // Mobile menu toggle
+        document.getElementById('menu-btn')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+            document.getElementById('sidebar-overlay').classList.toggle('hidden');
+        });
+        document.getElementById('sidebar-overlay')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+            document.getElementById('sidebar-overlay').classList.add('hidden');
+        });
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            auth.logout();
+            window.location.href = '../auth/login.html';
+        });
+
+        let allApplications = [];
+        let myJobs = [];
+
+        // Load jobs for filter
+        async function loadJobs() {
+            try {
+                const data = await api.get('/jobs/my');
+                myJobs = data.jobs || [];
+                
+                const filter = document.getElementById('job-filter');
+                myJobs.forEach(job => {
+                    const option = document.createElement('option');
+                    option.value = job._id;
+                    option.textContent = job.title;
+                    filter.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+            }
+        }
+
+        // Load applications
+        async function loadApplications() {
+            try {
+                // Load applications for all my jobs
+                const data = await api.get('/jobs/my');
+                myJobs = data.jobs || [];
+                
+                allApplications = [];
+                
+                for (const job of myJobs) {
+                    try {
+                        const appData = await api.get(`/applications/job/${job._id}`);
+                        const apps = appData.applications || [];
+                        apps.forEach(app => {
+                            allApplications.push({ ...app, jobTitle: job.title, jobId: job._id });
+                        });
+                    } catch (err) {
+                        console.log('No applications for job:', job._id);
+                    }
+                }
+                
+                updateStats();
+                renderApplications(allApplications);
+                
+            } catch (error) {
+                console.error('Error loading applications:', error);
+                document.getElementById('applications-list').innerHTML = `
+                    <div class="p-8 text-center text-gray-500">
+                        <p>Error loading applications</p>
+                    </div>
+                `;
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('total-apps').textContent = allApplications.length;
+            document.getElementById('pending-apps').textContent = allApplications.filter(a => a.status === 'pending').length;
+            document.getElementById('accepted-apps').textContent = allApplications.filter(a => a.status === 'accepted').length;
+            document.getElementById('rejected-apps').textContent = allApplications.filter(a => a.status === 'rejected').length;
+        }
+
+        function renderApplications(applications) {
+            const container = document.getElementById('applications-list');
+            
+            if (applications.length === 0) {
+                container.innerHTML = `
+                    <div class="p-8 text-center text-gray-500">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <p class="font-medium">No applications yet</p>
+                        <p class="text-sm mt-1">Post a job to start receiving applications</p>
+                        <a href="post-job.html" class="inline-block mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                            Post a Job
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = applications.map(app => {
+                const statusColors = {
+                    pending: 'bg-yellow-100 text-yellow-700',
+                    accepted: 'bg-green-100 text-green-700',
+                    rejected: 'bg-red-100 text-red-700',
+                    completed: 'bg-blue-100 text-blue-700'
+                };
+
+                return `
+                    <div class="p-6 hover:bg-gray-50 transition">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-semibold flex-shrink-0">
+                                    ${app.freelancer?.name?.charAt(0)?.toUpperCase() || 'F'}
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-900">${app.freelancer?.name || 'Unknown Freelancer'}</h3>
+                                    <p class="text-sm text-gray-500">${app.freelancer?.email || ''}</p>
+                                    <p class="text-sm text-indigo-600 mt-1">For: ${app.jobTitle || 'Unknown Job'}</p>
+                                    <p class="text-sm text-gray-600 mt-2 line-clamp-2">${app.coverLetter || 'No cover letter provided'}</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end gap-2">
+                                <div class="text-right">
+                                    <p class="font-semibold text-gray-900">$${app.proposedRate?.toLocaleString() || 'N/A'}</p>
+                                    <span class="inline-block px-3 py-1 rounded-full text-xs font-medium ${statusColors[app.status] || 'bg-gray-100 text-gray-700'}">
+                                        ${app.status?.charAt(0).toUpperCase() + app.status?.slice(1)}
+                                    </span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="viewApplication('${app._id}')" class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                                        View Details
+                                    </button>
+                                    ${app.status === 'pending' ? `
+                                        <button onclick="updateStatus('${app._id}', 'accepted')" class="px-3 py-1.5 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                                            Accept
+                                        </button>
+                                        <button onclick="updateStatus('${app._id}', 'rejected')" class="px-3 py-1.5 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                                            Reject
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function viewApplication(appId) {
+            const app = allApplications.find(a => a._id === appId);
+            if (!app) return;
+
+            const modal = document.getElementById('app-modal');
+            const content = document.getElementById('modal-content');
+
+            content.innerHTML = `
+                <div class="space-y-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-xl">
+                            ${app.freelancer?.name?.charAt(0)?.toUpperCase() || 'F'}
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900">${app.freelancer?.name || 'Unknown'}</h3>
+                            <p class="text-gray-500">${app.freelancer?.email || ''}</p>
+                            ${app.freelancer?.skills?.length ? `
+                                <div class="flex flex-wrap gap-1 mt-2">
+                                    ${app.freelancer.skills.map(s => `
+                                        <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-xs">${s.name || s}</span>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <p class="text-sm text-gray-500">Proposed Rate</p>
+                            <p class="text-xl font-bold text-gray-900">$${app.proposedRate?.toLocaleString() || 'N/A'}</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <p class="text-sm text-gray-500">Quiz Score</p>
+                            <p class="text-xl font-bold text-gray-900">${app.freelancer?.quizScore || 'N/A'}</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-medium text-gray-900 mb-2">Cover Letter</h4>
+                        <p class="text-gray-600 whitespace-pre-wrap">${app.coverLetter || 'No cover letter provided'}</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-medium text-gray-900 mb-2">Applied For</h4>
+                        <p class="text-indigo-600">${app.jobTitle || 'Unknown Job'}</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-medium text-gray-900 mb-2">Applied On</h4>
+                        <p class="text-gray-600">${new Date(app.createdAt).toLocaleDateString()}</p>
+                    </div>
+                    
+                    ${app.status === 'pending' ? `
+                        <div class="flex gap-3">
+                            <button onclick="updateStatus('${app._id}', 'accepted'); closeModal();" class="flex-1 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium">
+                                Accept Application
+                            </button>
+                            <button onclick="updateStatus('${app._id}', 'rejected'); closeModal();" class="flex-1 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium">
+                                Reject Application
+                            </button>
+                        </div>
+                    ` : `
+                        <div class="p-4 rounded-lg ${app.status === 'accepted' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}">
+                            This application has been ${app.status}
+                        </div>
+                    `}
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('app-modal').classList.add('hidden');
+        }
+
+        async function updateStatus(appId, status) {
+            try {
+                await api.put(`/applications/${appId}/status`, { status });
+                toast.success(`Application ${status}!`);
+                loadApplications();
+            } catch (error) {
+                toast.error('Error updating application');
+            }
+        }
+
+        // Filters
+        document.getElementById('job-filter').addEventListener('change', filterApplications);
+        document.getElementById('status-filter').addEventListener('change', filterApplications);
+
+        function filterApplications() {
+            const jobId = document.getElementById('job-filter').value;
+            const status = document.getElementById('status-filter').value;
+            
+            let filtered = allApplications;
+            
+            if (jobId) {
+                filtered = filtered.filter(a => a.jobId === jobId);
+            }
+            if (status) {
+                filtered = filtered.filter(a => a.status === status);
+            }
+            
+            renderApplications(filtered);
+        }
+
+        // Close modal on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Initialize
+        loadJobs();
+        loadApplications();
+    </script>
+</body>
+</html>

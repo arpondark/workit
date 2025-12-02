@@ -105,22 +105,22 @@
             <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
                 <div class="grid grid-cols-3 gap-6 text-center">
                     <div>
-                        <div class="text-4xl font-bold text-red-600" id="fail-score">5</div>
+                        <div class="text-4xl font-bold text-red-600" id="fail-score">2</div>
                         <div class="text-gray-500">Score</div>
                     </div>
                     <div>
-                        <div class="text-4xl font-bold text-gray-400">7</div>
+                        <div class="text-4xl font-bold text-gray-400" id="required-score">3</div>
                         <div class="text-gray-500">Required</div>
                     </div>
                     <div>
-                        <div class="text-4xl font-bold text-indigo-600" id="fail-percentage">50%</div>
+                        <div class="text-4xl font-bold text-indigo-600" id="fail-percentage">40%</div>
                         <div class="text-gray-500">Accuracy</div>
                     </div>
                 </div>
 
                 <div class="mt-8 p-4 bg-amber-50 rounded-xl">
                     <p class="text-amber-700">
-                        You need <span class="font-semibold">at least 7/10</span> to pass. 
+                        You need <span class="font-semibold">at least 3/5</span> to pass. 
                         We recommend improving your skills in <span id="fail-skill-name" class="font-semibold">Web Development</span>.
                     </p>
                 </div>
@@ -218,7 +218,8 @@
         function showPassResult(result) {
             document.getElementById('pass-result').classList.remove('hidden');
             document.getElementById('pass-score').textContent = result.score;
-            document.getElementById('pass-percentage').textContent = Math.round((result.score / 10) * 100) + '%';
+            const totalQuestions = result.totalQuestions || 5;
+            document.getElementById('pass-percentage').textContent = Math.round((result.score / totalQuestions) * 100) + '%';
             document.getElementById('pass-skill-name').textContent = result.skillName || result.skill?.name || 'this skill';
             
             // Set signup link with token
@@ -235,8 +236,11 @@
         function showFailResult(result) {
             document.getElementById('fail-result').classList.remove('hidden');
             document.getElementById('fail-score').textContent = result.score;
-            document.getElementById('fail-percentage').textContent = Math.round((result.score / 10) * 100) + '%';
-            document.getElementById('fail-skill-name').textContent = result.skillName || 'this skill';
+            const totalQuestions = result.totalQuestions || 5;
+            const passScore = result.passScore || 3;
+            document.getElementById('fail-percentage').textContent = Math.round((result.score / totalQuestions) * 100) + '%';
+            document.getElementById('required-score').textContent = passScore;
+            document.getElementById('fail-skill-name').textContent = result.skillName || result.skill?.name || 'this skill';
 
             // Store for course suggestion page
             sessionStorage.setItem('failedSkillName', result.skillName || '');

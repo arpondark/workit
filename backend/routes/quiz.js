@@ -85,10 +85,12 @@ router.post('/start', async (req, res) => {
             }
         ]);
 
-        if (questions.length < questionsCount) {
+        // If we have fewer questions than requested, that's okay, just use what we have
+        // But if we have 0 questions, that's a problem
+        if (questions.length === 0) {
             return res.status(400).json({
                 success: false,
-                message: `Not enough questions available for ${skill.name}. Please try another skill.`
+                message: `No questions available for ${skill.name}. Please try another skill.`
             });
         }
 
@@ -131,8 +133,16 @@ router.post('/submit', async (req, res) => {
         // Get quiz settings
         const passScoreSetting = await AdminSettings.findOne({ key: 'quiz_pass_score' });
         const tokenValiditySetting = await AdminSettings.findOne({ key: 'quiz_token_validity' });
-        const passScore = passScoreSetting ? passScoreSetting.value : 7;
+        let passScore = passScoreSetting ? passScoreSetting.value : 7;
         const tokenValidityHours = tokenValiditySetting ? tokenValiditySetting.value : 24;
+
+        // Dynamic pass score adjustment
+        // If total questions are less than the configured pass score (e.g. 5 questions but pass score is 7)
+        // Or if we just want to be fair for smaller quizzes
+        if (answers.length < passScore) {
+            // Require 70% to pass
+            passScore = Math.ceil(answers.length * 0.7);
+        }
 
         // Calculate score
         let correctCount = 0;
@@ -257,7 +267,13 @@ router.post('/add-skill', protect, authorize('freelancer'), async (req, res) => 
 
         // Get quiz settings
         const passScoreSetting = await AdminSettings.findOne({ key: 'quiz_pass_score' });
-        const passScore = passScoreSetting ? passScoreSetting.value : 7;
+        let passScore = passScoreSetting ? passScoreSetting.value : 7;
+
+        // Dynamic pass score adjustment
+        if (answers.length < passScore) {
+            // Require 70% to pass
+            passScore = Math.ceil(answers.length * 0.7);
+        }
 
         // Calculate score
         let correctCount = 0;

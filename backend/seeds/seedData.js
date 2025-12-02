@@ -569,8 +569,8 @@ const seedAdminSettings = async () => {
         if (settingsExist === 0) {
             const settings = [
                 { key: 'commission_rate', value: 0.01, description: 'Platform commission rate (1%)', category: 'payment' },
-                { key: 'quiz_pass_score', value: 7, description: 'Minimum score to pass skill quiz', category: 'quiz' },
-                { key: 'quiz_questions_count', value: 10, description: 'Number of questions per quiz', category: 'quiz' },
+                { key: 'quiz_pass_score', value: 3, description: 'Minimum score to pass skill quiz (3 out of 5)', category: 'quiz' },
+                { key: 'quiz_questions_count', value: 5, description: 'Number of questions per quiz', category: 'quiz' },
                 { key: 'quiz_token_validity', value: 24, description: 'Quiz pass token validity in hours', category: 'quiz' },
                 { key: 'site_name', value: 'WorkIT', description: 'Platform name', category: 'general' },
                 { key: 'support_email', value: 'support@workit.com', description: 'Support email address', category: 'general' }
