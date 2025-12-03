@@ -7,7 +7,7 @@ const seedAdmin = async () => {
     try {
         // Check if admin exists
         const adminExists = await User.findOne({ role: 'admin' });
-        
+
         if (!adminExists) {
             const admin = await User.create({
                 name: 'Admin',
@@ -27,7 +27,7 @@ const seedAdmin = async () => {
 const seedSkills = async () => {
     try {
         const skillsExist = await Skill.countDocuments();
-        
+
         if (skillsExist === 0) {
             const skills = [
                 { name: 'Web Development', slug: 'web-development', icon: '🌐', category: 'development', description: 'HTML, CSS, JavaScript, React, Node.js', isActive: true },
@@ -41,7 +41,7 @@ const seedSkills = async () => {
                 { name: 'Digital Marketing', slug: 'digital-marketing', icon: '📈', category: 'marketing', description: 'SEO, Social Media, PPC Advertising', isActive: true },
                 { name: 'WordPress', slug: 'wordpress', icon: '📝', category: 'development', description: 'WordPress Development & Customization', isActive: true }
             ];
-            
+
             await Skill.insertMany(skills);
             console.log('✅ Skills seeded successfully (10 skill categories)');
         } else {
@@ -55,12 +55,12 @@ const seedSkills = async () => {
 const seedQuestions = async () => {
     try {
         const questionsExist = await Question.countDocuments();
-        
+
         if (questionsExist === 0) {
             // Get skills
             const webDevSkill = await Skill.findOne({ name: 'Web Development' });
             const uiuxSkill = await Skill.findOne({ name: 'UI/UX Design' });
-            
+
             if (!webDevSkill || !uiuxSkill) {
                 console.log('⚠️  Required skills not found, skipping questions seeding');
                 return;
@@ -552,10 +552,271 @@ const seedQuestions = async () => {
                 }
             ];
 
-            await Question.insertMany([...webDevQuestions, ...uiuxQuestions]);
-            console.log('✅ Quiz questions seeded (20 Web Dev + 20 UI/UX Design)');
+            const dataScienceSkill = await Skill.findOne({ name: 'Data Science' });
+
+            const dataScienceQuestions = [];
+            if (dataScienceSkill) {
+                dataScienceQuestions.push(
+                    {
+                        skill: dataScienceSkill._id,
+                        question: 'What is the primary language used for Data Science?',
+                        options: [
+                            { text: 'Java', isCorrect: false },
+                            { text: 'Python', isCorrect: true },
+                            { text: 'C++', isCorrect: false },
+                            { text: 'Swift', isCorrect: false }
+                        ],
+                        difficulty: 'easy',
+                        isActive: true
+                    },
+                    {
+                        skill: dataScienceSkill._id,
+                        question: 'Which library is used for data manipulation in Python?',
+                        options: [
+                            { text: 'Pandas', isCorrect: true },
+                            { text: 'Requests', isCorrect: false },
+                            { text: 'Flask', isCorrect: false },
+                            { text: 'PyGame', isCorrect: false }
+                        ],
+                        difficulty: 'easy',
+                        isActive: true
+                    },
+                    {
+                        skill: dataScienceSkill._id,
+                        question: 'What does CSV stand for?',
+                        options: [
+                            { text: 'Computer Style Values', isCorrect: false },
+                            { text: 'Comma Separated Values', isCorrect: true },
+                            { text: 'Common System Variables', isCorrect: false },
+                            { text: 'Code Syntax Verification', isCorrect: false }
+                        ],
+                        difficulty: 'easy',
+                        isActive: true
+                    },
+                    {
+                        skill: dataScienceSkill._id,
+                        question: 'Which type of learning involves labeled data?',
+                        options: [
+                            { text: 'Unsupervised Learning', isCorrect: false },
+                            { text: 'Supervised Learning', isCorrect: true },
+                            { text: 'Reinforcement Learning', isCorrect: false },
+                            { text: 'Deep Learning', isCorrect: false }
+                        ],
+                        difficulty: 'medium',
+                        isActive: true
+                    },
+                    {
+                        skill: dataScienceSkill._id,
+                        question: 'What is a common library for plotting in Python?',
+                        options: [
+                            { text: 'Matplotlib', isCorrect: true },
+                            { text: 'NumPy', isCorrect: false },
+                            { text: 'Scikit-learn', isCorrect: false },
+                            { text: 'TensorFlow', isCorrect: false }
+                        ],
+                        difficulty: 'easy',
+                        isActive: true
+                    },
+                    {
+                        skill: dataScienceSkill._id,
+                        question: 'What is overfitting?',
+                        options: [
+                            { text: 'When a model performs poorly on training data', isCorrect: false },
+                            { text: 'When a model learns noise in training data', isCorrect: true },
+                            { text: 'When a model is too simple', isCorrect: false },
+                            { text: 'When a model has too few parameters', isCorrect: false }
+                        ],
+                        difficulty: 'medium',
+                        isActive: true
+                    },
+                    {
+                        skill: dataScienceSkill._id,
+                        question: 'Which algorithm is used for classification?',
+                        options: [
+                            { text: 'Linear Regression', isCorrect: false },
+                            { text: 'Logistic Regression', isCorrect: true },
+                            { text: 'K-Means Clustering', isCorrect: false },
+                            { text: 'Principal Component Analysis', isCorrect: false }
+                        ],
+                        difficulty: 'medium',
+                        isActive: true
+                    },
+                    {
+                        skill: dataScienceSkill._id,
+                        question: 'What is the purpose of splitting data into train and test sets?',
+                        options: [
+                            { text: 'To make the model faster', isCorrect: false },
+                            { text: 'To evaluate model performance on unseen data', isCorrect: true },
+                            { text: 'To increase data size', isCorrect: false },
+                            { text: 'To fix missing values', isCorrect: false }
+                        ],
+                        difficulty: 'medium',
+                        isActive: true
+                    },
+                    {
+                        skill: dataScienceSkill._id,
+                        question: 'What is a DataFrame?',
+                        options: [
+                            { text: 'A 2-dimensional labeled data structure', isCorrect: true },
+                            { text: 'A database query', isCorrect: false },
+                            { text: 'A machine learning model', isCorrect: false },
+                            { text: 'A visualization tool', isCorrect: false }
+                        ],
+                        difficulty: 'easy',
+                        isActive: true
+                    },
+                    {
+                        skill: dataScienceSkill._id,
+                        question: 'Which library is used for numerical computing in Python?',
+                        options: [
+                            { text: 'NumPy', isCorrect: true },
+                            { text: 'Django', isCorrect: false },
+                            { text: 'BeautifulSoup', isCorrect: false },
+                            { text: 'Selenium', isCorrect: false }
+                        ],
+                        difficulty: 'easy',
+                        isActive: true
+                    }
+                );
+            }
+
+            await Question.insertMany([...webDevQuestions, ...uiuxQuestions, ...dataScienceQuestions]);
+            console.log('✅ Quiz questions seeded (Web Dev, UI/UX Design, Data Science)');
         } else {
             console.log('ℹ️  Questions already exist');
+
+            // Check if Data Science questions exist, if not add them
+            const dataScienceSkill = await Skill.findOne({ name: 'Data Science' });
+            if (dataScienceSkill) {
+                const dsQuestionsCount = await Question.countDocuments({ skill: dataScienceSkill._id });
+                if (dsQuestionsCount === 0) {
+                    console.log('⚠️  Data Science questions missing, adding them...');
+                    const dataScienceQuestions = [
+                        {
+                            skill: dataScienceSkill._id,
+                            question: 'What is the primary language used for Data Science?',
+                            options: [
+                                { text: 'Java', isCorrect: false },
+                                { text: 'Python', isCorrect: true },
+                                { text: 'C++', isCorrect: false },
+                                { text: 'Swift', isCorrect: false }
+                            ],
+                            difficulty: 'easy',
+                            isActive: true
+                        },
+                        {
+                            skill: dataScienceSkill._id,
+                            question: 'Which library is used for data manipulation in Python?',
+                            options: [
+                                { text: 'Pandas', isCorrect: true },
+                                { text: 'Requests', isCorrect: false },
+                                { text: 'Flask', isCorrect: false },
+                                { text: 'PyGame', isCorrect: false }
+                            ],
+                            difficulty: 'easy',
+                            isActive: true
+                        },
+                        {
+                            skill: dataScienceSkill._id,
+                            question: 'What does CSV stand for?',
+                            options: [
+                                { text: 'Computer Style Values', isCorrect: false },
+                                { text: 'Comma Separated Values', isCorrect: true },
+                                { text: 'Common System Variables', isCorrect: false },
+                                { text: 'Code Syntax Verification', isCorrect: false }
+                            ],
+                            difficulty: 'easy',
+                            isActive: true
+                        },
+                        {
+                            skill: dataScienceSkill._id,
+                            question: 'Which type of learning involves labeled data?',
+                            options: [
+                                { text: 'Unsupervised Learning', isCorrect: false },
+                                { text: 'Supervised Learning', isCorrect: true },
+                                { text: 'Reinforcement Learning', isCorrect: false },
+                                { text: 'Deep Learning', isCorrect: false }
+                            ],
+                            difficulty: 'medium',
+                            isActive: true
+                        },
+                        {
+                            skill: dataScienceSkill._id,
+                            question: 'What is a common library for plotting in Python?',
+                            options: [
+                                { text: 'Matplotlib', isCorrect: true },
+                                { text: 'NumPy', isCorrect: false },
+                                { text: 'Scikit-learn', isCorrect: false },
+                                { text: 'TensorFlow', isCorrect: false }
+                            ],
+                            difficulty: 'easy',
+                            isActive: true
+                        },
+                        {
+                            skill: dataScienceSkill._id,
+                            question: 'What is overfitting?',
+                            options: [
+                                { text: 'When a model performs poorly on training data', isCorrect: false },
+                                { text: 'When a model learns noise in training data', isCorrect: true },
+                                { text: 'When a model is too simple', isCorrect: false },
+                                { text: 'When a model has too few parameters', isCorrect: false }
+                            ],
+                            difficulty: 'medium',
+                            isActive: true
+                        },
+                        {
+                            skill: dataScienceSkill._id,
+                            question: 'Which algorithm is used for classification?',
+                            options: [
+                                { text: 'Linear Regression', isCorrect: false },
+                                { text: 'Logistic Regression', isCorrect: true },
+                                { text: 'K-Means Clustering', isCorrect: false },
+                                { text: 'Principal Component Analysis', isCorrect: false }
+                            ],
+                            difficulty: 'medium',
+                            isActive: true
+                        },
+                        {
+                            skill: dataScienceSkill._id,
+                            question: 'What is the purpose of splitting data into train and test sets?',
+                            options: [
+                                { text: 'To make the model faster', isCorrect: false },
+                                { text: 'To evaluate model performance on unseen data', isCorrect: true },
+                                { text: 'To increase data size', isCorrect: false },
+                                { text: 'To fix missing values', isCorrect: false }
+                            ],
+                            difficulty: 'medium',
+                            isActive: true
+                        },
+                        {
+                            skill: dataScienceSkill._id,
+                            question: 'What is a DataFrame?',
+                            options: [
+                                { text: 'A 2-dimensional labeled data structure', isCorrect: true },
+                                { text: 'A database query', isCorrect: false },
+                                { text: 'A machine learning model', isCorrect: false },
+                                { text: 'A visualization tool', isCorrect: false }
+                            ],
+                            difficulty: 'easy',
+                            isActive: true
+                        },
+                        {
+                            skill: dataScienceSkill._id,
+                            question: 'Which library is used for numerical computing in Python?',
+                            options: [
+                                { text: 'NumPy', isCorrect: true },
+                                { text: 'Django', isCorrect: false },
+                                { text: 'BeautifulSoup', isCorrect: false },
+                                { text: 'Selenium', isCorrect: false }
+                            ],
+                            difficulty: 'easy',
+                            isActive: true
+                        }
+                    ];
+                    await Question.insertMany(dataScienceQuestions);
+                    console.log('✅ Data Science questions seeded');
+                }
+            }
         }
     } catch (error) {
         console.error('❌ Error seeding questions:', error.message);
@@ -565,7 +826,7 @@ const seedQuestions = async () => {
 const seedAdminSettings = async () => {
     try {
         const settingsExist = await AdminSettings.countDocuments();
-        
+
         if (settingsExist === 0) {
             const settings = [
                 { key: 'commission_rate', value: 0.01, description: 'Platform commission rate (1%)', category: 'payment' },
@@ -575,7 +836,7 @@ const seedAdminSettings = async () => {
                 { key: 'site_name', value: 'WorkIT', description: 'Platform name', category: 'general' },
                 { key: 'support_email', value: 'support@workit.com', description: 'Support email address', category: 'general' }
             ];
-            
+
             await AdminSettings.insertMany(settings);
             console.log('✅ Admin settings seeded successfully');
         } else {

@@ -107,13 +107,17 @@ const userSchema = new mongoose.Schema({
         linkedin: String,
         github: String,
         twitter: String
+    },
+    company: {
+        type: String,
+        default: ''
     }
 }, {
     timestamps: true
 });
 
 // Hash password before saving
-userSchema.pre('save', async function() {
+userSchema.pre('save', async function () {
     if (!this.isModified('password')) {
         return;
     }
@@ -122,12 +126,12 @@ userSchema.pre('save', async function() {
 });
 
 // Compare password method
-userSchema.methods.comparePassword = async function(enteredPassword) {
+userSchema.methods.comparePassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
 // Get highest quiz score
-userSchema.methods.getHighestQuizScore = function() {
+userSchema.methods.getHighestQuizScore = function () {
     if (this.skills.length === 0) return 0;
     return Math.max(...this.skills.map(s => s.quizScore));
 };
