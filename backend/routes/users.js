@@ -6,8 +6,29 @@ const {
     getFreelancer,
     getClient,
     getTopFreelancers,
-    getStats
+    getStats,
+    getProfile,
+    updateProfile,
+    changePassword
 } = require('../controllers/usersController');
+const multer = require('multer');
+const { storage } = require('../config/cloudinary');
+const upload = multer({ storage });
+
+// @route   GET /api/users/profile
+// @desc    Get current user profile
+// @access  Private
+router.get('/profile', protect, getProfile);
+
+// @route   PUT /api/users/profile
+// @desc    Update user profile
+// @access  Private
+router.put('/profile', protect, upload.single('photo'), updateProfile);
+
+// @route   PUT /api/users/change-password
+// @desc    Change password
+// @access  Private
+router.put('/change-password', protect, changePassword);
 
 // @route   GET /api/users/freelancers
 // @desc    Get all freelancers with filters

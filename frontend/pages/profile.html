@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +20,7 @@
         }
     </script>
 </head>
+
 <body class="min-h-screen bg-gray-50">
     <!-- Navigation -->
     <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -35,7 +37,9 @@
                     <span class="text-gray-700" id="user-name">Loading...</span>
                     <button onclick="handleLogout()" class="text-gray-600 hover:text-red-600 transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                            </path>
                         </svg>
                     </button>
                 </div>
@@ -55,8 +59,23 @@
             <!-- Header -->
             <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-8">
                 <div class="flex items-center">
-                    <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg">
-                        <span class="text-4xl font-bold text-indigo-600" id="avatar-initial">?</span>
+                    <div class="relative group">
+                        <div
+                            class="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg overflow-hidden">
+                            <img id="profile-avatar" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                            <span class="text-4xl font-bold text-indigo-600" id="avatar-initial">?</span>
+                        </div>
+                        <label for="photo-upload"
+                            class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z">
+                                </path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </label>
+                        <input type="file" id="photo-upload" class="hidden" accept="image/*">
                     </div>
                     <div class="ml-6 text-white">
                         <h2 class="text-2xl font-bold" id="profile-name">Loading...</h2>
@@ -72,21 +91,14 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                        <input 
-                            type="text" 
-                            id="name" 
+                        <input type="text" id="name"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            required
-                        >
+                            required>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50"
-                            readonly
-                        >
+                        <input type="email" id="email"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50" readonly>
                     </div>
                 </div>
 
@@ -95,21 +107,15 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
-                            <input 
-                                type="text" 
-                                id="company" 
+                            <input type="text" id="company"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="Your company name"
-                            >
+                                placeholder="Your company name">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                            <input 
-                                type="tel" 
-                                id="phone" 
+                            <input type="tel" id="phone"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="+1 (234) 567-8900"
-                            >
+                                placeholder="+1 (234) 567-8900">
                         </div>
                     </div>
                 </div>
@@ -117,41 +123,29 @@
                 <div id="freelancer-fields" class="hidden space-y-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Professional Title</label>
-                        <input 
-                            type="text" 
-                            id="title" 
+                        <input type="text" id="title"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            placeholder="e.g., Full Stack Developer"
-                        >
+                            placeholder="e.g., Full Stack Developer">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Bio</label>
-                        <textarea 
-                            id="bio" 
-                            rows="4" 
+                        <textarea id="bio" rows="4"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            placeholder="Tell us about yourself, your experience, and what you can offer..."
-                        ></textarea>
+                            placeholder="Tell us about yourself, your experience, and what you can offer..."></textarea>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Hourly Rate ($)</label>
-                            <input 
-                                type="number" 
-                                id="hourlyRate" 
-                                min="0" 
+                            <input type="number" id="hourlyRate" min="0"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                placeholder="50"
-                            >
+                                placeholder="50">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Experience Level</label>
-                            <select 
-                                id="experienceLevel" 
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            >
+                            <select id="experienceLevel"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                                 <option value="entry">Entry Level</option>
                                 <option value="intermediate">Intermediate</option>
                                 <option value="expert">Expert</option>
@@ -161,11 +155,13 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Skills</label>
-                        <div id="skills-container" class="flex flex-wrap gap-2 p-4 border border-gray-300 rounded-lg min-h-[60px]">
+                        <div id="skills-container"
+                            class="flex flex-wrap gap-2 p-4 border border-gray-300 rounded-lg min-h-[60px]">
                             <!-- Skills will be added here -->
                         </div>
                         <div class="mt-2">
-                            <select id="skill-select" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                            <select id="skill-select"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
                                 <option value="">Add a skill...</option>
                             </select>
                         </div>
@@ -173,43 +169,33 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Portfolio URL</label>
-                        <input 
-                            type="url" 
-                            id="portfolio" 
+                        <input type="url" id="portfolio"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            placeholder="https://your-portfolio.com"
-                        >
+                            placeholder="https://your-portfolio.com">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">LinkedIn URL</label>
-                        <input 
-                            type="url" 
-                            id="linkedin" 
+                        <input type="url" id="linkedin"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            placeholder="https://linkedin.com/in/username"
-                        >
+                            placeholder="https://linkedin.com/in/username">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">GitHub URL</label>
-                        <input 
-                            type="url" 
-                            id="github" 
+                        <input type="url" id="github"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                            placeholder="https://github.com/username"
-                        >
+                            placeholder="https://github.com/username">
                     </div>
                 </div>
 
                 <!-- Submit -->
                 <div class="flex justify-end pt-4 border-t border-gray-200">
-                    <button 
-                        type="submit" 
-                        class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition flex items-center"
-                    >
+                    <button type="submit"
+                        class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition flex items-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
                         </svg>
                         Save Changes
                     </button>
@@ -225,38 +211,25 @@
             <form id="password-form" class="p-6 space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
-                    <input 
-                        type="password" 
-                        id="currentPassword" 
+                    <input type="password" id="currentPassword"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        required
-                    >
+                        required>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-                    <input 
-                        type="password" 
-                        id="newPassword" 
+                    <input type="password" id="newPassword"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        required
-                        minlength="6"
-                    >
+                        required minlength="6">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
-                    <input 
-                        type="password" 
-                        id="confirmPassword" 
+                    <input type="password" id="confirmPassword"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        required
-                        minlength="6"
-                    >
+                        required minlength="6">
                 </div>
                 <div class="flex justify-end">
-                    <button 
-                        type="submit" 
-                        class="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition"
-                    >
+                    <button type="submit"
+                        class="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition">
                         Update Password
                     </button>
                 </div>
@@ -276,7 +249,9 @@
                     </div>
                     <div class="w-20 h-20 rounded-full bg-indigo-100 flex items-center justify-center">
                         <svg class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z">
+                            </path>
                         </svg>
                     </div>
                 </div>
@@ -298,7 +273,7 @@
         // Set navigation based on role
         function setNavigation() {
             const navLinks = document.getElementById('nav-links');
-            
+
             if (user.role === 'freelancer') {
                 navLinks.innerHTML = `
                     <a href="freelancer/dashboard.html" class="text-gray-600 hover:text-indigo-600 transition">Dashboard</a>
@@ -327,13 +302,23 @@
         async function loadProfile() {
             try {
                 const profile = await api.get('/users/profile');
-                
+
                 document.getElementById('user-name').textContent = profile.name;
-                document.getElementById('avatar-initial').textContent = profile.name.charAt(0).toUpperCase();
+
+                if (profile.avatar) {
+                    const avatar = document.getElementById('profile-avatar');
+                    const initial = document.getElementById('avatar-initial');
+                    avatar.src = profile.avatar;
+                    avatar.classList.remove('hidden');
+                    initial.classList.add('hidden');
+                } else {
+                    document.getElementById('avatar-initial').textContent = profile.name.charAt(0).toUpperCase();
+                }
+
                 document.getElementById('profile-name').textContent = profile.name;
                 document.getElementById('profile-role').textContent = profile.role.charAt(0).toUpperCase() + profile.role.slice(1);
                 document.getElementById('profile-email').textContent = profile.email;
-                
+
                 document.getElementById('name').value = profile.name;
                 document.getElementById('email').value = profile.email;
 
@@ -344,7 +329,7 @@
                 } else if (profile.role === 'freelancer') {
                     document.getElementById('freelancer-fields').classList.remove('hidden');
                     document.getElementById('quiz-section').classList.remove('hidden');
-                    
+
                     document.getElementById('title').value = profile.title || '';
                     document.getElementById('bio').value = profile.bio || '';
                     document.getElementById('hourlyRate').value = profile.hourlyRate || '';
@@ -353,7 +338,7 @@
                     document.getElementById('linkedin').value = profile.socialLinks?.linkedin || '';
                     document.getElementById('github').value = profile.socialLinks?.github || '';
                     document.getElementById('quiz-score').textContent = profile.quizScore ? `${profile.quizScore}/10` : 'Not taken';
-                    
+
                     // Load skills
                     selectedSkills = (profile.skills || []).map(s => s._id || s);
                     await loadSkills();
@@ -369,9 +354,9 @@
             try {
                 const data = await api.get('/quiz/skills');
                 availableSkills = data.skills || [];
-                
+
                 const select = document.getElementById('skill-select');
-                select.innerHTML = '<option value="">Add a skill...</option>' + 
+                select.innerHTML = '<option value="">Add a skill...</option>' +
                     availableSkills
                         .filter(s => !selectedSkills.includes(s._id))
                         .map(s => `<option value="${s._id}">${s.name}</option>`)
@@ -383,7 +368,7 @@
 
         function renderSelectedSkills() {
             const container = document.getElementById('skills-container');
-            
+
             if (selectedSkills.length === 0) {
                 container.innerHTML = '<p class="text-gray-400 text-sm">No skills added yet</p>';
                 return;
@@ -410,7 +395,7 @@
             loadSkills(); // Refresh dropdown
         }
 
-        document.getElementById('skill-select').addEventListener('change', function() {
+        document.getElementById('skill-select').addEventListener('change', function () {
             if (this.value && !selectedSkills.includes(this.value)) {
                 selectedSkills.push(this.value);
                 renderSelectedSkills();
@@ -419,38 +404,70 @@
             this.value = '';
         });
 
+        // Handle file selection
+        document.getElementById('photo-upload').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const avatar = document.getElementById('profile-avatar');
+                    const initial = document.getElementById('avatar-initial');
+                    avatar.src = e.target.result;
+                    avatar.classList.remove('hidden');
+                    initial.classList.add('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
         // Handle profile form submission
-        document.getElementById('profile-form').addEventListener('submit', async function(e) {
+        document.getElementById('profile-form').addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            const data = {
-                name: document.getElementById('name').value
-            };
+            const formData = new FormData();
+            formData.append('name', document.getElementById('name').value);
+
+            const photoFile = document.getElementById('photo-upload').files[0];
+            if (photoFile) {
+                formData.append('photo', photoFile);
+            }
 
             if (user.role === 'client') {
-                data.company = document.getElementById('company').value;
-                data.phone = document.getElementById('phone').value;
+                formData.append('company', document.getElementById('company').value);
+                formData.append('phone', document.getElementById('phone').value);
             } else if (user.role === 'freelancer') {
-                data.title = document.getElementById('title').value;
-                data.bio = document.getElementById('bio').value;
-                data.hourlyRate = parseFloat(document.getElementById('hourlyRate').value) || 0;
-                data.experienceLevel = document.getElementById('experienceLevel').value;
-                data.skills = selectedSkills;
-                data.portfolio = document.getElementById('portfolio').value;
-                data.socialLinks = {
-                    linkedin: document.getElementById('linkedin').value,
-                    github: document.getElementById('github').value
-                };
+                formData.append('title', document.getElementById('title').value);
+                formData.append('bio', document.getElementById('bio').value);
+                formData.append('hourlyRate', document.getElementById('hourlyRate').value || 0);
+                formData.append('experienceLevel', document.getElementById('experienceLevel').value);
+                formData.append('portfolio', document.getElementById('portfolio').value);
+
+                formData.append('socialLinks[linkedin]', document.getElementById('linkedin').value);
+                formData.append('socialLinks[github]', document.getElementById('github').value);
             }
 
             try {
-                const updated = await api.put('/users/profile', data);
-                
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/users/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const updated = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(updated.message || 'Error updating profile');
+                }
+
                 // Update local storage
                 const storedUser = auth.getUser();
-                storedUser.name = updated.name;
+                storedUser.name = updated.user.name;
+                if (updated.user.avatar) storedUser.avatar = updated.user.avatar;
                 localStorage.setItem('user', JSON.stringify(storedUser));
-                
+
                 toast.success('Profile updated successfully');
                 loadProfile();
             } catch (error) {
@@ -459,7 +476,7 @@
         });
 
         // Handle password change
-        document.getElementById('password-form').addEventListener('submit', async function(e) {
+        document.getElementById('password-form').addEventListener('submit', async function (e) {
             e.preventDefault();
 
             const currentPassword = document.getElementById('currentPassword').value;
@@ -481,7 +498,7 @@
                     currentPassword,
                     newPassword
                 });
-                
+
                 toast.success('Password updated successfully');
                 this.reset();
             } catch (error) {
@@ -494,4 +511,5 @@
         loadProfile();
     </script>
 </body>
+
 </html>

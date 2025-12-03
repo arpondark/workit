@@ -32,14 +32,16 @@
                             class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Work</span>
                         <span class="text-2xl font-bold text-gray-800">IT</span>
                     </a>
+                    <div class="hidden md:flex items-center space-x-8 ml-10">
+                        <a href="/" class="text-gray-700 hover:text-indigo-600 font-medium transition">Home</a>
+                        <a href="/pages/public/jobs.html"
+                            class="text-gray-700 hover:text-indigo-600 font-medium transition">Browse Jobs</a>
+                        <a href="/pages/public/freelancers.html"
+                            class="text-gray-700 hover:text-indigo-600 font-medium transition">Find Talent</a>
+                    </div>
                 </div>
 
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="/" class="text-gray-700 hover:text-indigo-600 font-medium transition">Home</a>
-                    <a href="/pages/public/jobs.html"
-                        class="text-gray-700 hover:text-indigo-600 font-medium transition">Browse Jobs</a>
-                    <a href="/pages/public/freelancers.html"
-                        class="text-gray-700 hover:text-indigo-600 font-medium transition">Find Talent</a>
                     <div id="auth-buttons" class="flex items-center space-x-4">
                         <a href="/pages/auth/login.html"
                             class="text-gray-700 hover:text-indigo-600 font-medium transition">Login</a>
@@ -57,11 +59,12 @@
                             </svg>
                         </button>
                         <div id="dropdown-menu"
-                            class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
+                            class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden z-50">
                             <a href="#" id="dashboard-link"
                                 class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Dashboard</a>
                             <a href="#" id="profile-link"
                                 class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
+                            <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</a>
                             <div class="border-t border-gray-100 my-2"></div>
                             <button id="logout-btn"
                                 class="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">Logout</button>
@@ -532,55 +535,83 @@
 
         // Check auth status and update nav
         function updateNav() {
+            console.log('updateNav called');
             const user = auth.getUser();
+            console.log('User from auth:', user);
+
             const authButtons = document.getElementById('auth-buttons');
             const userMenu = document.getElementById('user-menu');
             const mobileAuthButtons = document.getElementById('mobile-auth-buttons');
             const mobileUserMenu = document.getElementById('mobile-user-menu');
 
             if (user) {
+                console.log('User is logged in, showing user menu');
                 authButtons.classList.add('hidden');
                 userMenu.classList.remove('hidden');
                 mobileAuthButtons.classList.add('hidden');
                 mobileUserMenu.classList.remove('hidden');
 
-                document.getElementById('user-avatar').textContent = utils.getInitials(user.name);
+                document.getElementById('user-avatar').textContent = user.name.charAt(0).toUpperCase();
 
                 const dashboardUrl = user.role === 'admin'
                     ? '/pages/admin/dashboard.html'
                     : `/pages/${user.role}/dashboard.html`;
 
+                console.log('Dashboard URL:', dashboardUrl);
+
                 document.getElementById('dashboard-link').href = dashboardUrl;
                 document.getElementById('mobile-dashboard-link').href = dashboardUrl;
-                document.getElementById('profile-link').href = `/pages/${user.role}/profile.html`;
+                document.getElementById('profile-link').href = '/pages/profile.html';
+            } else {
+                console.log('User is NOT logged in');
             }
         }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            // Attach event listeners first to ensure they work even if data loading fails
-            try {
-                // Toggle dropdown menu
-                const userMenuBtn = document.getElementById('user-menu-btn');
-                if (userMenuBtn) {
-                    userMenuBtn.addEventListener('click', (e) => {
-                        e.stopPropagation(); // Prevent bubbling
-                        const menu = document.getElementById('dropdown-menu');
-                        menu.classList.toggle('hidden');
-                    });
-                }
+            console.log('DOMContentLoaded fired');
 
-                // Close dropdown when clicking outside
-                document.addEventListener('click', (e) => {
-                    const userMenu = document.getElementById('user-menu');
-                    const dropdown = document.getElementById('dropdown-menu');
-                    if (userMenu && !userMenu.contains(e.target)) {
-                        dropdown?.classList.add('hidden');
-                    }
-                });
+            // Load data and update UI FIRST
+            loadStats().catch(console.error);
+            loadCategories().catch(console.error);
+
+            // Update nav to show/hide appropriate elements based on auth status
+            try {
+                updateNav();
+            } catch (error) {
+                console.error('Error updating nav:', error);
+            }
+
+            // Attach event listeners AFTER updateNav has run
+            try {
+                // Direct event listeners for user menu dropdown
+                const userMenuBtn = document.getElementById('user-menu-btn');
+                const dropdownMenu = document.getElementById('dropdown-menu');
+                const userMenu = document.getElementById('user-menu');
+
+                if (userMenuBtn && dropdownMenu) {
+                    console.log('Attaching user menu event listeners');
+                    userMenuBtn.addEventListener('click', (e) => {
+                        console.log('User menu clicked');
+                        e.stopPropagation();
+                        // Remove the hidden class and toggle show class
+                        dropdownMenu.classList.remove('hidden');
+                        dropdownMenu.classList.toggle('show');
+                    });
+
+                    // Close when clicking outside
+                    document.addEventListener('click', (e) => {
+                        if (!userMenu.contains(e.target) && dropdownMenu.classList.contains('show')) {
+                            dropdownMenu.classList.remove('show');
+                        }
+                    });
+                } else {
+                    console.log('User menu elements not found, user likely not logged in');
+                }
 
                 // Logout handlers
                 document.getElementById('logout-btn')?.addEventListener('click', () => {
+                    console.log('Logout clicked');
                     auth.logout();
                 });
                 document.getElementById('mobile-logout-btn')?.addEventListener('click', () => {
@@ -593,16 +624,6 @@
                 });
             } catch (error) {
                 console.error('Error attaching event listeners:', error);
-            }
-
-            // Load data and update UI
-            loadStats().catch(console.error);
-            loadCategories().catch(console.error);
-
-            try {
-                updateNav();
-            } catch (error) {
-                console.error('Error updating nav:', error);
             }
         });
     </script>

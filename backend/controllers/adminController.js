@@ -244,12 +244,20 @@ exports.getQuestions = async (req, res) => {
 // @access  Private (Admin)
 exports.createQuestion = async (req, res) => {
     try {
-        const { skill, question, options, difficulty, explanation } = req.body;
+        const { skill, question, options, difficulty, explanation, correctAnswer } = req.body;
+
+        let formattedOptions = options;
+        if (Array.isArray(options) && typeof options[0] === 'string') {
+            formattedOptions = options.map((opt, index) => ({
+                text: opt,
+                isCorrect: index === parseInt(correctAnswer)
+            }));
+        }
 
         const newQuestion = await Question.create({
             skill,
             question,
-            options,
+            options: formattedOptions,
             difficulty,
             explanation
         });
@@ -275,11 +283,31 @@ exports.createQuestion = async (req, res) => {
 // @access  Private (Admin)
 exports.updateQuestion = async (req, res) => {
     try {
-        const { question, options, difficulty, explanation, isActive } = req.body;
+        const { skill, question, options, difficulty, explanation, isActive, correctAnswer } = req.body;
+
+        let formattedOptions = options;
+        if (Array.isArray(options) && typeof options[0] === 'string') {
+            formattedOptions = options.map((opt, index) => ({
+                text: opt,
+                isCorrect: index === parseInt(correctAnswer)
+            }));
+        }
+
+        const updateData = {
+            skill,
+            question,
+            difficulty,
+            explanation,
+            isActive
+        };
+
+        if (formattedOptions) {
+            updateData.options = formattedOptions;
+        }
 
         const updatedQuestion = await Question.findByIdAndUpdate(
             req.params.id,
-            { question, options, difficulty, explanation, isActive },
+            updateData,
             { new: true, runValidators: true }
         ).populate('skill', 'name icon');
 

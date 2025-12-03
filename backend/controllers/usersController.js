@@ -213,3 +213,133 @@ exports.getStats = async (req, res) => {
         });
     }
 };
+// @desc    Get current user profile
+// @route   GET /api/users/profile
+// @access  Private
+exports.getProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id)
+            .select('-password')
+            .populate('skills.skill', 'name icon');
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Update user profile
+// @route   PUT /api/users/profile
+// @access  Private
+exports.updateProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        // Handle file upload
+        if (req.file) {
+            user.avatar = req.file.path;
+        }
+
+        // Update fields based on role
+        if (user.role === 'client') {
+            if (req.body.name) user.name = req.body.name;
+            if (req.body.company) user.company = req.body.company;
+            if (req.body.phone) user.phone = req.body.phone;
+            if (req.body.location) user.location = req.body.location;
+            if (req.body.bio) user.bio = req.body.bio;
+        } else if (user.role === 'freelancer') {
+            if (req.body.name) user.name = req.body.name;
+            if (req.body.title) user.title = req.body.title;
+            if (req.body.bio) user.bio = req.body.bio;
+            if (req.body.hourlyRate) user.hourlyRate = req.body.hourlyRate;
+            if (req.body.experienceLevel) user.experienceLevel = req.body.experienceLevel;
+            if (req.body.portfolio) user.portfolio = req.body.portfolio;
+            if (req.body.location) user.location = req.body.location;
+
+            if (req.body.socialLinks) {
+                user.socialLinks = {
+                    ...user.socialLinks,
+                    ...req.body.socialLinks
+                };
+            }
+
+            if (req.body.skills) {
+                // Handle skills update if needed
+                // This might be complex depending on how skills are sent
+                // For now assuming it's handled separately or simple array
+            }
+        } else if (user.role === 'admin') {
+            if (req.body.name) user.name = req.body.name;
+        }
+
+        const updatedUser = await user.save();
+
+        res.json({
+            success: true,
+            message: 'Profile updated successfully',
+            user: updatedUser
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Change password
+// @route   PUT /api/users/change-password
+// @access  Private
+exports.changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+
+        const user = await User.findById(req.user.id).select('+password');
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        // Check current password
+        const isMatch = await user.matchPassword(currentPassword);
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                message: 'Invalid current password'
+            });
+        }
+
+        user.password = newPassword;
+        await user.save();
+
+        res.json({
+            success: true,
+            message: 'Password updated successfully'
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
