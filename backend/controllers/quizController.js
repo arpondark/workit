@@ -59,6 +59,32 @@ exports.startQuiz = async (req, res) => {
             });
         }
 
+        // Check for 24-hour cooldown after failed attempt
+        const cooldownHours = 24;
+        const cooldownTime = new Date(Date.now() - cooldownHours * 60 * 60 * 1000);
+
+        const recentFailedAttempt = await QuizAttempt.findOne({
+            email: email.toLowerCase(),
+            skill: skillId,
+            passed: false,
+            createdAt: { $gt: cooldownTime }
+        }).sort({ createdAt: -1 });
+
+        if (recentFailedAttempt) {
+            const retryAfter = new Date(recentFailedAttempt.createdAt.getTime() + cooldownHours * 60 * 60 * 1000);
+            const hoursLeft = Math.ceil((retryAfter - Date.now()) / (1000 * 60 * 60));
+
+            return res.status(429).json({
+                success: false,
+                message: `You must wait ${hoursLeft} hour(s) before retrying this quiz.`,
+                cooldown: {
+                    active: true,
+                    retryAfter: retryAfter,
+                    hoursLeft: hoursLeft
+                }
+            });
+        }
+
         // Get quiz settings
         const questionsCountSetting = await AdminSettings.findOne({ key: 'quiz_questions_count' });
         const questionsCount = questionsCountSetting ? questionsCountSetting.value : 10;
@@ -377,6 +403,90 @@ exports.getQuizResults = async (req, res) => {
         res.json({
             success: true,
             attempt
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Check if user is in cooldown period
+// @route   POST /api/quiz/check-cooldown
+// @access  Public
+exports.checkCooldown = async (req, res) => {
+    try {
+        const { email, skillId } = req.body;
+
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email is required'
+            });
+        }
+
+        const cooldownHours = 24;
+        const cooldownTime = new Date(Date.now() - cooldownHours * 60 * 60 * 1000);
+
+        const query = {
+            email: email.toLowerCase(),
+            passed: false,
+            createdAt: { $gt: cooldownTime }
+        };
+
+        // If skillId is provided, check for that specific skill
+        if (skillId) {
+            query.skill = skillId;
+        }
+
+        const recentFailedAttempt = await QuizAttempt.findOne(query).sort({ createdAt: -1 });
+
+        if (recentFailedAttempt) {
+            const retryAfter = new Date(recentFailedAttempt.createdAt.getTime() + cooldownHours * 60 * 60 * 1000);
+
+            res.json({
+                success: true,
+                cooldown: {
+                    active: true,
+                    retryAfter: retryAfter,
+                    hoursLeft: Math.ceil((retryAfter - Date.now()) / (1000 * 60 * 60))
+                }
+            });
+        } else {
+            res.json({
+                success: true,
+                cooldown: {
+                    active: false
+                }
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Get course links for a skill
+// @route   GET /api/quiz/skill-courses/:skillId
+// @access  Public
+exports.getSkillCourses = async (req, res) => {
+    try {
+        const skill = await Skill.findById(req.params.skillId).select('name courseLinks');
+
+        if (!skill) {
+            return res.status(404).json({
+                success: false,
+                message: 'Skill not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            skillName: skill.name,
+            courses: skill.courseLinks || []
         });
     } catch (error) {
         res.status(500).json({

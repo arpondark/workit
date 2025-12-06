@@ -237,23 +237,28 @@ exports.updateApplicationStatus = async (req, res) => {
             );
 
             // Create chat between client and freelancer
-            const existingChat = await Chat.findOne({
-                participants: { $all: [req.user._id, application.freelancer] }
-            });
-
-            if (!existingChat) {
-                const chat = await Chat.create({
-                    participants: [req.user._id, application.freelancer],
-                    job: application.job._id
+            try {
+                const existingChat = await Chat.findOne({
+                    participants: { $all: [req.user._id, application.freelancer] }
                 });
 
-                // Send system message
-                await Message.create({
-                    chat: chat._id,
-                    sender: req.user._id,
-                    content: `You've been hired for the job: ${application.job.title}`,
-                    type: 'system'
-                });
+                if (!existingChat) {
+                    const chat = await Chat.create({
+                        participants: [req.user._id, application.freelancer],
+                        job: application.job._id
+                    });
+
+                    // Send system message
+                    await Message.create({
+                        chat: chat._id,
+                        sender: req.user._id,
+                        content: `You've been hired for the job: ${application.job.title}`,
+                        type: 'system'
+                    });
+                }
+            } catch (chatError) {
+                // Log error but don't fail the accept operation
+                console.error('Error creating chat:', chatError.message);
             }
         } else if (status === 'rejected') {
             application.rejectedAt = new Date();

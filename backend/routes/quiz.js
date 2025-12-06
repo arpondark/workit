@@ -7,13 +7,25 @@ const {
     submitQuiz,
     getAttempts,
     addSkill,
-    getQuizResults
+    getQuizResults,
+    checkCooldown,
+    getSkillCourses
 } = require('../controllers/quizController');
 
 // @route   GET /api/quiz/skills
 // @desc    Get all active skills for quiz selection
 // @access  Public
 router.get('/skills', getSkills);
+
+// @route   POST /api/quiz/check-cooldown
+// @desc    Check if user is in cooldown period
+// @access  Public
+router.post('/check-cooldown', checkCooldown);
+
+// @route   GET /api/quiz/skill-courses/:skillId
+// @desc    Get course links for a skill
+// @access  Public
+router.get('/skill-courses/:skillId', getSkillCourses);
 
 // @route   POST /api/quiz/start
 // @desc    Start a quiz - get randomized questions

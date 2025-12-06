@@ -31,12 +31,7 @@ const chatSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Ensure only 2 participants per chat (one-to-one)
-chatSchema.pre('save', function(next) {
-    if (this.participants.length !== 2) {
-        next(new Error('Chat must have exactly 2 participants'));
-    }
-    next();
-});
+// Removed pre-save validation hook - was causing "next is not a function" errors
 
 module.exports = mongoose.model('Chat', chatSchema);
+

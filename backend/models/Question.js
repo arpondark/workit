@@ -41,13 +41,13 @@ const questionSchema = new mongoose.Schema({
 });
 
 // Validate that at least one option is correct
-questionSchema.pre('save', function(next) {
+questionSchema.pre('save', function (next) {
     const hasCorrectAnswer = this.options.some(opt => opt.isCorrect);
     if (!hasCorrectAnswer) {
-        next(new Error('Question must have at least one correct answer'));
+        return next(new Error('Question must have at least one correct answer'));
     }
     if (this.options.length < 2) {
-        next(new Error('Question must have at least 2 options'));
+        return next(new Error('Question must have at least 2 options'));
     }
     next();
 });

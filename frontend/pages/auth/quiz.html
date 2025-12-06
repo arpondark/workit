@@ -90,7 +90,8 @@
             </button>
         </div>
 
-        <div class="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-6">
+        <div class="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-6"
+            id="rules-box">
             <div class="flex items-start gap-4">
                 <div class="flex-shrink-0">
                     <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,8 +102,9 @@
                 <div>
                     <h3 class="font-semibold text-amber-800 mb-2">Assessment Rules</h3>
                     <ul class="text-amber-700 space-y-1 text-sm">
-                        <li>• The quiz consists of <strong>5 multiple-choice questions</strong></li>
-                        <li>• You need to score <strong>at least 3/5</strong> to pass</li>
+                        <li>• The quiz consists of <strong id="rules-question-count">multiple</strong> multiple-choice
+                            questions</li>
+                        <li>• You need to score at least <strong id="rules-pass-score">70%</strong> to pass</li>
                         <li>• Each question has a <strong>60-second time limit</strong></li>
                         <li>• You <strong>cannot go back</strong> to previous questions</li>
                         <li>• If you fail, learning resources will be suggested</li>
@@ -130,7 +132,7 @@
             <!-- Progress Bar -->
             <div class="mt-6">
                 <div class="flex justify-between text-sm text-gray-600 mb-2">
-                    <span>Question <span id="current-question">1</span>/10</span>
+                    <span>Question <span id="current-question">1</span> of <span id="total-questions">10</span></span>
                     <span><span id="answered-count">0</span> answered</span>
                 </div>
                 <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -187,17 +189,46 @@
         let timeLeft = 60;
         let startTime = null;
         let quizEnabled = true;
+        let quizSettings = { questionsCount: 10, passScore: 7 };
 
-        // Check quiz configuration
+        // Check quiz configuration and load settings
         async function checkQuizConfig() {
             try {
                 const data = await api.get('/auth/config');
-                if (data.config && data.config.quizEnabled === false) {
-                    quizEnabled = false;
-                    updateUIForDisabledQuiz();
+                if (data.config) {
+                    if (data.config.quizEnabled === false) {
+                        quizEnabled = false;
+                        updateUIForDisabledQuiz();
+                    }
+
+                    // Update quiz settings from config
+                    if (data.config.quizQuestionsCount) {
+                        quizSettings.questionsCount = data.config.quizQuestionsCount;
+                    }
+                    if (data.config.quizPassScore) {
+                        quizSettings.passScore = data.config.quizPassScore;
+                    }
+
+                    // Update rules display
+                    updateRulesDisplay();
                 }
             } catch (error) {
                 console.error('Error checking quiz config:', error);
+            }
+        }
+
+        // Update the rules display with dynamic values
+        function updateRulesDisplay() {
+            const questionCountEl = document.getElementById('rules-question-count');
+            const passScoreEl = document.getElementById('rules-pass-score');
+
+            if (questionCountEl) {
+                questionCountEl.textContent = quizSettings.questionsCount;
+            }
+            if (passScoreEl) {
+                // Calculate pass score as percentage or show actual score
+                const passPercent = Math.ceil((quizSettings.passScore / quizSettings.questionsCount) * 100);
+                passScoreEl.textContent = `${quizSettings.passScore}/${quizSettings.questionsCount} (${passPercent}%)`;
             }
         }
 
@@ -331,6 +362,7 @@
                 startTime = Date.now();
 
                 document.getElementById('skill-name').textContent = selectedSkill.name;
+                document.getElementById('total-questions').textContent = questions.length;
                 document.getElementById('skill-selection').classList.add('hidden');
                 document.getElementById('quiz-section').classList.remove('hidden');
                 document.getElementById('loading-state').classList.add('hidden');

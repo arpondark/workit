@@ -27,6 +27,21 @@ const skillSchema = new mongoose.Schema({
         enum: ['development', 'design', 'marketing', 'writing', 'video', 'music', 'business', 'media', 'other'],
         default: 'other'
     },
+    // YouTube course links for skill improvement
+    courseLinks: [{
+        title: {
+            type: String,
+            required: true
+        },
+        youtubeVideoId: {
+            type: String,
+            required: true
+        },
+        description: {
+            type: String,
+            default: ''
+        }
+    }],
     isActive: {
         type: Boolean,
         default: true
@@ -44,7 +59,7 @@ const skillSchema = new mongoose.Schema({
 });
 
 // Generate slug from name before saving
-skillSchema.pre('save', function(next) {
+skillSchema.pre('save', function (next) {
     if (this.isModified('name')) {
         this.slug = this.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     }

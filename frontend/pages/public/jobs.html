@@ -23,16 +23,16 @@
 
 <body class="bg-gray-50">
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm fixed w-full z-50">
+    <nav class="bg-white/95 backdrop-blur-md shadow-sm fixed w-full z-50 border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
+            <div class="flex justify-between h-20">
                 <div class="flex items-center">
                     <a href="/" class="flex items-center">
                         <span
                             class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Work</span>
                         <span class="text-2xl font-bold text-gray-800">IT</span>
                     </a>
-                    <div class="hidden md:flex items-center space-x-8 ml-10">
+                    <div class="hidden md:flex items-center space-x-6 ml-10">
                         <a href="/" class="text-gray-700 hover:text-indigo-600 font-medium transition">Home</a>
                         <a href="/pages/public/jobs.html" class="text-indigo-600 font-medium">Browse Jobs</a>
                         <a href="/pages/public/freelancers.html"
@@ -40,32 +40,77 @@
                     </div>
                 </div>
 
-                <div class="hidden md:flex items-center space-x-8">
+                <div class="hidden md:flex items-center space-x-6">
                     <div id="auth-buttons" class="flex items-center space-x-4">
                         <a href="/pages/auth/login.html"
                             class="text-gray-700 hover:text-indigo-600 font-medium transition">Login</a>
                         <a href="/pages/auth/quiz.html"
-                            class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition">Become
+                            class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2.5 rounded-xl font-medium hover:from-indigo-700 hover:to-purple-700 transition shadow-lg shadow-indigo-200">Become
                             a Freelancer</a>
                     </div>
-                    <div id="user-menu" class="hidden relative">
-                        <button id="user-menu-btn" class="flex items-center space-x-2 focus:outline-none">
-                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold"
-                                id="user-avatar"></div>
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div id="user-menu" class="hidden flex items-center space-x-6">
+                        <a href="#" id="nav-dashboard-link"
+                            class="text-gray-700 hover:text-indigo-600 font-medium transition flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7"></path>
+                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                                </path>
                             </svg>
-                        </button>
-                        <div id="dropdown-menu"
-                            class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden z-50">
-                            <a href="#" id="dashboard-link"
-                                class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Dashboard</a>
-                            <a href="/pages/profile.html"
-                                class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a>
-                            <div class="border-t border-gray-100 my-2"></div>
-                            <button id="logout-btn"
-                                class="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">Logout</button>
+                            Dashboard
+                        </a>
+                        <a href="/pages/messages.html"
+                            class="text-gray-700 hover:text-indigo-600 font-medium transition flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                                </path>
+                            </svg>
+                            Messages
+                        </a>
+                        <div class="relative">
+                            <button id="user-menu-btn"
+                                class="flex items-center space-x-3 focus:outline-none bg-gray-50 hover:bg-gray-100 rounded-full pl-3 pr-2 py-1.5 transition">
+                                <span class="text-sm font-medium text-gray-700" id="user-name-display">User</span>
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold shadow-md"
+                                    id="user-avatar"></div>
+                            </button>
+                            <div id="dropdown-menu"
+                                class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl py-2 hidden z-50 border border-gray-100">
+                                <div class="px-4 py-3 border-b border-gray-100">
+                                    <p class="text-sm font-semibold text-gray-900" id="dropdown-user-name">User Name</p>
+                                    <p class="text-xs text-gray-500" id="dropdown-user-role">Role</p>
+                                </div>
+                                <a href="#" id="dashboard-link"
+                                    class="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition">
+                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                                        </path>
+                                    </svg>
+                                    Dashboard
+                                </a>
+                                <a href="/pages/profile.html"
+                                    class="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition">
+                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                        </path>
+                                    </svg>
+                                    Profile
+                                </a>
+                                <div class="border-t border-gray-100 my-2"></div>
+                                <button id="logout-btn"
+                                    class="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                                        </path>
+                                    </svg>
+                                    Logout
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -98,6 +143,8 @@
                 <div id="mobile-user-menu" class="hidden pt-2 border-t space-y-2">
                     <a href="#" id="mobile-dashboard-link"
                         class="block text-gray-700 hover:text-indigo-600 font-medium">Dashboard</a>
+                    <a href="/pages/messages.html"
+                        class="block text-gray-700 hover:text-indigo-600 font-medium">Messages</a>
                     <button id="mobile-logout-btn" class="block text-red-600 font-medium">Logout</button>
                 </div>
             </div>
@@ -105,7 +152,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="pt-20">
+    <main class="pt-24">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Header -->
             <div class="text-center mb-12">
@@ -208,7 +255,7 @@
                 <span class="text-2xl font-bold text-white">Work</span>
                 <span class="text-2xl font-bold text-indigo-400">IT</span>
             </div>
-            <p class="text-gray-400">© 2024 WorkIT. All rights reserved.</p>
+            <p class="text-gray-400">© 2025 WorkIT. All rights reserved.</p>
         </div>
     </footer>
 
@@ -234,11 +281,25 @@
                 signupCTA.classList.add('hidden');
 
                 document.getElementById('user-avatar').textContent = user.name.charAt(0).toUpperCase();
+
+                // New elements for improved navbar
+                const userNameDisplay = document.getElementById('user-name-display');
+                if (userNameDisplay) userNameDisplay.textContent = user.name.split(' ')[0];
+
+                const dropdownUserName = document.getElementById('dropdown-user-name');
+                if (dropdownUserName) dropdownUserName.textContent = user.name;
+
+                const dropdownUserRole = document.getElementById('dropdown-user-role');
+                if (dropdownUserRole) dropdownUserRole.textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
+
                 const dashboardUrl = user.role === 'admin'
                     ? '/pages/admin/dashboard.html'
                     : `/pages/${user.role}/dashboard.html`;
                 document.getElementById('dashboard-link').href = dashboardUrl;
                 document.getElementById('mobile-dashboard-link').href = dashboardUrl;
+
+                const navDashboardLink = document.getElementById('nav-dashboard-link');
+                if (navDashboardLink) navDashboardLink.href = dashboardUrl;
             }
         }
 

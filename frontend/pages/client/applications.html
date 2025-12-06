@@ -484,11 +484,15 @@
 
         async function updateStatus(appId, status) {
             try {
-                await api.put(`/applications/${appId}/status`, { status });
-                toast.success(`Application ${status}!`);
-                loadApplications();
+                console.log('Updating application status:', { appId, status });
+                const response = await api.put(`/applications/${appId}/status`, { status });
+                console.log('Update response:', response);
+                toast.success(`Application ${status} successfully!`);
+                closeModal();
+                await loadApplications();
             } catch (error) {
-                toast.error('Error updating application');
+                console.error('Error updating application:', error);
+                toast.error(error.message || 'Error updating application');
             }
         }
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,13 +20,15 @@
         }
     </script>
 </head>
+
 <body class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
     <!-- Header -->
     <header class="bg-white shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex items-center justify-between">
                 <a href="/" class="flex items-center">
-                    <span class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Work</span>
+                    <span
+                        class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Work</span>
                     <span class="text-2xl font-bold text-gray-800">IT</span>
                 </a>
                 <a href="quiz.html" class="text-indigo-600 hover:text-indigo-700 font-medium">
@@ -40,7 +43,9 @@
         <div class="text-center mb-12">
             <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                    </path>
                 </svg>
             </div>
             <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Level Up Your Skills</h1>
@@ -49,7 +54,37 @@
                 <span id="skill-name" class="font-semibold text-indigo-600">Web Development</span>
             </p>
             <div id="score-display" class="mt-6 inline-flex items-center bg-amber-50 px-6 py-3 rounded-full">
-                <span class="text-amber-700">Your score: <span id="user-score" class="font-bold">5</span>/10 • Need: 7/10 to pass</span>
+                <span class="text-amber-700">Your score: <span id="user-score" class="font-bold">5</span>/<span
+                        id="total-questions">10</span> • Need: <span id="pass-score">7</span>/<span
+                        id="total-questions-2">10</span> to pass</span>
+            </div>
+        </div>
+
+        <!-- Cooldown Timer -->
+        <div id="cooldown-timer"
+            class="hidden bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-6 mb-8">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg class="w-7 h-7 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-amber-800 text-lg">Cooldown Period Active</h3>
+                    <p class="text-amber-700">You can retry the quiz in <span id="countdown"
+                            class="font-bold text-xl">--:--:--</span></p>
+                    <p class="text-amber-600 text-sm mt-1">Use this time to study the tutorials below!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- YouTube Tutorial Videos -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">📺 Tutorial Videos for <span id="video-skill-name"
+                    class="text-indigo-600">This Skill</span></h2>
+            <div class="grid md:grid-cols-2 gap-6" id="youtube-videos">
+                <!-- Videos loaded dynamically -->
             </div>
         </div>
 
@@ -132,9 +167,12 @@
         <div class="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-2xl p-8 text-center">
             <h2 class="text-2xl font-bold text-white mb-4">Ready to Try Again?</h2>
             <p class="text-indigo-200 mb-6">Once you've practiced, come back and retake the quiz!</p>
-            <a href="quiz.html" class="inline-flex items-center bg-white text-indigo-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition">
+            <a href="quiz.html"
+                class="inline-flex items-center bg-white text-indigo-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                    </path>
                 </svg>
                 Retake the Quiz
             </a>
@@ -194,6 +232,52 @@
             }
         };
 
+        // YouTube video tutorials for each skill
+        const youtubeVideos = {
+            'web-development': [
+                { id: 'nu_pCVPKzTk', title: 'Web Development Full Course', description: 'Complete 12-hour tutorial' },
+                { id: 'PkZNo7MFNFg', title: 'JavaScript Full Course', description: 'Learn JavaScript from scratch' },
+                { id: 'bMknfKXIFA8', title: 'React JS Tutorial', description: 'React crash course' },
+                { id: 'Oe421EPjeBE', title: 'Node.js Tutorial', description: 'Backend with Node.js' }
+            ],
+            'ui-ux-design': [
+                { id: 'c9Wg6Cb_YlU', title: 'UI/UX Design Tutorial', description: 'Complete design course' },
+                { id: 'FTFaQWZBqQ8', title: 'Figma Full Course', description: 'Master Figma design' },
+                { id: 'wIuVvCuiJhU', title: 'UX Design Principles', description: 'Essential UX concepts' },
+                { id: 'B-ytMSuwbf8', title: 'Web Design Masterclass', description: 'Modern web design' }
+            ],
+            'mobile-development': [
+                { id: '0-S5a0eXPoc', title: 'React Native Full Course', description: 'Build mobile apps' },
+                { id: 'VPvVD8t02U8', title: 'Flutter Complete Course', description: 'Flutter development' },
+                { id: 'fis26HvvDII', title: 'Android Development', description: 'Android for beginners' },
+                { id: 'comQ1-x2a1Q', title: 'iOS Swift Tutorial', description: 'Swift programming' }
+            ],
+            'data-science': [
+                { id: 'LHBE6Q9XlzI', title: 'Python for Data Science', description: 'Data analysis with Python' },
+                { id: 'Gv9_4yMHFhI', title: 'Machine Learning Course', description: 'ML fundamentals' },
+                { id: 'r-uOLxNrNk8', title: 'Data Analysis Tutorial', description: 'Pandas and NumPy' },
+                { id: 'HXV3zeQKqGY', title: 'SQL Full Course', description: 'Database fundamentals' }
+            ],
+            'graphic-design': [
+                { id: 'IyR_uYsRdPs', title: 'Photoshop Tutorial', description: 'Adobe Photoshop basics' },
+                { id: 'Ib8UBwu3yGA', title: 'Illustrator Course', description: 'Vector graphics' },
+                { id: 'kw4pQN4GdlI', title: 'Logo Design Masterclass', description: 'Create stunning logos' },
+                { id: 'YqQx75OPRa0', title: 'Graphic Design Fundamentals', description: 'Design principles' }
+            ],
+            'digital-marketing': [
+                { id: 'bixR-KIJKYM', title: 'Digital Marketing Full Course', description: 'Complete marketing guide' },
+                { id: 'I2pwcAVonKI', title: 'Social Media Marketing', description: 'SMM strategies' },
+                { id: 'rKc3BYpJjPM', title: 'Google Ads Tutorial', description: 'PPC advertising' },
+                { id: 'MYE6T_gd7H0', title: 'SEO Complete Course', description: 'Search engine optimization' }
+            ],
+            'default': [
+                { id: '5MgBikgcWnY', title: 'How to Learn Any Skill Fast', description: 'Learning techniques' },
+                { id: 'IlU-zDU6aQ0', title: 'Study Tips for Success', description: 'Effective studying' },
+                { id: 'MGWa9ER-CSs', title: 'Freelancing Success Tips', description: 'Freelancer guide' },
+                { id: 'iONDebHX9qk', title: 'Time Management', description: 'Productivity tips' }
+            ]
+        };
+
         function createResourceCard(resource) {
             return `
                 <a href="${resource.url}" target="_blank" class="block p-6 bg-gray-50 rounded-xl hover:bg-indigo-50 hover:shadow-md transition group">
@@ -207,7 +291,7 @@
         function loadResources() {
             const skillName = sessionStorage.getItem('failedSkillName') || 'Web Development';
             const score = sessionStorage.getItem('failedScore') || '5';
-            
+
             document.getElementById('skill-name').textContent = skillName;
             document.getElementById('user-score').textContent = score;
 
@@ -218,10 +302,70 @@
             document.getElementById('interactive-platforms').innerHTML = resources.interactive.map(createResourceCard).join('');
             document.getElementById('youtube-channels').innerHTML = resources.youtube.map(createResourceCard).join('');
             document.getElementById('practice-sites').innerHTML = resources.practice.map(createResourceCard).join('');
+
+            // Load YouTube video embeds
+            const videos = youtubeVideos[skillSlug] || youtubeVideos.default;
+            document.getElementById('video-skill-name').textContent = skillName;
+            document.getElementById('youtube-videos').innerHTML = videos.map(video => `
+                <div class="bg-gray-50 rounded-xl overflow-hidden hover:shadow-lg transition">
+                    <div class="aspect-video">
+                        <iframe 
+                            class="w-full h-full"
+                            src="https://www.youtube.com/embed/${video.id}"
+                            title="${video.title}"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                        ></iframe>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-900">${video.title}</h3>
+                        <p class="text-sm text-gray-600">${video.description}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            // Check and display cooldown
+            const lastAttempt = sessionStorage.getItem('lastQuizAttempt');
+            const cooldownHours = 24;
+            if (lastAttempt) {
+                const attemptTime = new Date(lastAttempt);
+                const retryTime = new Date(attemptTime.getTime() + cooldownHours * 60 * 60 * 1000);
+                const now = new Date();
+
+                if (now < retryTime) {
+                    document.getElementById('cooldown-timer').classList.remove('hidden');
+                    startCountdown(retryTime);
+                }
+            }
+        }
+
+        function startCountdown(retryTime) {
+            function update() {
+                const now = new Date();
+                const diff = retryTime - now;
+
+                if (diff <= 0) {
+                    document.getElementById('countdown').textContent = 'Now!';
+                    document.getElementById('cooldown-timer').classList.add('hidden');
+                    return;
+                }
+
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById('countdown').textContent =
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            update();
+            setInterval(update, 1000);
         }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', loadResources);
     </script>
 </body>
+
 </html>
