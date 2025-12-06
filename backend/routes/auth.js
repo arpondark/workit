@@ -10,8 +10,14 @@ const {
     logout,
     updateProfile,
     changePassword,
-    verifyQuizToken
+    verifyQuizToken,
+    getAuthConfig
 } = require('../controllers/authController');
+
+// @route   GET /api/auth/config
+// @desc    Get public auth config
+// @access  Public
+router.get('/config', getAuthConfig);
 
 // @route   POST /api/auth/register/client
 // @desc    Register a new client

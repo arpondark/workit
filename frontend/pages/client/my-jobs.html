@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +20,7 @@
         }
     </script>
 </head>
+
 <body class="min-h-screen bg-gray-50">
     <!-- Navigation -->
     <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -38,7 +40,9 @@
                     <span class="text-gray-700" id="user-name">Loading...</span>
                     <button onclick="handleLogout()" class="text-gray-600 hover:text-red-600 transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                            </path>
                         </svg>
                     </button>
                 </div>
@@ -54,7 +58,8 @@
                 <h1 class="text-3xl font-bold text-gray-900">My Jobs</h1>
                 <p class="text-gray-600 mt-1">Manage your posted jobs and view applications</p>
             </div>
-            <a href="post-job.html" class="mt-4 md:mt-0 inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+            <a href="post-job.html"
+                class="mt-4 md:mt-0 inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
@@ -66,21 +71,19 @@
         <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 mb-6">
             <div class="flex flex-wrap gap-4">
                 <div class="flex-1 min-w-[200px]">
-                    <input 
-                        type="text" 
-                        id="search-input" 
-                        placeholder="Search jobs..." 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    >
+                    <input type="text" id="search-input" placeholder="Search jobs..."
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
-                <select id="status-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                <select id="status-filter"
+                    class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
                     <option value="">All Status</option>
                     <option value="open">Open</option>
                     <option value="in-progress">In Progress</option>
                     <option value="completed">Completed</option>
                     <option value="cancelled">Cancelled</option>
                 </select>
-                <button onclick="loadJobs()" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                <button onclick="loadJobs()"
+                    class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
                     Search
                 </button>
             </div>
@@ -99,13 +102,15 @@
     </main>
 
     <!-- Applications Modal -->
-    <div id="applications-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+    <div id="applications-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-hidden">
             <div class="p-6 border-b border-gray-200 flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-gray-800">Applications for <span id="modal-job-title"></span></h3>
                 <button onclick="closeApplicationsModal()" class="text-gray-400 hover:text-gray-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
                     </svg>
                 </button>
             </div>
@@ -148,9 +153,9 @@
             });
 
             try {
-                const data = await api.get(`/jobs/client/my-jobs?${params}`);
-                renderJobs(data.jobs || []);
-                renderPagination(data.pages || 1);
+                const response = await api.get(`/jobs/client/my-jobs?${params}`);
+                renderJobs(response.data || []);
+                renderPagination(response.pagination?.totalPages || 1);
             } catch (error) {
                 console.error('Error loading jobs:', error);
                 document.getElementById('jobs-container').innerHTML = `
@@ -197,10 +202,9 @@
                             </div>
                             <p class="text-gray-600 mb-4 line-clamp-2">${job.description}</p>
                             <div class="flex flex-wrap gap-2 mb-4">
-                                ${job.skills.slice(0, 4).map(skill => `
-                                    <span class="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm">${skill.name || skill}</span>
-                                `).join('')}
-                                ${job.skills.length > 4 ? `<span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">+${job.skills.length - 4} more</span>` : ''}
+                                ${job.skill ? `
+                                    <span class="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm">${job.skill.name || job.skill}</span>
+                                ` : ''}
                             </div>
                             <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
                                 <span class="flex items-center">
@@ -356,11 +360,11 @@
             try {
                 await api.put(`/applications/${applicationId}/status`, { status });
                 toast.success(`Application ${status} successfully`);
-                
+
                 // Reload applications
                 const data = await api.get(`/applications/job/${jobId}`);
                 renderApplications(data.applications || [], jobId);
-                
+
                 // Reload jobs to update application count
                 loadJobs(currentPage);
             } catch (error) {
@@ -389,7 +393,7 @@
         }
 
         // Search on Enter
-        document.getElementById('search-input').addEventListener('keypress', function(e) {
+        document.getElementById('search-input').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') loadJobs();
         });
 
@@ -397,4 +401,5 @@
         loadJobs();
     </script>
 </body>
+
 </html>

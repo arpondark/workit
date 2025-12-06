@@ -1,12 +1,35 @@
 const User = require('../models/User');
 const Skill = require('../models/Skill');
 const QuizAttempt = require('../models/QuizAttempt');
+const AdminSettings = require('../models/AdminSettings');
 const { generateToken, sanitizeUser } = require('../utils/helpers');
+
+// @desc    Get public auth config
+// @route   GET /api/auth/config
+// @access  Public
+exports.getAuthConfig = async (req, res) => {
+    try {
+        const quizEnabledSetting = await AdminSettings.findOne({ key: 'quiz_enabled' });
+
+        res.json({
+            success: true,
+            config: {
+                quizEnabled: quizEnabledSetting ? quizEnabledSetting.value : true
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
 
 // @desc    Register a new client
 // @route   POST /api/auth/register/client
 // @access  Public
 exports.registerClient = async (req, res) => {
+    // ... (keep existing registerClient code) ...
     try {
         const { name, email, password, company } = req.body;
 
@@ -44,42 +67,70 @@ exports.registerClient = async (req, res) => {
     }
 };
 
-// @desc    Register a new freelancer (requires quiz pass token)
+// @desc    Register a new freelancer (requires quiz pass token unless disabled)
 // @route   POST /api/auth/register/freelancer
 // @access  Public
 exports.registerFreelancer = async (req, res) => {
     try {
         const { name, email, password, quizPassToken, skillId } = req.body;
 
-        // Validate quiz pass token
-        if (!quizPassToken) {
-            return res.status(400).json({
-                success: false,
-                message: 'Quiz pass token is required. Please pass the skill quiz first.'
-            });
-        }
+        // Check if quiz is enabled
+        const quizEnabledSetting = await AdminSettings.findOne({ key: 'quiz_enabled' });
+        const quizEnabled = quizEnabledSetting ? quizEnabledSetting.value : true;
 
-        // Find the quiz attempt with this token
-        const quizAttempt = await QuizAttempt.findOne({
-            passToken: quizPassToken,
-            email: email.toLowerCase(),
-            passed: true,
-            passTokenUsed: false
-        });
+        let skillToRegister = skillId;
+        let quizScore = 0;
+        let passed = false;
 
-        if (!quizAttempt) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid or expired quiz pass token. Please take the skill quiz again.'
-            });
-        }
+        if (quizEnabled) {
+            // Validate quiz pass token
+            if (!quizPassToken) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Quiz pass token is required. Please pass the skill quiz first.'
+                });
+            }
 
-        // Check if token has expired (24 hours)
-        if (quizAttempt.passTokenExpiresAt && new Date() > quizAttempt.passTokenExpiresAt) {
-            return res.status(400).json({
-                success: false,
-                message: 'Quiz pass token has expired. Please take the skill quiz again.'
+            // Find the quiz attempt with this token
+            const quizAttempt = await QuizAttempt.findOne({
+                passToken: quizPassToken,
+                email: email.toLowerCase(),
+                passed: true,
+                passTokenUsed: false
             });
+
+            if (!quizAttempt) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid or expired quiz pass token. Please take the skill quiz again.'
+                });
+            }
+
+            // Check if token has expired (24 hours)
+            if (quizAttempt.passTokenExpiresAt && new Date() > quizAttempt.passTokenExpiresAt) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Quiz pass token has expired. Please take the skill quiz again.'
+                });
+            }
+
+            skillToRegister = quizAttempt.skill;
+            quizScore = quizAttempt.score;
+            passed = true;
+
+            // Mark token as used
+            quizAttempt.passTokenUsed = true;
+            await quizAttempt.save();
+        } else {
+            // Quiz disabled, verify skillId is provided
+            if (!skillId) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Skill ID is required'
+                });
+            }
+            // Auto-pass
+            passed = true;
         }
 
         // Check if user already exists
@@ -91,9 +142,6 @@ exports.registerFreelancer = async (req, res) => {
             });
         }
 
-        // Get skill details
-        const skill = await Skill.findById(quizAttempt.skill);
-
         // Create freelancer user
         const user = await User.create({
             name,
@@ -101,19 +149,15 @@ exports.registerFreelancer = async (req, res) => {
             password,
             role: 'freelancer',
             skills: [{
-                skill: quizAttempt.skill,
-                quizScore: quizAttempt.score,
-                passed: true,
+                skill: skillToRegister,
+                quizScore: quizScore,
+                passed: passed,
                 passedAt: new Date()
             }]
         });
 
-        // Mark token as used
-        quizAttempt.passTokenUsed = true;
-        await quizAttempt.save();
-
         // Increment freelancer count for the skill
-        await Skill.findByIdAndUpdate(quizAttempt.skill, {
+        await Skill.findByIdAndUpdate(skillToRegister, {
             $inc: { freelancerCount: 1 }
         });
 

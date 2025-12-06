@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,71 +20,97 @@
         }
     </script>
 </head>
+
 <body class="bg-gray-50">
     <div class="flex min-h-screen">
         <!-- Sidebar (same as dashboard) -->
-        <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform z-50">
+        <aside id="sidebar"
+            class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform z-50">
             <div class="flex flex-col h-full">
                 <div class="p-6 border-b">
                     <a href="/" class="flex items-center">
-                        <span class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Work</span>
+                        <span
+                            class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Work</span>
                         <span class="text-2xl font-bold text-gray-800">IT</span>
                     </a>
                 </div>
                 <nav class="flex-1 p-4 space-y-2">
-                    <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <a href="dashboard.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                            </path>
                         </svg>
                         Dashboard
                     </a>
-                    <a href="post-job.html" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-indigo-50 text-indigo-600 font-medium">
+                    <a href="post-job.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg bg-indigo-50 text-indigo-600 font-medium">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
+                            </path>
                         </svg>
                         Post a Job
                     </a>
-                    <a href="my-jobs.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <a href="my-jobs.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                            </path>
                         </svg>
                         My Jobs
                     </a>
-                    <a href="applications.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <a href="applications.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
                         </svg>
                         Applications
                     </a>
-                    <a href="find-freelancers.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <a href="find-freelancers.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                            </path>
                         </svg>
                         Find Freelancers
                     </a>
-                    <a href="../messages.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <a href="../messages.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                            </path>
                         </svg>
                         Messages
                     </a>
-                    <a href="payments.html" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                    <a href="payments.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
+                            </path>
                         </svg>
                         Payments
                     </a>
                 </nav>
                 <div class="p-4 border-t">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold" id="sidebar-avatar"></div>
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold"
+                            id="sidebar-avatar"></div>
                         <div class="flex-1 min-w-0">
                             <div class="font-medium text-gray-900 truncate" id="sidebar-name"></div>
                             <div class="text-sm text-gray-500">Client</div>
                         </div>
                         <button id="logout-btn" class="text-gray-400 hover:text-red-500 transition">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                                </path>
                             </svg>
                         </button>
                     </div>
@@ -100,7 +127,8 @@
                     <div class="flex items-center gap-4">
                         <button id="menu-btn" class="lg:hidden text-gray-600">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16"></path>
                             </svg>
                         </button>
                         <h1 class="text-xl font-bold text-gray-900">Post a New Job</h1>
@@ -113,33 +141,27 @@
                     <!-- Job Title -->
                     <div class="bg-white rounded-xl shadow-sm p-6">
                         <h2 class="text-lg font-semibold text-gray-900 mb-4">Job Details</h2>
-                        
+
                         <div class="space-y-6">
                             <div>
-                                <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Job Title *</label>
-                                <input 
-                                    type="text" 
-                                    id="title" 
-                                    required
+                                <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Job Title
+                                    *</label>
+                                <input type="text" id="title" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                    placeholder="e.g., Full Stack Developer for E-commerce Website"
-                                >
+                                    placeholder="e.g., Full Stack Developer for E-commerce Website">
                             </div>
 
                             <div>
-                                <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Job Description *</label>
-                                <textarea 
-                                    id="description" 
-                                    rows="6"
-                                    required
+                                <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Job
+                                    Description *</label>
+                                <textarea id="description" rows="6" required
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
-                                    placeholder="Describe your project in detail. Include requirements, deliverables, and any other important information..."
-                                ></textarea>
+                                    placeholder="Describe your project in detail. Include requirements, deliverables, and any other important information..."></textarea>
                                 <p class="text-sm text-gray-500 mt-1">Minimum 50 characters</p>
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Required Skills *</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Skill Category *</label>
                                 <div class="grid grid-cols-2 md:grid-cols-3 gap-3" id="skills-grid">
                                     <!-- Skills will be loaded here -->
                                 </div>
@@ -150,17 +172,19 @@
                     <!-- Budget Section -->
                     <div class="bg-white rounded-xl shadow-sm p-6">
                         <h2 class="text-lg font-semibold text-gray-900 mb-4">Budget</h2>
-                        
+
                         <div class="space-y-6">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-3">Budget Type *</label>
                                 <div class="flex gap-4">
                                     <label class="flex items-center">
-                                        <input type="radio" name="budgetType" value="hourly" checked class="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                                        <input type="radio" name="budgetType" value="hourly" checked
+                                            class="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
                                         <span class="ml-2 text-gray-700">Hourly Rate</span>
                                     </label>
                                     <label class="flex items-center">
-                                        <input type="radio" name="budgetType" value="fixed" class="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                                        <input type="radio" name="budgetType" value="fixed"
+                                            class="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
                                         <span class="ml-2 text-gray-700">Fixed Price</span>
                                     </label>
                                 </div>
@@ -168,43 +192,34 @@
 
                             <div id="hourly-budget" class="grid md:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="budget-min" class="block text-sm font-medium text-gray-700 mb-2">Minimum Rate ($/hr) *</label>
-                                    <input 
-                                        type="number" 
-                                        id="budget-min" 
-                                        min="5"
-                                        required
+                                    <label for="budget-min" class="block text-sm font-medium text-gray-700 mb-2">Minimum
+                                        Rate ($/hr) *</label>
+                                    <input type="number" id="budget-min" min="5" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                        placeholder="e.g., 25"
-                                    >
+                                        placeholder="e.g., 25">
                                 </div>
                                 <div>
-                                    <label for="budget-max" class="block text-sm font-medium text-gray-700 mb-2">Maximum Rate ($/hr) *</label>
-                                    <input 
-                                        type="number" 
-                                        id="budget-max" 
-                                        min="5"
-                                        required
+                                    <label for="budget-max" class="block text-sm font-medium text-gray-700 mb-2">Maximum
+                                        Rate ($/hr) *</label>
+                                    <input type="number" id="budget-max" min="5" required
                                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                        placeholder="e.g., 50"
-                                    >
+                                        placeholder="e.g., 50">
                                 </div>
                             </div>
 
                             <div id="fixed-budget" class="hidden">
-                                <label for="budget-fixed" class="block text-sm font-medium text-gray-700 mb-2">Fixed Price ($) *</label>
-                                <input 
-                                    type="number" 
-                                    id="budget-fixed" 
-                                    min="10"
+                                <label for="budget-fixed" class="block text-sm font-medium text-gray-700 mb-2">Fixed
+                                    Price ($) *</label>
+                                <input type="number" id="budget-fixed" min="10"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                    placeholder="e.g., 500"
-                                >
+                                    placeholder="e.g., 500">
                             </div>
 
                             <div>
-                                <label for="duration" class="block text-sm font-medium text-gray-700 mb-2">Estimated Duration</label>
-                                <select id="duration" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <label for="duration" class="block text-sm font-medium text-gray-700 mb-2">Estimated
+                                    Duration</label>
+                                <select id="duration"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                                     <option value="">Select duration</option>
                                     <option value="less-than-week">Less than a week</option>
                                     <option value="1-2-weeks">1-2 weeks</option>
@@ -225,10 +240,12 @@
                                 <p class="text-gray-500 text-sm">Review your job details before posting</p>
                             </div>
                             <div class="flex gap-4">
-                                <button type="button" id="preview-btn" class="px-6 py-3 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition">
+                                <button type="button" id="preview-btn"
+                                    class="px-6 py-3 border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition">
                                     Preview
                                 </button>
-                                <button type="submit" id="submit-btn" class="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition">
+                                <button type="submit" id="submit-btn"
+                                    class="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition">
                                     Post Job
                                 </button>
                             </div>
@@ -247,7 +264,8 @@
                     <h3 class="text-xl font-bold text-gray-900">Job Preview</h3>
                     <button id="close-preview" class="text-gray-400 hover:text-gray-600">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
                 </div>
@@ -280,32 +298,32 @@
         });
         document.getElementById('logout-btn').addEventListener('click', () => auth.logout());
 
-        let selectedSkills = [];
+        let selectedSkill = null;
 
         // Load skills
         async function loadSkills() {
             try {
                 const data = await api.get('/quiz/skills');
                 const grid = document.getElementById('skills-grid');
-                
+
                 grid.innerHTML = data.skills.map(skill => `
-                    <label class="skill-checkbox flex items-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-indigo-300 transition">
-                        <input type="checkbox" value="${skill._id}" data-name="${skill.name}" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                    <label class="skill-radio flex items-center p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-indigo-300 transition">
+                        <input type="radio" name="skill" value="${skill._id}" data-name="${skill.name}" class="w-4 h-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
                         <span class="ml-2 text-gray-700">${skill.icon} ${skill.name}</span>
                     </label>
                 `).join('');
 
                 // Add change listeners
-                document.querySelectorAll('.skill-checkbox input').forEach(checkbox => {
-                    checkbox.addEventListener('change', (e) => {
-                        const label = e.target.closest('.skill-checkbox');
-                        if (e.target.checked) {
-                            label.classList.add('border-indigo-500', 'bg-indigo-50');
-                            selectedSkills.push({ id: e.target.value, name: e.target.dataset.name });
-                        } else {
+                document.querySelectorAll('.skill-radio input').forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        // Remove styling from all labels
+                        document.querySelectorAll('.skill-radio').forEach(label => {
                             label.classList.remove('border-indigo-500', 'bg-indigo-50');
-                            selectedSkills = selectedSkills.filter(s => s.id !== e.target.value);
-                        }
+                        });
+                        // Add styling to selected label
+                        const label = e.target.closest('.skill-radio');
+                        label.classList.add('border-indigo-500', 'bg-indigo-50');
+                        selectedSkill = { id: e.target.value, name: e.target.dataset.name };
                     });
                 });
             } catch (error) {
@@ -367,12 +385,12 @@
                     </div>
 
                     <div>
-                        <h5 class="font-medium text-gray-900 mb-2">Required Skills</h5>
+                        <h5 class="font-medium text-gray-900 mb-2">Skill Category</h5>
                         <div class="flex flex-wrap gap-2">
-                            ${selectedSkills.length > 0 
-                                ? selectedSkills.map(s => `<span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm">${s.name}</span>`).join('')
-                                : '<span class="text-gray-400">No skills selected</span>'
-                            }
+                            ${selectedSkill
+                    ? `<span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm">${selectedSkill.name}</span>`
+                    : '<span class="text-gray-400">No skill selected</span>'
+                }
                         </div>
                     </div>
                 </div>
@@ -404,8 +422,8 @@
                 return;
             }
 
-            if (selectedSkills.length === 0) {
-                toast.error('Please select at least one skill');
+            if (!selectedSkill) {
+                toast.error('Please select a skill category');
                 return;
             }
 
@@ -414,7 +432,7 @@
             if (budgetType === 'hourly') {
                 const min = parseFloat(document.getElementById('budget-min').value);
                 const max = parseFloat(document.getElementById('budget-max').value);
-                
+
                 if (!min || !max || min < 5 || max < min) {
                     toast.error('Please enter valid hourly rates');
                     return;
@@ -439,7 +457,7 @@
                 const data = await api.post('/jobs', {
                     title,
                     description,
-                    skills: selectedSkills.map(s => s.id),
+                    skill: selectedSkill.id,
                     budget,
                     duration: duration || undefined
                 });
@@ -459,4 +477,5 @@
         document.addEventListener('DOMContentLoaded', loadSkills);
     </script>
 </body>
+
 </html>

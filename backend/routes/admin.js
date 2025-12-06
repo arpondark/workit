@@ -19,7 +19,9 @@ const {
     deleteJob,
     getCommissions,
     getSettings,
-    updateSetting
+    updateSettings,
+    resetQuizAttempts,
+    clearAllMessages
 } = require('../controllers/adminController');
 
 // Middleware to ensure admin access
@@ -126,9 +128,21 @@ router.get('/commissions', adminOnly, getCommissions);
 // @access  Private (Admin)
 router.get('/settings', adminOnly, getSettings);
 
-// @route   PUT /api/admin/settings/:key
-// @desc    Update a setting
+// @route   PUT /api/admin/settings
+// @desc    Update settings (bulk)
 // @access  Private (Admin)
-router.put('/settings/:key', adminOnly, updateSetting);
+router.put('/settings', adminOnly, updateSettings);
+
+// ==================== DANGER ZONE ====================
+
+// @route   POST /api/admin/reset-quiz-attempts
+// @desc    Reset all quiz attempts
+// @access  Private (Admin)
+router.post('/reset-quiz-attempts', adminOnly, resetQuizAttempts);
+
+// @route   POST /api/admin/clear-messages
+// @desc    Clear all messages
+// @access  Private (Admin)
+router.post('/clear-messages', adminOnly, clearAllMessages);
 
 module.exports = router;

@@ -6,6 +6,7 @@ const Application = require('../models/Application');
 const Transaction = require('../models/Transaction');
 const QuizAttempt = require('../models/QuizAttempt');
 const AdminSettings = require('../models/AdminSettings');
+const Message = require('../models/Message');
 const { paginate, paginationResponse } = require('../utils/helpers');
 
 // ==================== DASHBOARD ====================
@@ -645,30 +646,74 @@ exports.getSettings = async (req, res) => {
     }
 };
 
-// @desc    Update a setting
-// @route   PUT /api/admin/settings/:key
+// @desc    Update settings (bulk)
+// @route   PUT /api/admin/settings
 // @access  Private (Admin)
-exports.updateSetting = async (req, res) => {
+exports.updateSettings = async (req, res) => {
     try {
-        const { value } = req.body;
+        const updates = req.body;
+        const results = [];
 
-        const setting = await AdminSettings.findOneAndUpdate(
-            { key: req.params.key },
-            { value, updatedBy: req.user._id },
-            { new: true }
-        );
-
-        if (!setting) {
-            return res.status(404).json({
-                success: false,
-                message: 'Setting not found'
-            });
+        for (const [key, value] of Object.entries(updates)) {
+            const setting = await AdminSettings.findOneAndUpdate(
+                { key },
+                {
+                    value,
+                    updatedBy: req.user._id,
+                    // Set category based on key prefix or known keys if needed, 
+                    // but for now we assume keys already exist or we just update value
+                },
+                { new: true, upsert: true }
+            );
+            results.push(setting);
         }
 
         res.json({
             success: true,
-            message: 'Setting updated successfully',
-            setting
+            message: 'Settings updated successfully',
+            settings: results
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+// ==================== DANGER ZONE ====================
+
+// @desc    Reset all quiz attempts
+// @route   POST /api/admin/reset-quiz-attempts
+// @access  Private (Admin)
+exports.resetQuizAttempts = async (req, res) => {
+    try {
+        await QuizAttempt.deleteMany({});
+
+        // Also reset user skills status if needed, but for now just clearing attempts
+        // Ideally we might want to reset 'passed' status on users too, but that's more complex
+
+        res.json({
+            success: true,
+            message: 'All quiz attempts have been reset'
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Clear all messages
+// @route   POST /api/admin/clear-messages
+// @access  Private (Admin)
+exports.clearAllMessages = async (req, res) => {
+    try {
+        await Message.deleteMany({});
+
+        res.json({
+            success: true,
+            message: 'All messages have been cleared'
         });
     } catch (error) {
         res.status(500).json({

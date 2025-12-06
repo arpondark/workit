@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,9 +20,11 @@
         }
     </script>
 </head>
+
 <body class="min-h-screen bg-gray-100">
     <!-- Sidebar -->
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-gray-900 transform -translate-x-full lg:translate-x-0 transition-transform duration-200 z-30">
+    <aside id="sidebar"
+        class="fixed inset-y-0 left-0 w-64 bg-gray-900 transform -translate-x-full lg:translate-x-0 transition-transform duration-200 z-30">
         <div class="flex items-center justify-between p-4 border-b border-gray-700">
             <a href="/" class="flex items-center">
                 <span class="text-2xl font-bold text-indigo-400">Work</span>
@@ -29,61 +32,86 @@
             </a>
             <button id="close-sidebar" class="lg:hidden text-gray-400 hover:text-white">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
                 </svg>
             </button>
         </div>
-        
+
         <nav class="p-4 space-y-2">
-            <a href="dashboard.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition">
+            <a href="dashboard.html"
+                class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                    </path>
                 </svg>
                 Dashboard
             </a>
-            <a href="users.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition">
+            <a href="users.html"
+                class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                    </path>
                 </svg>
                 Users
             </a>
-            <a href="jobs.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition">
+            <a href="jobs.html"
+                class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                    </path>
                 </svg>
                 Jobs
             </a>
-            <a href="skills.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition">
+            <a href="skills.html"
+                class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+                    </path>
                 </svg>
                 Skills
             </a>
-            <a href="questions.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition">
+            <a href="questions.html"
+                class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                    </path>
                 </svg>
                 Questions
             </a>
-            <a href="transactions.html" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition">
+            <a href="transactions.html"
+                class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
+                    </path>
                 </svg>
                 Transactions
             </a>
             <a href="settings.html" class="flex items-center px-4 py-3 bg-indigo-600 text-white rounded-lg">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                    </path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 </svg>
                 Settings
             </a>
         </nav>
 
         <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700">
-            <button onclick="handleLogout()" class="flex items-center w-full px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition">
+            <button onclick="handleLogout()"
+                class="flex items-center w-full px-4 py-3 text-gray-300 hover:bg-gray-800 rounded-lg transition">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                    </path>
                 </svg>
                 Logout
             </button>
@@ -101,7 +129,8 @@
                 <div class="flex items-center">
                     <button id="open-sidebar" class="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100 mr-3">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
                     </button>
                     <h1 class="text-xl font-semibold text-gray-800">Platform Settings</h1>
@@ -117,7 +146,9 @@
                     <div class="flex items-center mb-6">
                         <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
                             <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
                             </svg>
                         </div>
                         <div>
@@ -129,20 +160,16 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Commission Rate (%)</label>
                             <div class="flex items-center">
-                                <input 
-                                    type="number" 
-                                    id="commission-rate"
-                                    min="0"
-                                    max="50"
-                                    step="0.1"
+                                <input type="number" id="commission-rate" min="0" max="50" step="0.1"
                                     class="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                    value="1"
-                                >
+                                    value="1">
                                 <span class="ml-3 text-gray-500">% of each transaction</span>
                             </div>
-                            <p class="text-gray-400 text-sm mt-1">This commission will be deducted from freelancer payments</p>
+                            <p class="text-gray-400 text-sm mt-1">This commission will be deducted from freelancer
+                                payments</p>
                         </div>
-                        <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                        <button type="submit"
+                            class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
                             Save Commission Rate
                         </button>
                     </form>
@@ -153,7 +180,8 @@
                     <div class="flex items-center mb-6">
                         <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
                             <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
                         <div>
@@ -162,59 +190,96 @@
                         </div>
                     </div>
                     <form id="quiz-form" class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-purple-50 rounded-lg mb-4">
+                            <div>
+                                <h3 class="font-medium text-gray-900">Enable Skill Quiz</h3>
+                                <p class="text-sm text-gray-500">Require freelancers to pass a quiz before registration
+                                </p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="quiz-enabled" class="sr-only peer" checked>
+                                <div
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600">
+                                </div>
+                            </label>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Pass Score (out of 10)</label>
-                                <input 
-                                    type="number" 
-                                    id="quiz-pass-score"
-                                    min="1"
-                                    max="10"
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Pass Score (out of
+                                    10)</label>
+                                <input type="number" id="quiz-pass-score" min="1" max="10"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                    value="7"
-                                >
+                                    value="7">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Questions per Quiz</label>
-                                <input 
-                                    type="number" 
-                                    id="quiz-question-count"
-                                    min="5"
-                                    max="50"
+                                <input type="number" id="quiz-question-count" min="5" max="50"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                    value="10"
-                                >
+                                    value="10">
                             </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Time Limit (minutes)</label>
-                                <input 
-                                    type="number" 
-                                    id="quiz-time-limit"
-                                    min="5"
-                                    max="120"
+                                <input type="number" id="quiz-time-limit" min="5" max="120"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                    value="10"
-                                >
+                                    value="10">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Retry Wait (hours)</label>
-                                <input 
-                                    type="number" 
-                                    id="quiz-retry-wait"
-                                    min="0"
-                                    max="168"
+                                <input type="number" id="quiz-retry-wait" min="0" max="168"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                    value="24"
-                                >
+                                    value="24">
                                 <p class="text-gray-400 text-sm mt-1">Hours before failed users can retry</p>
                             </div>
                         </div>
-                        <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                        <button type="submit"
+                            class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
                             Save Quiz Settings
                         </button>
                     </form>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="bg-white rounded-xl shadow-sm border border-red-100 overflow-hidden">
+                    <div class="p-6 border-b border-red-100 bg-red-50">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-red-100 rounded-lg text-red-600">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-semibold text-red-900">Danger Zone</h2>
+                                <p class="text-sm text-red-700">Destructive actions - use with caution</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-6">
+                        <div class="flex items-center justify-between p-4 border border-red-100 rounded-lg bg-white">
+                            <div>
+                                <h3 class="font-medium text-gray-900">Reset Quiz Attempts</h3>
+                                <p class="text-sm text-gray-500">Clear all quiz attempt records from the database</p>
+                            </div>
+                            <button onclick="handleResetQuiz()"
+                                class="px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors">
+                                Reset Data
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 border border-red-100 rounded-lg bg-white">
+                            <div>
+                                <h3 class="font-medium text-gray-900">Clear All Messages</h3>
+                                <p class="text-sm text-gray-500">Delete all chat messages from the platform</p>
+                            </div>
+                            <button onclick="handleClearMessages()"
+                                class="px-4 py-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors">
+                                Clear Messages
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Platform Settings -->
@@ -222,7 +287,9 @@
                     <div class="flex items-center mb-6">
                         <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
                             <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9">
+                                </path>
                             </svg>
                         </div>
                         <div>
@@ -233,75 +300,33 @@
                     <form id="platform-form" class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Platform Name</label>
-                            <input 
-                                type="text" 
-                                id="platform-name"
+                            <input type="text" id="platform-name"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                value="WorkIT"
-                            >
+                                value="WorkIT">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Support Email</label>
-                            <input 
-                                type="email" 
-                                id="support-email"
+                            <input type="email" id="support-email"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                value="support@workit.com"
-                            >
+                                value="support@workit.com">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Minimum Job Budget ($)</label>
-                            <input 
-                                type="number" 
-                                id="min-job-budget"
-                                min="1"
+                            <input type="number" id="min-job-budget" min="1"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                value="10"
-                            >
+                                value="10">
                         </div>
                         <div class="flex items-center">
-                            <input type="checkbox" id="maintenance-mode" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                            <label for="maintenance-mode" class="ml-2 text-sm text-gray-700">Enable Maintenance Mode</label>
+                            <input type="checkbox" id="maintenance-mode"
+                                class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                            <label for="maintenance-mode" class="ml-2 text-sm text-gray-700">Enable Maintenance
+                                Mode</label>
                         </div>
-                        <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+                        <button type="submit"
+                            class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
                             Save Platform Settings
                         </button>
                     </form>
-                </div>
-
-                <!-- Danger Zone -->
-                <div class="bg-white rounded-xl p-6 shadow-sm border border-red-200">
-                    <div class="flex items-center mb-6">
-                        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-4">
-                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 class="text-lg font-semibold text-red-800">Danger Zone</h2>
-                            <p class="text-red-500 text-sm">Destructive actions - use with caution</p>
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between p-4 bg-red-50 rounded-lg">
-                            <div>
-                                <p class="font-medium text-gray-800">Reset Quiz Attempts</p>
-                                <p class="text-gray-500 text-sm">Clear all quiz attempt records</p>
-                            </div>
-                            <button onclick="resetQuizAttempts()" class="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-100 transition">
-                                Reset
-                            </button>
-                        </div>
-                        <div class="flex items-center justify-between p-4 bg-red-50 rounded-lg">
-                            <div>
-                                <p class="font-medium text-gray-800">Clear All Messages</p>
-                                <p class="text-gray-500 text-sm">Delete all chat messages from the platform</p>
-                            </div>
-                            <button onclick="clearMessages()" class="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-100 transition">
-                                Clear
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </main>
@@ -309,11 +334,6 @@
 
     <script src="../../js/utils.js"></script>
     <script>
-        // Check admin auth
-        if (!auth.isLoggedIn() || auth.getUser().role !== 'admin') {
-            window.location.href = 'login.html';
-        }
-
         // Mobile sidebar toggle
         document.getElementById('open-sidebar').addEventListener('click', () => {
             document.getElementById('sidebar').classList.remove('-translate-x-full');
@@ -328,6 +348,42 @@
             document.getElementById('sidebar-overlay').classList.add('hidden');
         }
 
+        // Handle Reset Quiz Attempts
+        function handleResetQuiz() {
+            modal.confirm(
+                'Are you sure you want to reset all quiz attempts? This action cannot be undone.',
+                async () => {
+                    try {
+                        loading.show('Resetting quiz attempts...');
+                        await api.post('/admin/reset-quiz-attempts');
+                        loading.hide();
+                        toast.success('All quiz attempts have been reset');
+                    } catch (error) {
+                        loading.hide();
+                        toast.error(error.message || 'Failed to reset quiz attempts');
+                    }
+                }
+            );
+        }
+
+        // Handle Clear Messages
+        function handleClearMessages() {
+            modal.confirm(
+                'Are you sure you want to delete ALL messages? This action cannot be undone.',
+                async () => {
+                    try {
+                        loading.show('Clearing messages...');
+                        await api.post('/admin/clear-messages');
+                        loading.hide();
+                        toast.success('All messages have been cleared');
+                    } catch (error) {
+                        loading.hide();
+                        toast.error(error.message || 'Failed to clear messages');
+                    }
+                }
+            );
+        }
+
         // Logout
         function handleLogout() {
             auth.logout();
@@ -337,17 +393,23 @@
         // Load Settings
         async function loadSettings() {
             try {
-                const settings = await api.get('/admin/settings');
-                
+                const data = await api.get('/admin/settings');
+                const settingsArray = data.settings || [];
+                const settings = settingsArray.reduce((acc, curr) => {
+                    acc[curr.key] = curr.value;
+                    return acc;
+                }, {});
+
                 // Commission
                 document.getElementById('commission-rate').value = settings.commissionRate || 1;
-                
+
                 // Quiz
+                document.getElementById('quiz-enabled').checked = settings.quiz_enabled !== false; // Default to true
                 document.getElementById('quiz-pass-score').value = settings.quizPassScore || 7;
                 document.getElementById('quiz-question-count').value = settings.quizQuestionCount || 10;
                 document.getElementById('quiz-time-limit').value = settings.quizTimeLimit || 10;
                 document.getElementById('quiz-retry-wait').value = settings.quizRetryWait || 24;
-                
+
                 // Platform
                 document.getElementById('platform-name').value = settings.platformName || 'WorkIT';
                 document.getElementById('support-email').value = settings.supportEmail || 'support@workit.com';
@@ -359,7 +421,7 @@
         }
 
         // Save Commission
-        document.getElementById('commission-form').addEventListener('submit', async function(e) {
+        document.getElementById('commission-form').addEventListener('submit', async function (e) {
             e.preventDefault();
             try {
                 await api.put('/admin/settings', {
@@ -372,10 +434,11 @@
         });
 
         // Save Quiz Settings
-        document.getElementById('quiz-form').addEventListener('submit', async function(e) {
+        document.getElementById('quiz-form').addEventListener('submit', async function (e) {
             e.preventDefault();
             try {
                 await api.put('/admin/settings', {
+                    quiz_enabled: document.getElementById('quiz-enabled').checked,
                     quizPassScore: parseInt(document.getElementById('quiz-pass-score').value),
                     quizQuestionCount: parseInt(document.getElementById('quiz-question-count').value),
                     quizTimeLimit: parseInt(document.getElementById('quiz-time-limit').value),
@@ -388,7 +451,7 @@
         });
 
         // Save Platform Settings
-        document.getElementById('platform-form').addEventListener('submit', async function(e) {
+        document.getElementById('platform-form').addEventListener('submit', async function (e) {
             e.preventDefault();
             try {
                 await api.put('/admin/settings', {
@@ -406,7 +469,7 @@
         // Danger Zone
         async function resetQuizAttempts() {
             if (!confirm('Are you sure you want to reset all quiz attempts? This action cannot be undone.')) return;
-            
+
             try {
                 await api.delete('/admin/quiz-attempts');
                 toast.success('Quiz attempts reset successfully');
@@ -417,7 +480,7 @@
 
         async function clearMessages() {
             if (!confirm('Are you sure you want to delete all messages? This action cannot be undone.')) return;
-            
+
             try {
                 await api.delete('/admin/messages');
                 toast.success('Messages cleared successfully');
@@ -430,4 +493,5 @@
         loadSettings();
     </script>
 </body>
+
 </html>
