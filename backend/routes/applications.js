@@ -14,6 +14,11 @@ const {
 // @access  Private (Freelancer)
 router.post('/', protect, authorize('freelancer'), applyForJob);
 
+// @route   POST /api/applications/:jobId
+// @desc    Apply for a job (jobId from URL)
+// @access  Private (Freelancer)
+router.post('/:jobId', protect, authorize('freelancer'), applyForJob);
+
 // @route   GET /api/applications/freelancer/my-applications
 // @desc    Get all applications by current freelancer
 // @access  Private (Freelancer)

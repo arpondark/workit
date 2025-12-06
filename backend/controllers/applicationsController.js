@@ -9,7 +9,8 @@ const { paginate, paginationResponse } = require('../utils/helpers');
 // @access  Private (Freelancer)
 exports.applyForJob = async (req, res) => {
     try {
-        const { jobId, coverLetter, proposedBudget, estimatedDuration } = req.body;
+        const { coverLetter, proposedBudget, estimatedDuration } = req.body;
+        const jobId = req.params.jobId || req.body.jobId;
 
         // Check if job exists and is open
         const job = await Job.findById(jobId).populate('skill');
