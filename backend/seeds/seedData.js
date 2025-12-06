@@ -847,13 +847,88 @@ const seedAdminSettings = async () => {
     }
 };
 
+const seedUsers = async () => {
+    try {
+        const userCount = await User.countDocuments({ role: { $ne: 'admin' } });
+
+        if (userCount === 0) {
+            // Get some skills for freelancers
+            const skills = await Skill.find().limit(5);
+
+            const sampleUsers = [
+                // Freelancers
+                {
+                    name: 'John Doe',
+                    email: 'john@example.com',
+                    password: 'password123',
+                    role: 'freelancer',
+                    skills: skills.slice(0, 3).map(s => ({ skill: s._id })),
+                    bio: 'Experienced web developer with 5+ years of experience',
+                    isSuspended: false
+                },
+                {
+                    name: 'Jane Smith',
+                    email: 'jane@example.com',
+                    password: 'password123',
+                    role: 'freelancer',
+                    skills: skills.slice(1, 4).map(s => ({ skill: s._id })),
+                    bio: 'UI/UX Designer specializing in mobile apps',
+                    isSuspended: false
+                },
+                {
+                    name: 'Mike Johnson',
+                    email: 'mike@example.com',
+                    password: 'password123',
+                    role: 'freelancer',
+                    skills: skills.slice(2, 5).map(s => ({ skill: s._id })),
+                    bio: 'Full-stack developer and DevOps engineer',
+                    isSuspended: false
+                },
+                // Clients
+                {
+                    name: 'Tech Corp',
+                    email: 'client1@example.com',
+                    password: 'password123',
+                    role: 'client',
+                    company: 'Tech Corp Inc',
+                    isSuspended: false
+                },
+                {
+                    name: 'Startup Hub',
+                    email: 'client2@example.com',
+                    password: 'password123',
+                    role: 'client',
+                    company: 'Startup Hub LLC',
+                    isSuspended: false
+                },
+                {
+                    name: 'Design Agency',
+                    email: 'client3@example.com',
+                    password: 'password123',
+                    role: 'client',
+                    company: 'Design Agency Co',
+                    isSuspended: false
+                }
+            ];
+
+            await User.insertMany(sampleUsers);
+            console.log('✅ Sample users seeded successfully (3 freelancers, 3 clients)');
+        } else {
+            console.log('ℹ️  Users already exist');
+        }
+    } catch (error) {
+        console.error('❌ Error seeding users:', error.message);
+    }
+};
+
 const runAllSeeds = async () => {
     console.log('\n🌱 Starting database seeding...\n');
     await seedSkills();
     await seedQuestions();
     await seedAdmin();
     await seedAdminSettings();
+    await seedUsers();
     console.log('\n🌱 Database seeding completed!\n');
 };
 
-module.exports = { seedAdmin, seedSkills, seedQuestions, seedAdminSettings, runAllSeeds };
+module.exports = { seedAdmin, seedSkills, seedQuestions, seedAdminSettings, seedUsers, runAllSeeds };

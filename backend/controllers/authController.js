@@ -19,7 +19,8 @@ exports.getAuthConfig = async (req, res) => {
                 quizEnabled: quizEnabledSetting ? quizEnabledSetting.value : true,
                 quizQuestionsCount: quizQuestionsCountSetting ? quizQuestionsCountSetting.value : 10,
                 quizPassScore: quizPassScoreSetting ? quizPassScoreSetting.value : 7,
-                quizLearningLink: (await AdminSettings.findOne({ key: 'quizLearningLink' }))?.value || ''
+                quizLearningLink: (await AdminSettings.findOne({ key: 'quizLearningLink' }))?.value || '',
+                quizFailVideoLink: (await AdminSettings.findOne({ key: 'quizFailVideoLink' }))?.value || ''
             }
         });
     } catch (error) {

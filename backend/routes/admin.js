@@ -24,6 +24,13 @@ const {
     clearAllMessages
 } = require('../controllers/adminController');
 
+const {
+    getLearningResources,
+    createLearningResource,
+    updateLearningResource,
+    deleteLearningResource
+} = require('../controllers/learningResourcesController');
+
 // Middleware to ensure admin access
 const adminOnly = [protect, authorize('admin')];
 
@@ -144,5 +151,27 @@ router.post('/reset-quiz-attempts', adminOnly, resetQuizAttempts);
 // @desc    Clear all messages
 // @access  Private (Admin)
 router.post('/clear-messages', adminOnly, clearAllMessages);
+
+// ==================== LEARNING RESOURCES ====================
+
+// @route   GET /api/admin/learning-resources
+// @desc    Get all learning resources
+// @access  Private (Admin)
+router.get('/learning-resources', adminOnly, getLearningResources);
+
+// @route   POST /api/admin/learning-resources
+// @desc    Create a learning resource
+// @access  Private (Admin)
+router.post('/learning-resources', adminOnly, createLearningResource);
+
+// @route   PUT /api/admin/learning-resources/:id
+// @desc    Update a learning resource
+// @access  Private (Admin)
+router.put('/learning-resources/:id', adminOnly, updateLearningResource);
+
+// @route   DELETE /api/admin/learning-resources/:id
+// @desc    Delete a learning resource
+// @access  Private (Admin)
+router.delete('/learning-resources/:id', adminOnly, deleteLearningResource);
 
 module.exports = router;

@@ -400,9 +400,17 @@ exports.getUsers = async (req, res) => {
 
         const total = await User.countDocuments(query);
 
+        // Get stats for frontend
+        const totalClients = await User.countDocuments({ role: 'client' });
+        const totalFreelancers = await User.countDocuments({ role: 'freelancer' });
+        const totalSuspended = await User.countDocuments({ isSuspended: true });
+
         res.json({
             success: true,
-            ...paginationResponse(users, page, limitNum, total)
+            ...paginationResponse(users, page, limitNum, total),
+            totalClients,
+            totalFreelancers,
+            totalSuspended
         });
     } catch (error) {
         res.status(500).json({
