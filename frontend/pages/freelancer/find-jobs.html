@@ -335,7 +335,7 @@
 
                 loadingState.classList.add('hidden');
 
-                let jobs = data.jobs || [];
+                let jobs = data.data || [];
 
                 // Client-side budget filter
                 if (budget) {
@@ -347,7 +347,7 @@
                     });
                 }
 
-                document.getElementById('results-count').textContent = data.total || jobs.length;
+                document.getElementById('results-count').textContent = data.pagination?.totalItems || jobs.length;
 
                 if (jobs.length === 0) {
                     emptyState.classList.remove('hidden');
@@ -362,9 +362,9 @@
                 });
 
                 // Setup pagination
-                if (data.totalPages > 1) {
-                    currentPage = data.page;
-                    totalPages = data.totalPages;
+                if (data.pagination?.totalPages > 1) {
+                    currentPage = data.pagination.currentPage;
+                    totalPages = data.pagination.totalPages;
                     setupPagination();
                     pagination.classList.remove('hidden');
                 }
