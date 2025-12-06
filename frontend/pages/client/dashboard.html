@@ -223,6 +223,24 @@
                 <div class="grid lg:grid-cols-3 gap-8">
                     <!-- Recent Jobs -->
                     <div class="lg:col-span-2">
+                        <!-- Running Jobs / Quick Pay Section -->
+                        <div id="running-jobs-container" class="bg-white rounded-xl shadow-sm mb-6 hidden">
+                            <div
+                                class="p-6 border-b flex items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-xl">
+                                <h3 class="font-semibold text-gray-900 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                    Running Jobs & Payments
+                                </h3>
+                            </div>
+                            <div class="p-4" id="running-jobs-list">
+                                <!-- Running Jobs Loaded Here -->
+                            </div>
+                        </div>
+
                         <div class="bg-white rounded-xl shadow-sm">
                             <div class="p-6 border-b flex items-center justify-between">
                                 <h3 class="font-semibold text-gray-900">Recent Jobs</h3>
@@ -397,11 +415,14 @@
         document.getElementById('logout-btn').addEventListener('click', () => auth.logout());
 
         // Load dashboard data
+        let allClientJobs = [];
+
         async function loadDashboard() {
             try {
                 // Load my jobs
                 const jobsData = await api.get('/jobs/client/my-jobs');
                 const jobs = jobsData.data || [];
+                allClientJobs = jobs;
 
                 const activeJobs = jobs.filter(j => j.status === 'open' || j.status === 'in-progress');
                 const completedJobs = jobs.filter(j => j.status === 'completed');
@@ -437,6 +458,37 @@
                 } else {
                     jobsContainer.innerHTML = '';
                     noJobsDiv.classList.remove('hidden');
+                }
+
+                // Running Jobs (Quick Payment Section)
+                const runningJobs = jobs.filter(j => j.status === 'in-progress');
+                // Could render this in a new section or replace one. 
+                // For now, let's inject a "Running Jobs" panel above Recent Jobs
+                const runningJobsContainer = document.getElementById('running-jobs-container');
+                if (runningJobsContainer) {
+                    if (runningJobs.length > 0) {
+                        const runningList = document.getElementById('running-jobs-list');
+                        runningList.innerHTML = runningJobs.map(job => `
+                            <div class="p-4 border border-blue-100 rounded-lg bg-blue-50 mb-3">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">${job.title}</h4>
+                                        <p class="text-sm text-gray-600">Freelancer: ${job.hiredFreelancer?.name || 'Assigned'}</p>
+                                        ${job.submission?.status === 'pending' && job.submission?.submittedAt ? '<span class="text-xs font-bold text-amber-600 bg-amber-100 px-2 py-0.5 rounded mt-1 inline-block">Work Submitted</span>' : ''}
+                                    </div>
+                                    <div>
+                                        ${job.submission?.status === 'pending' && job.submission?.submittedAt
+                                ? `<button onclick="viewSubmission('${job._id}')" class="px-3 py-1.5 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 transition">Review & Pay</button>`
+                                : `<button class="px-3 py-1.5 bg-gray-200 text-gray-500 text-sm font-medium rounded cursor-not-allowed">In Progress</button>`
+                            }
+                                    </div>
+                                </div>
+                            </div>
+                         `).join('');
+                        runningJobsContainer.classList.remove('hidden');
+                    } else {
+                        runningJobsContainer.classList.add('hidden');
+                    }
                 }
 
                 // Load applications for my jobs
@@ -500,6 +552,60 @@
             } catch (error) {
                 console.error('Error loading dashboard:', error);
                 toast.error('Failed to load dashboard data');
+            }
+        }
+
+        function viewSubmission(jobId) {
+            const job = allClientJobs.find(j => j._id === jobId);
+            if (!job || !job.submission) return;
+
+            const submission = job.submission;
+
+            const attachmentsHtml = submission.attachments && submission.attachments.length > 0
+                ? `<div class="mt-4">
+                    <h5 class="font-medium text-gray-900 mb-2">Attachments / Links:</h5>
+                    <ul class="list-disc list-inside text-sm text-blue-600">
+                        ${submission.attachments.map(link => `<li><a href="${link}" target="_blank" class="hover:underline break-all">${link}</a></li>`).join('')}
+                    </ul>
+                   </div>`
+                : '';
+
+            modal.show({
+                title: 'Review Submission',
+                confirmText: 'Release Payment',
+                cancelText: 'Cancel',
+                content: `
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h5 class="font-medium text-gray-900 mb-2">Description:</h5>
+                            <p class="text-gray-700 whitespace-pre-wrap">${submission.description || 'No description provided.'}</p>
+                            ${attachmentsHtml}
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded-lg flex items-start gap-3 border border-yellow-100">
+                            <svg class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                            <p class="text-sm text-yellow-700">
+                                <strong>Warning:</strong> Releasing payment is final. The job will be marked as completed and funds transferred.
+                            </p>
+                        </div>
+                    </div>
+                `,
+                onConfirm: () => releasePayment(jobId)
+            });
+        }
+
+        async function releasePayment(jobId) {
+            try {
+                // Call complete job API
+                await api.post(`/jobs/${jobId}/complete`);
+                toast.success('Payment released & job completed!');
+
+                // Refresh dashboard
+                loadDashboard();
+            } catch (error) {
+                console.error('Payment Error:', error);
+                toast.error(error.message || 'Failed to release payment');
             }
         }
 

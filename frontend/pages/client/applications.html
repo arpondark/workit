@@ -276,6 +276,7 @@
 
         let allApplications = [];
         let myJobs = [];
+        let globalQuizSettings = { questionsCount: 10 };
 
         // Load jobs for filter
         async function loadJobs() {
@@ -307,6 +308,7 @@
                 for (const job of myJobs) {
                     try {
                         const appData = await api.get(`/jobs/${job._id}/applications`);
+                        if (appData.quizSettings) globalQuizSettings = appData.quizSettings;
                         const apps = appData.applications || [];
                         apps.forEach(app => {
                             allApplications.push({ ...app, jobTitle: job.title, jobId: job._id });
@@ -425,7 +427,7 @@
                             ${app.freelancer?.skills?.length ? `
                                 <div class="flex flex-wrap gap-1 mt-2">
                                     ${app.freelancer.skills.map(s => `
-                                        <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-xs">${s.name || s}</span>
+                                        <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded text-xs">${s.skill?.name || s.name || 'Unknown'}</span>
                                     `).join('')}
                                 </div>
                             ` : ''}
@@ -439,7 +441,7 @@
                         </div>
                         <div class="p-4 bg-gray-50 rounded-lg">
                             <p class="text-sm text-gray-500">Quiz Score</p>
-                            <p class="text-xl font-bold text-gray-900">${app.freelancer?.quizScore || 'N/A'}</p>
+                            <p class="text-xl font-bold text-gray-900">${app.freelancer?.quizScore ? app.freelancer.quizScore + '/' + globalQuizSettings.questionsCount : 'N/A'}</p>
                         </div>
                     </div>
                     

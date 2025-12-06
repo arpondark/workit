@@ -78,6 +78,23 @@ const jobSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+    paymentStatus: {
+        type: String,
+        enum: ['pending', 'escrowed', 'released', 'refunded'],
+        default: 'pending'
+    },
+    submission: {
+        description: String,
+        attachments: [{
+            name: String,
+            url: String
+        }],
+        submittedAt: Date,
+        status: {
+            type: String,
+            enum: ['pending', 'approved', 'rejected']
+        }
+    },
     views: {
         type: Number,
         default: 0

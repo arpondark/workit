@@ -106,7 +106,7 @@ exports.getMyApplications = async (req, res) => {
         const applications = await Application.find(query)
             .populate({
                 path: 'job',
-                select: 'title description budget status skill client',
+                select: 'title description budget status skill client submission paymentStatus',
                 populate: [
                     { path: 'skill', select: 'name icon' },
                     { path: 'client', select: 'name avatar' }
@@ -249,12 +249,35 @@ exports.updateApplicationStatus = async (req, res) => {
                     });
 
                     // Send system message
-                    await Message.create({
+                    const systemMessage = await Message.create({
                         chat: chat._id,
                         sender: req.user._id,
                         content: `You've been hired for the job: ${application.job.title}`,
                         type: 'system'
                     });
+
+                    // Update chat with last message and unread count
+                    chat.lastMessage = systemMessage._id;
+                    chat.lastMessageAt = new Date();
+
+                    if (!chat.unreadCount) {
+                        chat.unreadCount = new Map();
+                    }
+                    // increment for freelancer (who is not req.user)
+                    chat.unreadCount.set(application.freelancer.toString(), 1);
+
+                    await chat.save();
+
+                    // Emit socket event
+                    if (req.io) {
+                        const populatedMessage = await Message.findById(systemMessage._id)
+                            .populate('sender', 'name avatar');
+
+                        req.io.to(`chat:${chat._id}`).emit('message:received', {
+                            chatId: chat._id,
+                            message: populatedMessage
+                        });
+                    }
                 }
             } catch (chatError) {
                 // Log error but don't fail the accept operation

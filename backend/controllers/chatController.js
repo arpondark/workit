@@ -23,7 +23,11 @@ exports.getChats = async (req, res) => {
         // Add unread count for current user
         const chatsWithUnread = chats.map(chat => {
             const chatObj = chat.toObject();
-            chatObj.unreadCount = chat.unreadCount.get(req.user._id.toString()) || 0;
+            if (chat.unreadCount && typeof chat.unreadCount.get === 'function') {
+                chatObj.unreadCount = chat.unreadCount.get(req.user._id.toString()) || 0;
+            } else {
+                chatObj.unreadCount = 0;
+            }
             return chatObj;
         });
 
@@ -138,6 +142,9 @@ exports.getMessages = async (req, res) => {
         );
 
         // Reset unread count
+        if (!chat.unreadCount) {
+            chat.unreadCount = new Map();
+        }
         chat.unreadCount.set(req.user._id.toString(), 0);
         await chat.save();
 
@@ -158,11 +165,16 @@ exports.getMessages = async (req, res) => {
 // @access  Private
 exports.sendMessage = async (req, res) => {
     try {
+        console.log('sendMessage called. ChatID:', req.params.chatId);
+        console.log('Request body:', req.body);
+        console.log('User:', req.user._id);
+
         const { content, type = 'text' } = req.body;
 
         const chat = await Chat.findById(req.params.chatId);
 
         if (!chat) {
+            console.log('Chat not found');
             return res.status(404).json({
                 success: false,
                 message: 'Chat not found'
@@ -175,6 +187,7 @@ exports.sendMessage = async (req, res) => {
         );
 
         if (!isParticipant) {
+            console.log('User not participant. Participants:', chat.participants);
             return res.status(403).json({
                 success: false,
                 message: 'Not authorized to send messages in this chat'
@@ -189,11 +202,16 @@ exports.sendMessage = async (req, res) => {
             type
         });
 
+        console.log('Message created:', message._id);
+
         // Update chat
         chat.lastMessage = message._id;
         chat.lastMessageAt = new Date();
 
         // Increment unread count for other participant
+        if (!chat.unreadCount) {
+            chat.unreadCount = new Map();
+        }
         chat.participants.forEach(p => {
             if (p.toString() !== req.user._id.toString()) {
                 const currentCount = chat.unreadCount.get(p.toString()) || 0;
@@ -202,15 +220,26 @@ exports.sendMessage = async (req, res) => {
         });
 
         await chat.save();
+        console.log('Chat updated with lastMessage');
 
         const populatedMessage = await Message.findById(message._id)
             .populate('sender', 'name avatar');
+
+        // Emit socket event for real-time update
+        if (req.io) {
+            req.io.to(`chat:${req.params.chatId}`).emit('message:received', {
+                chatId: req.params.chatId,
+                message: populatedMessage
+            });
+            console.log('Emitted message:received via controller');
+        }
 
         res.status(201).json({
             success: true,
             message: populatedMessage
         });
     } catch (error) {
+        console.error('sendMessage Error:', error);
         res.status(500).json({
             success: false,
             message: error.message
@@ -319,6 +348,9 @@ exports.markRead = async (req, res) => {
         );
 
         // Reset unread count
+        if (!chat.unreadCount) {
+            chat.unreadCount = new Map();
+        }
         chat.unreadCount.set(req.user._id.toString(), 0);
         await chat.save();
 

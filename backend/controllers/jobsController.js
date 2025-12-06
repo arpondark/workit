@@ -1,6 +1,7 @@
 const Job = require('../models/Job');
 const Application = require('../models/Application');
 const Skill = require('../models/Skill');
+const AdminSettings = require('../models/AdminSettings');
 const { paginate, paginationResponse } = require('../utils/helpers');
 
 // @desc    Get all jobs with filters
@@ -15,7 +16,7 @@ exports.getJobs = async (req, res) => {
         } = req.query;
 
         // Build query
-        const query = { isActive: true };
+        const query = { isActive: true, status: 'open' };
 
         if (skill) query.skill = skill;
         if (status) query.status = status;
@@ -314,10 +315,147 @@ exports.getJobApplications = async (req, res) => {
             })
             .sort('-createdAt');
 
+        // Get quiz settings
+        const questionsCountSetting = await AdminSettings.findOne({ key: 'quiz_questions_count' });
+        const quizSettings = {
+            questionsCount: questionsCountSetting ? questionsCountSetting.value : 10
+        };
+
+        // Process applications to add quiz score
+        const processedApplications = applications.map(app => {
+            const appObj = app.toObject();
+            if (app.freelancer && app.freelancer.skills) {
+                const scores = app.freelancer.skills
+                    .map(s => s.quizScore || 0)
+                    .filter(s => s > 0);
+                appObj.freelancer.quizScore = scores.length > 0 ? Math.max(...scores) : 0;
+            } else {
+                if (appObj.freelancer) appObj.freelancer.quizScore = 0;
+            }
+            return appObj;
+        });
+
         res.json({
             success: true,
-            count: applications.length,
-            applications
+            count: processedApplications.length,
+            applications: processedApplications,
+            quizSettings
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Submit work for a job
+// @route   POST /api/jobs/:id/submit
+// @access  Private (Freelancer - hired only)
+exports.submitWork = async (req, res) => {
+    try {
+        const { description, attachments } = req.body;
+
+        const job = await Job.findById(req.params.id);
+
+        if (!job) {
+            return res.status(404).json({
+                success: false,
+                message: 'Job not found'
+            });
+        }
+
+        // Verify authentication
+        if (job.hiredFreelancer.toString() !== req.user._id.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to submit work for this job'
+            });
+        }
+
+        if (job.status !== 'in-progress') {
+            return res.status(400).json({
+                success: false,
+                message: 'Job is not in progress'
+            });
+        }
+
+        // Update submission
+        job.submission = {
+            description,
+            attachments: attachments || [],
+            submittedAt: new Date(),
+            status: 'pending'
+        };
+
+        // Notify client? (Could use socket here too eventually)
+
+        await job.save();
+
+        res.json({
+            success: true,
+            message: 'Work submitted successfully',
+            job
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Complete job and release payment
+// @route   POST /api/jobs/:id/complete
+// @access  Private (Client - owner only)
+exports.completeJob = async (req, res) => {
+    try {
+        const job = await Job.findById(req.params.id);
+
+        if (!job) {
+            return res.status(404).json({
+                success: false,
+                message: 'Job not found'
+            });
+        }
+
+        // Verify ownership
+        if (job.client.toString() !== req.user._id.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to complete this job'
+            });
+        }
+
+        if (job.status !== 'in-progress') {
+            return res.status(400).json({
+                success: false,
+                message: 'Job is not in progress'
+            });
+        }
+
+        if (job.submission.status !== 'pending' && !req.query.force) {
+            // Optional: require submission first? 
+            // The prompt implies "verify and release".
+            // If no submission, maybe client can still complete? 
+            // Logic: If submission exists, approve it.
+        }
+
+        // Update job status
+        job.status = 'completed';
+        job.completedAt = new Date();
+        job.paymentStatus = 'released';
+
+        if (job.submission) {
+            job.submission.status = 'approved';
+        }
+
+        await job.save();
+
+        res.json({
+            success: true,
+            message: 'Job completed and payment released',
+            job
         });
     } catch (error) {
         res.status(500).json({

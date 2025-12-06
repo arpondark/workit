@@ -119,6 +119,23 @@
         </div>
     </div>
 
+    <!-- Review Work Modal -->
+    <div id="review-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 p-6">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Review Submission & Release Payment</h3>
+            <div id="review-content" class="mb-6 space-y-4">
+                <!-- Content injected via JS -->
+            </div>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeReviewModal()"
+                    class="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition">Cancel</button>
+                <button id="release-payment-btn"
+                    class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">Release
+                    Payment</button>
+            </div>
+        </div>
+    </div>
+
     <script src="../../js/utils.js"></script>
     <script>
         // Auth check
@@ -133,6 +150,7 @@
 
         let currentPage = 1;
         const limit = 10;
+        let currentLoadedJobs = [];
 
         function handleLogout() {
             auth.logout();
@@ -153,7 +171,8 @@
 
             try {
                 const response = await api.get(`/jobs/client/my-jobs?${params}`);
-                renderJobs(response.data || []);
+                currentLoadedJobs = response.data || [];
+                renderJobs(currentLoadedJobs);
                 renderPagination(response.pagination?.totalPages || 1);
             } catch (error) {
                 console.error('Error loading jobs:', error);
@@ -241,13 +260,26 @@
                                     </svg>
                                     Close Job
                                 </button>
-                            ` : job.status === 'cancelled' || job.status === 'closed' ? `
-                                <button onclick="reopenJob('${job._id}')" class="flex items-center justify-center px-4 py-2 border border-green-300 text-green-600 rounded-lg hover:bg-green-50 transition text-sm">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                    </svg>
                                     Reopen
                                 </button>
+                            ` : job.status === 'in-progress' ? `
+                                <div class="flex flex-col gap-2 w-full">
+                                    <button onclick="startChat('${job.hiredFreelancer?._id}')" class="flex items-center justify-center px-4 py-2 border border-indigo-300 text-indigo-600 rounded-lg hover:bg-indigo-50 transition text-sm">
+                                        Message
+                                    </button>
+                                    ${job.submission?.status === 'pending' ? `
+                                        <button onclick="openReviewModal('${job._id}')" class="flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm w-full">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            Review & Pay
+                                        </button>
+                                    ` : `
+                                        <button onclick="openReviewModal('${job._id}')" class="flex items-center justify-center px-4 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 transition text-sm w-full">
+                                            Release Payment
+                                        </button>
+                                    `}
+                                </div>
                             ` : ''}
                             <button onclick="deleteJob('${job._id}')" class="flex items-center justify-center px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition text-sm">
                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -436,6 +468,66 @@
         function startChat(freelancerId) {
             window.location.href = `../messages.html?user=${freelancerId}`;
         }
+
+        // Review Modal Logic
+        let selectedJobId = null;
+
+        function openReviewModal(jobId) {
+            selectedJobId = jobId;
+            const job = currentLoadedJobs.find(j => j._id === jobId);
+            if (!job) return;
+
+            const container = document.getElementById('review-content');
+            if (job.submission && job.submission.submittedAt) {
+                container.innerHTML = `
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="text-sm text-gray-500 mb-1">Submitted on ${new Date(job.submission.submittedAt).toLocaleDateString()}</p>
+                        <p class="text-gray-900 font-medium mb-2">Description:</p>
+                        <p class="text-gray-700 mb-4 whitespace-pre-wrap">${escapeHtml(job.submission.description || 'No description')}</p>
+                        
+                        ${job.submission.attachments && job.submission.attachments.length > 0 ? `
+                            <p class="text-gray-900 font-medium mb-2">Attachments/Links:</p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                ${job.submission.attachments.map(att => `
+                                    <li><a href="${att.url}" target="_blank" class="text-indigo-600 hover:underline">${escapeHtml(att.name || att.url)}</a></li>
+                                `).join('')}
+                            </ul>
+                        ` : ''}
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="text-center py-4 bg-yellow-50 rounded-lg text-yellow-800">
+                        <p>No formal submission yet.</p>
+                        <p class="text-sm mt-1">You can still release payment if you verify the work.</p>
+                    </div>
+                `;
+            }
+
+            document.getElementById('review-modal').classList.remove('hidden');
+        }
+
+        function closeReviewModal() {
+            document.getElementById('review-modal').classList.add('hidden');
+            selectedJobId = null;
+        }
+
+        document.getElementById('release-payment-btn').addEventListener('click', async () => {
+            if (!selectedJobId) return;
+
+            try {
+                showLoading(true);
+                await api.post(`/jobs/${selectedJobId}/complete?force=true`, {});
+                showLoading(false);
+
+                showToast('Payment released and job completed!', 'success');
+                closeReviewModal();
+                loadJobs(currentPage);
+            } catch (error) {
+                showLoading(false);
+                showToast(error.message, 'error');
+            }
+        });
 
         // Search on Enter
         document.getElementById('search-input').addEventListener('keypress', function (e) {

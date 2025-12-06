@@ -8,7 +8,9 @@ const {
     updateJob,
     deleteJob,
     getMyJobs,
-    getJobApplications
+    getJobApplications,
+    submitWork,
+    completeJob
 } = require('../controllers/jobsController');
 
 // @route   GET /api/jobs
@@ -45,5 +47,15 @@ router.delete('/:id', protect, authorize('client', 'admin'), deleteJob);
 // @desc    Get all applications for a job
 // @access  Private (Client - owner only)
 router.get('/:id/applications', protect, authorize('client'), getJobApplications);
+
+// @route   POST /api/jobs/:id/submit
+// @desc    Submit work for a job
+// @access  Private (Freelancer - hired only)
+router.post('/:id/submit', protect, authorize('freelancer'), submitWork);
+
+// @route   POST /api/jobs/:id/complete
+// @desc    Complete job and release payment
+// @access  Private (Client - owner only)
+router.post('/:id/complete', protect, authorize('client'), completeJob);
 
 module.exports = router;

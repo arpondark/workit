@@ -18,8 +18,8 @@ const server = http.createServer(app);
 // Initialize Socket.IO
 const io = new Server(server, {
     cors: {
-        origin: process.env.NODE_ENV === 'production' 
-            ? process.env.FRONTEND_URL 
+        origin: process.env.NODE_ENV === 'production'
+            ? process.env.FRONTEND_URL
             : ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5500', 'http://127.0.0.1:5500'],
         methods: ['GET', 'POST'],
         credentials: true
@@ -40,9 +40,15 @@ app.use(helmet({
     crossOriginEmbedderPolicy: false
 }));
 
+// Inject socket.io into request
+app.use((req, res, next) => {
+    req.io = io;
+    next();
+});
+
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? process.env.FRONTEND_URL 
+    origin: process.env.NODE_ENV === 'production'
+        ? process.env.FRONTEND_URL
         : ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5500', 'http://127.0.0.1:5500', 'http://localhost:5000', 'http://127.0.0.1:5000'],
     credentials: true
 }));
@@ -65,8 +71,8 @@ app.use('/api/admin', require('./routes/admin'));
 
 // Health check
 app.get('/api/health', (req, res) => {
-    res.json({ 
-        success: true, 
+    res.json({
+        success: true,
         message: 'WorkIT API is running',
         timestamp: new Date().toISOString()
     });

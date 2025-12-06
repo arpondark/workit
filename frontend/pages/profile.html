@@ -337,10 +337,11 @@
                     document.getElementById('portfolio').value = profile.portfolio || '';
                     document.getElementById('linkedin').value = profile.socialLinks?.linkedin || '';
                     document.getElementById('github').value = profile.socialLinks?.github || '';
-                    document.getElementById('quiz-score').textContent = profile.quizScore ? `${profile.quizScore}/10` : 'Not taken';
+                    const totalQuestions = profile.quizSettings?.questionsCount || 10;
+                    document.getElementById('quiz-score').textContent = profile.quizScore ? `${profile.quizScore}/${totalQuestions}` : 'Not taken';
 
                     // Load skills
-                    selectedSkills = (profile.skills || []).map(s => s._id || s);
+                    selectedSkills = (profile.skills || []).map(s => s.skill?._id || s.skill);
                     await loadSkills();
                     renderSelectedSkills();
                 }
@@ -444,6 +445,9 @@
 
                 formData.append('socialLinks[linkedin]', document.getElementById('linkedin').value);
                 formData.append('socialLinks[github]', document.getElementById('github').value);
+
+                // Append skills as JSON string
+                formData.append('skills', JSON.stringify(selectedSkills));
             }
 
             try {

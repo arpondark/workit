@@ -393,15 +393,17 @@
                 document.getElementById('profile-name').textContent = profile.name;
                 document.getElementById('profile-title').textContent = profile.title || 'Freelancer';
                 document.getElementById('profile-rate').textContent = `$${profile.hourlyRate || 0}/hr`;
-                document.getElementById('profile-score').textContent = `${profile.quizScore || 0}/10`;
+                const totalQuestions = profile.quizSettings?.questionsCount || 10;
+                document.getElementById('profile-score').textContent = `${profile.quizScore || 0}/${totalQuestions}`;
                 document.getElementById('profile-jobs').textContent = profile.completedJobs || 0;
 
                 // Display skills
                 const skillsContainer = document.getElementById('profile-skills');
                 if (profile.skills && profile.skills.length > 0) {
-                    skillsContainer.innerHTML = profile.skills.map(s => `
-                        <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm">${s.skill?.name || s.name || s}</span>
-                    `).join('');
+                    skillsContainer.innerHTML = profile.skills.map(s => {
+                        const skillName = s.skill?.name || s.name || 'Unknown Skill';
+                        return `<span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm">${skillName}</span>`;
+                    }).join('');
                 } else {
                     skillsContainer.innerHTML = '<span class="text-gray-400 text-sm">No skills added</span>';
                 }

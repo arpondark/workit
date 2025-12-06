@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Skill = require('../models/Skill');
 const Job = require('../models/Job');
+const AdminSettings = require('../models/AdminSettings');
 const { paginate, paginationResponse } = require('../utils/helpers');
 
 // @desc    Get all freelancers with filters
@@ -54,10 +55,15 @@ exports.getFreelancers = async (req, res) => {
                 sort = { rating: -1 };
                 break;
             case 'completedJobs':
+            case 'experience':
                 sort = { completedJobs: -1 };
                 break;
             case 'hourlyRate':
+            case 'rate-low':
                 sort = { hourlyRate: 1 };
+                break;
+            case 'rate-high':
+                sort = { hourlyRate: -1 };
                 break;
             case 'newest':
                 sort = { createdAt: -1 };
@@ -75,9 +81,19 @@ exports.getFreelancers = async (req, res) => {
 
         const total = await User.countDocuments(query);
 
+        // Get quiz settings
+        const questionsCountSetting = await AdminSettings.findOne({ key: 'quiz_questions_count' });
+        const quizEnabledSetting = await AdminSettings.findOne({ key: 'quiz_enabled' });
+
+        const quizSettings = {
+            questionsCount: questionsCountSetting ? questionsCountSetting.value : 10,
+            enabled: quizEnabledSetting ? quizEnabledSetting.value : true
+        };
+
         res.json({
             success: true,
-            ...paginationResponse(freelancers, page, limitNum, total)
+            ...paginationResponse(freelancers, page, limitNum, total),
+            quizSettings // Add to response
         });
     } catch (error) {
         res.status(500).json({
@@ -106,9 +122,28 @@ exports.getFreelancer = async (req, res) => {
             });
         }
 
+        // Filter invalid skills
+        const freelancerObj = freelancer.toObject();
+        if (freelancerObj.skills) {
+            freelancerObj.skills = freelancerObj.skills.filter(s => s.skill);
+        }
+
+        // Add computed quiz score
+        freelancerObj.quizScore = freelancer.getHighestQuizScore();
+
+        // Get quiz settings
+        const questionsCountSetting = await AdminSettings.findOne({ key: 'quiz_questions_count' });
+        const quizEnabledSetting = await AdminSettings.findOne({ key: 'quiz_enabled' });
+
+        const quizSettings = {
+            questionsCount: questionsCountSetting ? questionsCountSetting.value : 10,
+            enabled: quizEnabledSetting ? quizEnabledSetting.value : true
+        };
+
         res.json({
             success: true,
-            freelancer
+            freelancer: freelancerObj,
+            quizSettings // Add to response
         });
     } catch (error) {
         res.status(500).json({
@@ -229,7 +264,27 @@ exports.getProfile = async (req, res) => {
             });
         }
 
-        res.json(user);
+        // Filter out any skills that failed to populate (where skill is null)
+        const userObj = user.toObject();
+        if (userObj.skills) {
+            userObj.skills = userObj.skills.filter(s => s.skill);
+        }
+
+        // Add computed quiz score from model method
+        userObj.quizScore = user.getHighestQuizScore();
+
+        // Get quiz settings (only if freelancer)
+        if (user.role === 'freelancer') {
+            const questionsCountSetting = await AdminSettings.findOne({ key: 'quiz_questions_count' });
+            const quizEnabledSetting = await AdminSettings.findOne({ key: 'quiz_enabled' });
+
+            userObj.quizSettings = {
+                questionsCount: questionsCountSetting ? questionsCountSetting.value : 10,
+                enabled: quizEnabledSetting ? quizEnabledSetting.value : true
+            };
+        }
+
+        res.json(userObj);
     } catch (error) {
         res.status(500).json({
             success: false,
@@ -281,9 +336,34 @@ exports.updateProfile = async (req, res) => {
             }
 
             if (req.body.skills) {
-                // Handle skills update if needed
-                // This might be complex depending on how skills are sent
-                // For now assuming it's handled separately or simple array
+                // Parse skills if sent as JSON string (from FormData)
+                let newSkills = req.body.skills;
+                if (typeof newSkills === 'string') {
+                    try {
+                        newSkills = JSON.parse(newSkills);
+                    } catch (e) {
+                        newSkills = [];
+                    }
+                }
+
+                if (Array.isArray(newSkills)) {
+                    // Get existing skills map for quick lookup
+                    const existingSkillsMap = new Map(
+                        user.skills.map(s => [s.skill.toString(), s])
+                    );
+
+                    // Build new skills array, preserving existing data (quiz scores etc)
+                    user.skills = newSkills.map(skillId => {
+                        if (existingSkillsMap.has(skillId)) {
+                            return existingSkillsMap.get(skillId);
+                        }
+                        return {
+                            skill: skillId,
+                            passed: false,
+                            quizScore: 0
+                        };
+                    });
+                }
             }
         } else if (user.role === 'admin') {
             if (req.body.name) user.name = req.body.name;

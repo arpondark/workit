@@ -84,7 +84,7 @@
     </style>
 </head>
 
-<body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+<body class="h-screen flex flex-col bg-white overflow-hidden">
     <!-- Navigation -->
     <nav class="bg-white/80 backdrop-blur-xl shadow-sm border-b border-gray-200/50 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -112,120 +112,138 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
-            style="height: calc(100vh - 140px);">
-            <div class="flex h-full">
-                <!-- Conversations List -->
-                <div id="conversations-panel"
-                    class="w-full md:w-96 border-r border-gray-100 flex flex-col bg-gray-50/50">
-                    <div class="p-5 bg-white border-b border-gray-100">
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-xl font-bold text-gray-900">Messages</h2>
-                            <span id="unread-badge"
-                                class="hidden px-2.5 py-0.5 bg-indigo-600 text-white text-xs font-semibold rounded-full"></span>
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="search-conversations" placeholder="Search conversations..."
-                                class="w-full pl-11 pr-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500 text-sm transition">
-                            <svg class="w-5 h-5 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2"
-                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="flex-1 flex overflow-hidden bg-white">
+        <!-- Conversations List -->
+        <div id="conversations-panel" class="w-full md:w-80 lg:w-96 border-r border-gray-200 flex flex-col bg-white">
+            <div class="p-4 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white z-10">
+                <h2 class="text-2xl font-bold text-gray-900">Chats</h2>
+                <div class="flex gap-2">
+                    <span id="unread-badge"
+                        class="hidden px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full"></span>
+                </div>
+            </div>
+
+            <div class="px-4 py-2">
+                <div class="relative">
+                    <input type="text" id="search-conversations" placeholder="Search Messenger"
+                        class="w-full pl-10 pr-4 py-2 bg-gray-100 border-none rounded-full focus:ring-0 text-gray-900 placeholder-gray-500 transition">
+                    <svg class="w-5 h-5 text-gray-500 absolute left-3 top-1/2 transform -translate-y-1/2" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <div id="conversations-list" class="flex-1 overflow-y-auto messages-scroll min-h-0 hover:overflow-y-auto">
+                <!-- Content injected via JS -->
+                <div class="p-8 text-center">
+                    <div
+                        class="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-2">
+                    </div>
+                    <p class="text-gray-400 text-sm">Loading...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div id="chat-panel" class="hidden md:flex flex-1 flex-col bg-white overflow-hidden relative">
+            <!-- Empty State -->
+            <div id="chat-empty" class="absolute inset-0 flex items-center justify-center bg-white z-0">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-10 h-10 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z" />
+                            <path
+                                d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800">Your Messages</h3>
+                    <p class="text-gray-500 mt-1">Send private photos and messages to a friend or group.</p>
+                </div>
+            </div>
+
+            <!-- Active Chat Interface -->
+            <div id="chat-active" class="hidden flex-1 flex flex-col h-full min-h-0 z-10 bg-white">
+                <!-- Header -->
+                <div
+                    class="h-16 px-4 border-b border-gray-200 flex items-center justify-between shadow-sm flex-shrink-0 bg-white">
+                    <div class="flex items-center gap-3">
+                        <button onclick="closeChat()"
+                            class="md:hidden p-2 -ml-2 text-indigo-600 hover:bg-indigo-50 rounded-full transition">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    d="M15 19l-7-7 7-7"></path>
                             </svg>
+                        </button>
+                        <div class="relative">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold overflow-hidden"
+                                id="chat-avatar-container">
+                                <span id="chat-avatar"></span>
+                            </div>
+                            <span id="online-indicator"
+                                class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full hidden"></span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-900 leading-tight" id="chat-name"></h3>
+                            <p class="text-xs text-gray-500" id="chat-status"></p>
                         </div>
                     </div>
-                    <div id="conversations-list" class="flex-1 overflow-y-auto messages-scroll">
-                        <div class="p-8 text-center">
-                            <div
-                                class="w-10 h-10 border-3 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-3">
-                            </div>
-                            <p class="text-gray-500 text-sm">Loading conversations...</p>
-                        </div>
+                    <div class="flex items-center gap-3 text-indigo-600">
+                        <!-- Optional Actions -->
+                        <button class="p-2 hover:bg-gray-100 rounded-full">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z">
+                                </path>
+                            </svg>
+                        </button>
+                        <button class="p-2 hover:bg-gray-100 rounded-full">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Chat Area -->
-                <div id="chat-panel" class="hidden md:flex flex-1 flex-col bg-white">
-                    <!-- Empty State -->
-                    <div id="chat-empty"
-                        class="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white">
-                        <div class="text-center max-w-sm">
-                            <div
-                                class="w-24 h-24 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <svg class="w-12 h-12 text-indigo-500" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                <!-- Messages -->
+                <div id="messages-container"
+                    class="flex-1 overflow-y-auto messages-scroll p-4 space-y-2 bg-white min-h-0">
+                    <!-- Messages go here -->
+                </div>
+
+                <!-- Input -->
+                <div class="p-3 bg-white flex-shrink-0">
+                    <div class="flex items-end gap-2 max-w-full">
+                        <div class="flex gap-2 text-indigo-600 self-center">
+                            <button class="p-2 hover:bg-gray-100 rounded-full"><svg class="w-6 h-6" fill="currentColor"
+                                    viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                                        clip-rule="evenodd"></path>
+                                </svg></button>
+                            <button class="p-2 hover:bg-gray-100 rounded-full"><svg class="w-6 h-6" fill="currentColor"
+                                    viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
+                                        clip-rule="evenodd"></path>
+                                </svg></button>
+                        </div>
+                        <form id="message-form" class="flex-1 flex gap-2">
+                            <input type="text" id="message-input"
+                                class="w-full bg-gray-100 border-none rounded-full px-4 py-2.5 focus:ring-1 focus:ring-transparent focus:bg-gray-200 transition text-gray-900 placeholder-gray-500"
+                                placeholder="Aa" autocomplete="off">
+                            <button type="submit"
+                                class="self-center p-2 text-indigo-600 hover:bg-indigo-50 rounded-full transition">
+                                <svg class="w-6 h-6 transform rotate-90" fill="currentColor" viewBox="0 0 20 20">
+                                    <path
+                                        d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z">
                                     </path>
                                 </svg>
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Select a conversation</h3>
-                            <p class="text-gray-500">Choose a conversation from the list to start messaging</p>
-                        </div>
-                    </div>
-
-                    <!-- Active Chat -->
-                    <div id="chat-active" class="hidden flex-1 flex flex-col">
-                        <!-- Chat Header -->
-                        <div id="chat-header"
-                            class="px-6 py-4 bg-white border-b border-gray-100 flex items-center shadow-sm">
-                            <button onclick="closeChat()"
-                                class="md:hidden p-2 -ml-2 mr-2 text-gray-500 hover:bg-gray-100 rounded-xl transition">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15 19l-7-7 7-7"></path>
-                                </svg>
                             </button>
-                            <div class="relative">
-                                <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg"
-                                    id="chat-avatar">U</div>
-                                <span id="online-indicator"
-                                    class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full hidden"></span>
-                            </div>
-                            <div class="ml-4 flex-1">
-                                <p class="font-semibold text-gray-900" id="chat-name">User Name</p>
-                                <p class="text-sm text-gray-500" id="chat-status">Offline</p>
-                            </div>
-                            <div id="typing-indicator"
-                                class="hidden flex items-center gap-1 px-3 py-1.5 bg-gray-100 rounded-full">
-                                <span class="typing-dot w-2 h-2 bg-gray-400 rounded-full"></span>
-                                <span class="typing-dot w-2 h-2 bg-gray-400 rounded-full"></span>
-                                <span class="typing-dot w-2 h-2 bg-gray-400 rounded-full"></span>
-                            </div>
-                        </div>
-
-                        <!-- Messages -->
-                        <div id="messages-container"
-                            class="flex-1 overflow-y-auto messages-scroll p-6 space-y-4 bg-gradient-to-b from-gray-50/50 to-white">
-                            <!-- Messages will be inserted here -->
-                        </div>
-
-                        <!-- Message Input -->
-                        <div class="p-4 bg-white border-t border-gray-100">
-                            <form id="message-form" class="flex items-center gap-3">
-                                <div class="flex-1 relative">
-                                    <input type="text" id="message-input" placeholder="Type your message..."
-                                        class="w-full px-5 py-3.5 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-indigo-500 pr-12 transition"
-                                        autocomplete="off">
-                                    <button type="button"
-                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                                            </path>
-                                        </svg>
-                                    </button>
-                                </div>
-                                <button type="submit"
-                                    class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-3.5 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition shadow-lg shadow-indigo-200 hover:shadow-xl hover:-translate-y-0.5 transform">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                                    </svg>
-                                </button>
-                            </form>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -274,7 +292,8 @@
             // Listen for new messages (matching backend event name)
             socket.on('message:received', ({ chatId, message }) => {
                 if (activeChat && chatId === activeChat._id) {
-                    const isOwn = message.sender._id === currentUser.id || message.sender === currentUser.id;
+                    const currentUserId = currentUser._id || currentUser.id;
+                    const isOwn = message.sender._id === currentUserId || message.sender === currentUserId;
                     appendMessage(message, isOwn);
                     scrollToBottom();
 
@@ -286,7 +305,8 @@
 
             // Listen for typing updates
             socket.on('typing:update', ({ chatId, userId, isTyping }) => {
-                if (activeChat && chatId === activeChat._id && userId !== currentUser.id) {
+                const currentUserId = currentUser._id || currentUser.id;
+                if (activeChat && chatId === activeChat._id && userId !== currentUserId) {
                     const indicator = document.getElementById('typing-indicator');
                     if (isTyping) {
                         indicator.classList.remove('hidden');
@@ -317,7 +337,8 @@
 
             // Update active chat status
             if (activeChat) {
-                const otherUser = activeChat.participants.find(p => p._id !== currentUser.id);
+                const currentUserId = currentUser._id || currentUser.id;
+                const otherUser = activeChat.participants.find(p => p._id !== currentUserId);
                 if (otherUser?._id === userId) {
                     document.getElementById('chat-status').textContent = isOnline ? 'Online' : 'Offline';
                     const indicator = document.getElementById('online-indicator');
@@ -333,8 +354,23 @@
         // Load Conversations
         async function loadConversations() {
             try {
+                if (!auth.isLoggedIn()) {
+                    window.location.href = 'auth/login.html';
+                    return;
+                }
+
                 const data = await api.get('/chat');
                 conversations = data.chats || [];
+
+                // Safe sort
+                if (Array.isArray(conversations)) {
+                    conversations.sort((a, b) => {
+                        const dateA = new Date(a.lastMessageAt || a.createdAt);
+                        const dateB = new Date(b.lastMessageAt || b.createdAt);
+                        return dateB - dateA;
+                    });
+                }
+
                 renderConversations();
 
                 // Check URL params for specific user to message
@@ -346,15 +382,18 @@
             } catch (error) {
                 console.error('Error loading conversations:', error);
                 document.getElementById('conversations-list').innerHTML =
-                    '<div class="p-8 text-center"><p class="text-red-500">Error loading conversations</p></div>';
+                    `<div class="p-8 text-center"><p class="text-red-500">Error: ${error.message || 'Failed to load conversations'}</p></div>`;
             }
         }
 
         async function startChatWithUser(userId) {
             try {
-                const response = await api.post('/chat/start', { participantId: userId });
+                // Fixed: backend expects 'userId', not 'participantId'
+                const response = await api.post('/chat/start', { userId });
                 if (response.chat) {
                     // Add to conversations if not exists
+                    if (!Array.isArray(conversations)) conversations = [];
+
                     const existingIndex = conversations.findIndex(c => c._id === response.chat._id);
                     if (existingIndex === -1) {
                         conversations.unshift(response.chat);
@@ -364,73 +403,98 @@
                 }
             } catch (error) {
                 console.error('Error starting chat:', error);
+                toast.error('Failed to start chat: ' + error.message);
             }
         }
 
         function renderConversations() {
             const container = document.getElementById('conversations-list');
+            const currentUser = auth.getUser();
 
-            // Count total unread
-            let totalUnread = 0;
-            conversations.forEach(chat => {
-                totalUnread += chat.unreadCount?.get?.(currentUser.id) || chat.unreadCount?.[currentUser.id] || 0;
-            });
-
-            const badge = document.getElementById('unread-badge');
-            if (totalUnread > 0) {
-                badge.textContent = totalUnread > 99 ? '99+' : totalUnread;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
+            if (!currentUser) {
+                container.innerHTML = '<div class="p-4 text-center text-red-500">Please login</div>';
+                return;
             }
 
-            if (conversations.length === 0) {
+            // Count total unread safely
+            let totalUnread = 0;
+            const currentUserId = currentUser._id || currentUser.id;
+
+            if (Array.isArray(conversations)) {
+                conversations.forEach(chat => {
+                    totalUnread += (chat.unreadCount || 0);
+                });
+            }
+
+            const badge = document.getElementById('unread-badge');
+            if (badge) {
+                if (totalUnread > 0) {
+                    badge.textContent = totalUnread > 99 ? '99+' : totalUnread;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
+
+            if (!Array.isArray(conversations) || conversations.length === 0) {
                 container.innerHTML = `
                     <div class="p-8 text-center">
-                        <div class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-10 h-10 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                             </svg>
                         </div>
-                        <h3 class="font-semibold text-gray-900 mb-1">No conversations yet</h3>
-                        <p class="text-gray-500 text-sm">Start a conversation by applying to a job or accepting an application</p>
+                        <h3 class="font-semibold text-gray-900 mb-1">No conversations</h3>
+                        <p class="text-gray-500 text-sm">Start chatting with freelancers or clients!</p>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = conversations.map(chat => {
-                const otherUser = chat.participants.find(p => p._id !== currentUser.id);
+                const otherUser = chat.participants ? chat.participants.find(p => p._id !== currentUserId) : null;
                 const lastMessage = chat.lastMessage;
-                const unread = chat.unreadCount?.get?.(currentUser.id) || chat.unreadCount?.[currentUser.id] || 0;
+                const unread = chat.unreadCount || 0;
                 const isActive = activeChat?._id === chat._id;
+
+                const otherUserName = otherUser ? otherUser.name : 'Unknown User';
+                const otherUserAvatar = otherUser ? otherUser.avatar : null;
+                const isOnline = otherUser ? otherUser.isOnline : false;
 
                 return `
                     <div 
-                        class="conversation-item p-4 cursor-pointer transition-all ${isActive ? 'active' : ''}"
-                        data-chat-id="${chat._id}"
-                        data-user-id="${otherUser?._id}"
+                        class="conversation-item p-3 mx-2 my-1 rounded-lg cursor-pointer transition-colors ${isActive ? 'bg-indigo-50' : 'hover:bg-gray-100'}"
                         onclick="openChat('${chat._id}')"
                     >
                         <div class="flex items-center gap-3">
                             <div class="relative flex-shrink-0">
-                                <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
-                                    ${otherUser?.name?.charAt(0)?.toUpperCase() || 'U'}
+                                <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold overflow-hidden">
+                                     ${otherUserAvatar
+                        ? `<img src="${otherUserAvatar}" class="w-full h-full object-cover">`
+                        : `<div class="w-full h-full flex items-center justify-center bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
+                                            ${utils.getInitials(otherUserName)}
+                                           </div>`
+                    }
                                 </div>
-                                <span class="status-dot absolute bottom-0 right-0 w-3 h-3 ${otherUser?.isOnline ? 'bg-green-500' : 'bg-gray-300'} border-2 border-white rounded-full"></span>
+                                ${isOnline ? `<span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></span>` : ''}
                             </div>
                             <div class="flex-1 min-w-0">
-                                <div class="flex items-center justify-between mb-0.5">
-                                    <p class="font-semibold text-gray-900 truncate">${otherUser?.name || 'Unknown User'}</p>
-                                    ${lastMessage ? `
-                                        <span class="text-xs text-gray-400 flex-shrink-0 ml-2">${formatTime(lastMessage.createdAt)}</span>
-                                    ` : ''}
-                                </div>
                                 <div class="flex items-center justify-between">
-                                    <p class="text-sm text-gray-500 truncate">${lastMessage?.content || 'No messages yet'}</p>
-                                    ${unread > 0 ? `
-                                        <span class="ml-2 flex-shrink-0 w-5 h-5 bg-indigo-600 text-white text-xs font-semibold rounded-full flex items-center justify-center">${unread}</span>
-                                    ` : ''}
+                                    <p class="font-semibold text-gray-900 truncate text-base ${unread > 0 ? 'text-black' : ''}">
+                                        ${otherUserName}
+                                    </p>
+                                    <span class="text-xs text-gray-500 whitespace-nowrap ml-1">
+                                        ${lastMessage ? formatTime(lastMessage.createdAt || new Date(), true) : ''}
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between mt-0.5">
+                                    <p class="text-sm truncate ${unread > 0 ? 'font-bold text-gray-900' : 'text-gray-500'}">
+                                        ${lastMessage
+                        ? (lastMessage.sender === currentUserId ? 'You: ' : '') +
+                        (lastMessage.type === 'file' ? '📎 Attachment' : (lastMessage.content || ''))
+                        : 'Start a conversation'}
+                                    </p>
+                                    ${unread > 0 ? `<span class="min-w-[1.25rem] h-5 px-1.5 bg-indigo-600 rounded-full flex items-center justify-center text-xs text-white font-medium">${unread}</span>` : ''}
                                 </div>
                             </div>
                         </div>
@@ -445,7 +509,9 @@
                 if (!chat) return;
 
                 activeChat = chat;
-                const otherUser = chat.participants.find(p => p._id !== currentUser.id);
+                const currentUserId = currentUser._id || currentUser.id;
+                // Safer ID comparison
+                const otherUser = chat.participants.find(p => (p._id || p) != currentUserId) || {};
 
                 // Update header UI
                 document.getElementById('chat-empty').classList.add('hidden');
@@ -498,9 +564,9 @@
 
             try {
                 const data = await api.get(`/chat/${chatId}/messages`);
-                const messages = data.messages || [];
+                const messages = data.data || []; // Backend returns 'data' via paginationResponse
                 renderMessages(messages);
-                scrollToBottom();
+                scrollToBottom('auto'); // Instant scroll on load
             } catch (error) {
                 console.error('Error loading messages:', error);
                 container.innerHTML = '<div class="text-center py-8"><p class="text-red-500">Error loading messages</p></div>';
@@ -525,18 +591,25 @@
             }
 
             container.innerHTML = messages.map(msg => {
-                const isOwn = msg.sender._id === currentUser.id || msg.sender === currentUser.id;
+                const currentUserId = currentUser._id || currentUser.id;
+                const isOwn = msg.sender._id === currentUserId || msg.sender === currentUserId;
                 return createMessageHTML(msg, isOwn);
             }).join('');
         }
-
         function createMessageHTML(msg, isOwn) {
             const time = formatTime(msg.createdAt);
             return `
-                <div class="flex ${isOwn ? 'justify-end' : 'justify-start'}">
-                    <div class="message-bubble ${isOwn ? 'message-own text-white' : 'message-other text-gray-800'} px-4 py-3 rounded-2xl ${isOwn ? 'rounded-br-md' : 'rounded-bl-md'} shadow-sm">
-                        <p class="text-sm leading-relaxed">${escapeHtml(msg.content)}</p>
-                        <p class="text-xs ${isOwn ? 'text-white/70' : 'text-gray-400'} mt-1 text-right">${time}</p>
+                <div class="message-item flex ${isOwn ? 'justify-end' : 'justify-start'} mb-1" data-message-id="${msg._id}">
+                    <div class="max-w-[75%] relative group">
+                        <div class="px-4 py-2 text-[15px] ${isOwn
+                    ? 'bg-blue-600 text-white rounded-[18px] rounded-br-[4px]'
+                    : 'bg-gray-200 text-gray-900 rounded-[18px] rounded-bl-[4px]'
+                } break-words leading-snug">
+                            ${escapeHtml(msg.content)}
+                        </div>
+                        <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute ${isOwn ? 'right-0 -bottom-5' : 'left-0 -bottom-5'} text-[11px] text-gray-400 whitespace-nowrap z-10 px-1">
+                            ${time}
+                        </div>
                     </div>
                 </div>
             `;
@@ -550,22 +623,34 @@
 
         function appendMessage(msg, isOwn) {
             const container = document.getElementById('messages-container');
+
+            // Prevent duplicates
+            if (msg._id && container.querySelector(`[data-message-id="${msg._id}"]`)) {
+                return;
+            }
+
             const emptyMessage = container.querySelector('.text-center');
-            if (emptyMessage) emptyMessage.remove();
+            if (emptyMessage && !emptyMessage.querySelector('.animate-spin')) emptyMessage.remove();
 
             container.insertAdjacentHTML('beforeend', createMessageHTML(msg, isOwn));
+            scrollToBottom('smooth'); // Smooth scroll for new messages
         }
 
-        function scrollToBottom() {
+        function scrollToBottom(behavior = 'smooth') {
             const container = document.getElementById('messages-container');
+            // Use setTimeout to ensure DOM is updated
             setTimeout(() => {
-                container.scrollTop = container.scrollHeight;
-            }, 100);
+                container.scrollTo({
+                    top: container.scrollHeight,
+                    behavior: behavior
+                });
+            }, 50);
         }
 
         function formatTime(dateString) {
             if (!dateString) return '';
             const date = new Date(dateString);
+            if (isNaN(date.getTime())) return ''; // Handle invalid dates
             const now = new Date();
             const diff = now - date;
 
@@ -613,16 +698,9 @@
                 const message = response.message || response;
 
                 // Append to UI immediately
-                appendMessage({ ...message, sender: { _id: currentUser.id } }, true);
+                const currentUserId = currentUser._id || currentUser.id;
+                appendMessage({ ...message, sender: { _id: currentUserId } }, true);
                 scrollToBottom();
-
-                // Emit via socket for real-time delivery to other user
-                if (socket) {
-                    socket.emit('message:send', {
-                        chatId: activeChat._id,
-                        content
-                    });
-                }
 
                 // Update conversation preview
                 updateConversationPreview(activeChat._id, message);

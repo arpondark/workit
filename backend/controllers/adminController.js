@@ -25,7 +25,9 @@ exports.getDashboardStats = async (req, res) => {
             completedJobs,
             totalApplications,
             totalTransactions,
-            suspendedUsers
+            suspendedUsers,
+            totalQuizAttempts,
+            totalPassedQuizzes
         ] = await Promise.all([
             User.countDocuments({ role: { $ne: 'admin' } }),
             User.countDocuments({ role: 'freelancer' }),
@@ -35,7 +37,9 @@ exports.getDashboardStats = async (req, res) => {
             Job.countDocuments({ status: 'completed' }),
             Application.countDocuments(),
             Transaction.countDocuments({ type: 'payment', status: 'completed' }),
-            User.countDocuments({ isSuspended: true })
+            User.countDocuments({ isSuspended: true }),
+            QuizAttempt.countDocuments(),
+            QuizAttempt.countDocuments({ passed: true })
         ]);
 
         // Total revenue (commission)
@@ -44,6 +48,11 @@ exports.getDashboardStats = async (req, res) => {
             { $group: { _id: null, total: { $sum: '$amount' } } }
         ]);
         const totalRevenue = revenueResult[0]?.total || 0;
+
+        // Calculate pass rate
+        const quizPassRate = totalQuizAttempts > 0
+            ? Math.round((totalPassedQuizzes / totalQuizAttempts) * 100)
+            : 0;
 
         // Recent activity
         const recentJobs = await Job.find()
@@ -69,7 +78,9 @@ exports.getDashboardStats = async (req, res) => {
                     completedJobs,
                     totalApplications,
                     totalRevenue,
-                    suspendedUsers
+                    suspendedUsers,
+                    totalQuizAttempts,
+                    quizPassRate
                 },
                 recentJobs,
                 recentUsers

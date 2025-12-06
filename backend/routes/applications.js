@@ -22,7 +22,11 @@ router.post('/:jobId', protect, authorize('freelancer'), applyForJob);
 // @route   GET /api/applications/freelancer/my-applications
 // @desc    Get all applications by current freelancer
 // @access  Private (Freelancer)
+// @route   GET /api/applications/freelancer/my-applications
+// @desc    Get all applications by current freelancer
+// @access  Private (Freelancer)
 router.get('/freelancer/my-applications', protect, authorize('freelancer'), getMyApplications);
+router.get('/my', protect, authorize('freelancer'), getMyApplications);
 
 // @route   GET /api/applications/:id
 // @desc    Get single application
