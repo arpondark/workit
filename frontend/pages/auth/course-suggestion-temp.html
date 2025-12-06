@@ -154,36 +154,3 @@
         </div>
     </div>
 
-    <script src="../../js/utils.js"></script>
-    <script>
-        async function loadResources() {
-            const skillName = sessionStorage.getItem('failedSkillName') || 'Web Development';
-            const score = sessionStorage.getItem('failedScore') || '5';
-            document.getElementById('skill-name').textContent = skillName;
-            document.getElementById('user-score').textContent = score;
-
-            try {
-                const response = await fetch('/api/admin/learning-resources');
-                const data = await response.json();
-                
-                if (data.success && data.resources && data.resources.length > 0) {
-                    document.getElementById('learning-resources').innerHTML = data.resources.map(r => `
-                        <a href="${r.url}" target="_blank" class="block p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl hover:shadow-lg transition group border border-indigo-100">
-                            <div class="flex items-start justify-between mb-3">
-                                <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">${r.category}</span>
-                            </div>
-                            <h3 class="font-semibold text-gray-900 group-hover:text-indigo-600 transition text-lg mb-2">${r.title}</h3>
-                            ${r.description ? `<p class="text-sm text-gray-600">${r.description}</p>` : ''}
-                        </a>
-                    `).join('');
-                } else {
-                    document.getElementById('learning-resources').innerHTML = '<div class="text-center py-12 col-span-full text-gray-500"><p>No learning resources available yet</p></div>';
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-        document.addEventListener('DOMContentLoaded', loadResources);
-    </script>
-</body>
-</html>

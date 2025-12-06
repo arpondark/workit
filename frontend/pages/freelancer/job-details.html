@@ -579,7 +579,19 @@
                     window.location.href = 'my-applications.html';
                 }, 1500);
             } catch (error) {
-                toast.error(error.message || 'Failed to submit application');
+                if (error.data && error.data.requireSkillTest) {
+                    modal.show({
+                        title: 'Skill Verification Required',
+                        content: `<p class="mb-4">${error.message}</p><p class="text-sm text-gray-500">Passing this test will verify your expertise and allow you to apply for this job.</p>`,
+                        confirmText: 'Take Skill Test',
+                        cancelText: 'Later',
+                        onConfirm: () => {
+                            window.location.href = `/pages/auth/quiz.html?skill=${error.data.skillId}`;
+                        }
+                    });
+                } else {
+                    toast.error(error.message || 'Failed to submit application');
+                }
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit Application';

@@ -44,7 +44,9 @@ exports.applyForJob = async (req, res) => {
         if (!hasSkill) {
             return res.status(403).json({
                 success: false,
-                message: `You must pass the ${job.skill.name} skill test before applying for this job.`
+                message: `You must pass the ${job.skill.name} skill test before applying for this job.`,
+                requireSkillTest: true,
+                skillId: job.skill._id
             });
         }
 

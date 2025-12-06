@@ -401,19 +401,19 @@
             try {
                 const attachments = link ? [{ name: 'Project Link', url: link }] : [];
 
-                showLoading(true);
+                loading.show('Submitting work...');
                 const response = await api.post(`/jobs/${jobId}/submit`, {
                     description,
                     attachments
                 });
-                showLoading(false);
+                loading.hide();
 
-                showToast('Work submitted successfully!', 'success');
+                toast.success('Work submitted successfully!');
                 closeSubmitModal();
                 loadActiveJobs(); // Refresh list
             } catch (error) {
-                showLoading(false);
-                showToast(error.message, 'error');
+                loading.hide();
+                toast.error(error.message);
             }
         });
 
