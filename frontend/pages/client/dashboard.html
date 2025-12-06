@@ -445,7 +445,7 @@
 
                 for (const job of jobs.slice(0, 3)) {
                     try {
-                        const appsData = await api.get(`/applications/job/${job._id}`);
+                        const appsData = await api.get(`/jobs/${job._id}/applications`);
                         const apps = (appsData.applications || []).map(app => ({ ...app, jobTitle: job.title }));
                         allApplications = [...allApplications, ...apps];
                         pendingCount += apps.filter(a => a.status === 'pending').length;

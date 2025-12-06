@@ -175,7 +175,7 @@ exports.updateJob = async (req, res) => {
 
         const allowedUpdates = [
             'title', 'description', 'budget', 'duration',
-            'experienceLevel', 'requirements', 'deadline', 'isActive'
+            'experienceLevel', 'requirements', 'deadline', 'isActive', 'status'
         ];
 
         const updates = {};
@@ -228,10 +228,12 @@ exports.deleteJob = async (req, res) => {
             });
         }
 
-        // Soft delete - just mark as inactive
-        job.isActive = false;
-        job.status = 'cancelled';
-        await job.save();
+        // Hard delete - actually remove the job from database
+        await Job.findByIdAndDelete(req.params.id);
+
+        // Also delete associated applications
+        const Application = require('../models/Application');
+        await Application.deleteMany({ job: req.params.id });
 
         // Decrement job count for skill
         await Skill.findByIdAndUpdate(job.skill, {
@@ -240,7 +242,7 @@ exports.deleteJob = async (req, res) => {
 
         res.json({
             success: true,
-            message: 'Job deleted successfully'
+            message: 'Job deleted permanently'
         });
     } catch (error) {
         res.status(500).json({

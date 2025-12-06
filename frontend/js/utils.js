@@ -6,7 +6,7 @@ const SOCKET_URL = 'http://localhost:5000';
 const api = {
     async request(endpoint, options = {}) {
         const token = localStorage.getItem('token');
-        
+
         const defaultHeaders = {
             'Content-Type': 'application/json'
         };
@@ -110,7 +110,7 @@ const auth = {
 
     requireAuth(allowedRoles = []) {
         const user = this.getUser();
-        
+
         if (!this.isLoggedIn() || !user) {
             window.location.href = '/pages/auth/login.html';
             return false;
@@ -142,7 +142,7 @@ const toast = {
 
         const toastEl = document.createElement('div');
         toastEl.className = `toast ${type}`;
-        
+
         const icons = {
             success: '✓',
             error: '✕',
@@ -210,7 +210,7 @@ const modal = {
 
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
-        
+
         overlay.innerHTML = `
             <div class="modal">
                 <div class="modal-header">
@@ -274,7 +274,7 @@ const modal = {
     alert(title, message) {
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
-        
+
         overlay.innerHTML = `
             <div class="modal">
                 <div class="modal-header">
@@ -345,7 +345,7 @@ const utils = {
 
     timeAgo(date) {
         const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-        
+
         const intervals = {
             year: 31536000,
             month: 2592000,
@@ -363,6 +363,11 @@ const utils = {
         }
 
         return 'Just now';
+    },
+
+    capitalize(str) {
+        if (!str) return '';
+        return str.charAt(0).toUpperCase() + str.slice(1).replace(/-/g, ' ');
     },
 
     truncate(text, length = 100) {
