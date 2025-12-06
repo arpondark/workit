@@ -305,6 +305,7 @@
 
         let currentPage = 1;
         let totalPages = 1;
+        let appliedJobs = {}; // Track applied jobs with their status
 
         // Load skills for filter
         async function loadSkills() {
@@ -335,6 +336,20 @@
             pagination.classList.add('hidden');
 
             try {
+                // First, load user's applications to check which jobs they've applied to
+                try {
+                    const appsData = await api.get('/applications/freelancer/my-applications?limit=100');
+                    const applications = appsData.data || [];
+                    appliedJobs = {};
+                    applications.forEach(app => {
+                        if (app.job?._id) {
+                            appliedJobs[app.job._id] = app.status;
+                        }
+                    });
+                } catch (err) {
+                    console.log('Could not load applications');
+                }
+
                 const search = document.getElementById('search-input').value;
                 const skill = document.getElementById('skill-filter').value;
                 const budget = document.getElementById('budget-filter').value;
@@ -393,43 +408,135 @@
 
         function createJobCard(job) {
             const budgetText = job.budget?.type === 'fixed'
-                ? `$${job.budget.min} Fixed`
-                : `$${job.budget?.min || 0} - $${job.budget?.max || 0}/hr`;
+                ? `$${job.budget.min?.toLocaleString()}`
+                : `$${job.budget?.min?.toLocaleString() || 0} - $${job.budget?.max?.toLocaleString() || 0}`;
+
+            const budgetLabel = job.budget?.type === 'fixed' ? 'Fixed Price' : 'Hourly Rate';
+            const experienceColors = {
+                'entry': 'bg-emerald-100 text-emerald-700',
+                'intermediate': 'bg-blue-100 text-blue-700',
+                'expert': 'bg-purple-100 text-purple-700'
+            };
+            const expColor = experienceColors[job.experienceLevel] || 'bg-gray-100 text-gray-700';
+            const expLabel = job.experienceLevel ? job.experienceLevel.charAt(0).toUpperCase() + job.experienceLevel.slice(1) : 'Any Level';
+
+            // Check if user already applied to this job
+            const applicationStatus = appliedJobs[job._id];
+            const hasApplied = !!applicationStatus;
+
+            // Determine button/badge based on application status
+            let actionButton;
+            if (hasApplied) {
+                const statusColors = {
+                    'pending': 'bg-yellow-100 text-yellow-700 border-yellow-200',
+                    'accepted': 'bg-green-100 text-green-700 border-green-200',
+                    'rejected': 'bg-red-100 text-red-700 border-red-200',
+                    'shortlisted': 'bg-blue-100 text-blue-700 border-blue-200'
+                };
+                const statusClass = statusColors[applicationStatus] || 'bg-gray-100 text-gray-700 border-gray-200';
+                const statusText = applicationStatus.charAt(0).toUpperCase() + applicationStatus.slice(1);
+                actionButton = `
+                    <span class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold border ${statusClass}">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Applied • ${statusText}
+                    </span>
+                `;
+            } else {
+                actionButton = `
+                    <button 
+                        class="apply-btn inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 hover:shadow-lg hover:shadow-indigo-200 transition-all duration-300 transform hover:-translate-y-0.5"
+                        data-job-id="${job._id}"
+                        data-job-title="${job.title}"
+                        data-job-budget="${budgetText}"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        Apply Now
+                    </button>
+                `;
+            }
 
             return `
-                <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition">
-                    <div class="flex items-start justify-between gap-4">
-                        <div class="flex-1">
-                            <a href="job-details.html?id=${job._id}" class="text-lg font-semibold text-gray-900 hover:text-indigo-600 cursor-pointer">${job.title}</a>
-                            <p class="text-gray-500 text-sm mt-1">${job.client?.name || 'Anonymous'} • Posted ${utils.timeAgo(job.createdAt)}</p>
+                <div class="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:border-indigo-100 transition-all duration-300">
+                    <!-- Top gradient accent -->
+                    <div class="h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+                    
+                    <div class="p-6">
+                        <!-- Header -->
+                        <div class="flex items-start justify-between gap-4 mb-4">
+                            <div class="flex-1 min-w-0">
+                                <a href="job-details.html?id=${job._id}" 
+                                   class="block text-xl font-bold text-gray-900 hover:text-indigo-600 transition-colors truncate group-hover:text-indigo-600">
+                                    ${job.title}
+                                </a>
+                                <div class="flex items-center gap-2 mt-2">
+                                    <div class="w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-medium">
+                                        ${job.client?.name?.charAt(0) || 'C'}
+                                    </div>
+                                    <span class="text-sm text-gray-600">${job.client?.name || 'Anonymous'}</span>
+                                    <span class="text-gray-300">•</span>
+                                    <span class="text-sm text-gray-500">${utils.timeAgo(job.createdAt)}</span>
+                                </div>
+                            </div>
+                            <div class="text-right flex-shrink-0">
+                                <div class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                                    ${budgetText}
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1">${budgetLabel}</div>
+                            </div>
                         </div>
-                        <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
-                            ${budgetText}
-                        </span>
-                    </div>
-                    
-                    <p class="text-gray-600 mt-4 line-clamp-3">${job.description}</p>
-                    
-                    <div class="flex flex-wrap gap-2 mt-4">
-                        ${job.skill ? `
-                            <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm">${job.skill.name || job.skill}</span>
-                        ` : ''}
-                    </div>
-                    
-                    <div class="flex items-center justify-between mt-6 pt-4 border-t">
-                        <div class="flex items-center gap-4 text-sm text-gray-500">
-                            <span>${job.applicationsCount || 0} applications</span>
-                            <span>•</span>
-                            <span>${job.budget?.type === 'fixed' ? 'Fixed Price' : 'Hourly'}</span>
+                        
+                        <!-- Description -->
+                        <p class="text-gray-600 text-sm leading-relaxed line-clamp-2 mb-4">${job.description}</p>
+                        
+                        <!-- Tags -->
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            ${job.skill ? `
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-medium">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
+                                    ${job.skill.name || job.skill}
+                                </span>
+                            ` : ''}
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 ${expColor} rounded-lg text-sm font-medium">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                                </svg>
+                                ${expLabel}
+                            </span>
+                            ${job.duration ? `
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-700 rounded-lg text-sm font-medium">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    ${job.duration}
+                                </span>
+                            ` : ''}
                         </div>
-                        <button 
-                            class="apply-btn bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition"
-                            data-job-id="${job._id}"
-                            data-job-title="${job.title}"
-                            data-job-budget="${budgetText}"
-                        >
-                            Apply Now
-                        </button>
+                        
+                        <!-- Footer -->
+                        <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                            <div class="flex items-center gap-5 text-sm text-gray-500">
+                                <span class="flex items-center gap-1.5">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    <span class="font-medium">${job.applicationsCount || 0}</span> applied
+                                </span>
+                                <span class="flex items-center gap-1.5">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                    <span class="font-medium">${job.views || 0}</span> views
+                                </span>
+                            </div>
+                            ${actionButton}
+                        </div>
                     </div>
                 </div>
             `;

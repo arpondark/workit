@@ -283,11 +283,17 @@
                                 </div>
                             </div>
 
-                            <!-- Apply Button -->
-                            <button id="apply-btn"
-                                class="w-full bg-indigo-600 text-white py-4 rounded-xl font-semibold text-lg hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
-                                Apply Now
-                            </button>
+                            <!-- Apply Button / Already Applied Status -->
+                            <div id="apply-btn-container">
+                                <button id="apply-btn"
+                                    class="w-full bg-indigo-600 text-white py-4 rounded-xl font-semibold text-lg hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
+                                    Apply Now
+                                </button>
+                            </div>
+                            <div id="already-applied-container" class="hidden">
+                                <div id="already-applied-badge"
+                                    class="w-full py-4 rounded-xl font-semibold text-lg text-center border"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -384,6 +390,7 @@
         document.getElementById('logout-btn').addEventListener('click', () => auth.logout());
 
         let jobData = null;
+        let userApplication = null; // Track if user already applied
 
         // Load job details
         async function loadJobDetails() {
@@ -398,6 +405,16 @@
             try {
                 const response = await api.get(`/jobs/${jobId}`);
                 jobData = response.job;
+
+                // Check if user already applied to this job
+                try {
+                    const appsData = await api.get('/applications/freelancer/my-applications?limit=100');
+                    const applications = appsData.data || [];
+                    userApplication = applications.find(app => app.job?._id === jobId);
+                } catch (err) {
+                    console.log('Could not check application status');
+                }
+
                 renderJobDetails(jobData);
             } catch (error) {
                 console.error('Error loading job:', error);
@@ -468,7 +485,31 @@
 
             // Hide apply button if job is not open
             if (job.status !== 'open') {
-                document.getElementById('apply-btn').classList.add('hidden');
+                document.getElementById('apply-btn-container').classList.add('hidden');
+            }
+
+            // Check if user already applied
+            if (userApplication) {
+                document.getElementById('apply-btn-container').classList.add('hidden');
+                document.getElementById('already-applied-container').classList.remove('hidden');
+
+                const statusColors = {
+                    'pending': 'bg-yellow-100 text-yellow-700 border-yellow-200',
+                    'accepted': 'bg-green-100 text-green-700 border-green-200',
+                    'rejected': 'bg-red-100 text-red-700 border-red-200',
+                    'shortlisted': 'bg-blue-100 text-blue-700 border-blue-200'
+                };
+                const statusClass = statusColors[userApplication.status] || 'bg-gray-100 text-gray-700 border-gray-200';
+                const statusText = userApplication.status.charAt(0).toUpperCase() + userApplication.status.slice(1);
+
+                const badge = document.getElementById('already-applied-badge');
+                badge.className = `w-full py-4 rounded-xl font-semibold text-lg text-center border flex items-center justify-center gap-2 ${statusClass}`;
+                badge.innerHTML = `
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Already Applied \u2022 ${statusText}
+                `;
             }
         }
 

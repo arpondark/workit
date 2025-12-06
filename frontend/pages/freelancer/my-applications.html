@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +20,7 @@
         }
     </script>
 </head>
+
 <body class="min-h-screen bg-gray-50">
     <!-- Navigation -->
     <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
@@ -38,7 +40,9 @@
                     <span class="text-gray-700" id="user-name">Loading...</span>
                     <button onclick="handleLogout()" class="text-gray-600 hover:text-red-600 transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                            </path>
                         </svg>
                     </button>
                 </div>
@@ -60,7 +64,9 @@
                 <div class="flex items-center">
                     <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
                         <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
                         </svg>
                     </div>
                     <div>
@@ -73,7 +79,8 @@
                 <div class="flex items-center">
                     <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
                         <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
                     <div>
@@ -86,7 +93,8 @@
                 <div class="flex items-center">
                     <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
                         <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
                     <div>
@@ -99,7 +107,8 @@
                 <div class="flex items-center">
                     <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
                         <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
                     <div>
@@ -113,19 +122,22 @@
         <!-- Filters -->
         <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-200 mb-6">
             <div class="flex flex-wrap gap-4">
-                <select id="status-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                <select id="status-filter"
+                    class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
                     <option value="">All Status</option>
                     <option value="pending">Pending</option>
                     <option value="accepted">Accepted</option>
                     <option value="rejected">Rejected</option>
                 </select>
-                <select id="sort-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                <select id="sort-filter"
+                    class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
                     <option value="-createdAt">Newest First</option>
                     <option value="createdAt">Oldest First</option>
                     <option value="-proposedBudget">Highest Budget</option>
                     <option value="proposedBudget">Lowest Budget</option>
                 </select>
-                <button onclick="loadApplications()" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                <button onclick="loadApplications()"
+                    class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
                     Apply Filter
                 </button>
             </div>
@@ -177,9 +189,10 @@
 
             try {
                 const data = await api.get(`/applications/freelancer/my-applications?${params}`);
-                renderApplications(data.applications || []);
-                renderPagination(data.pages || 1);
-                updateStats(data.applications || []);
+                const applications = data.data || [];
+                renderApplications(applications);
+                renderPagination(data.pagination?.totalPages || 1);
+                updateStats(applications);
             } catch (error) {
                 console.error('Error loading applications:', error);
                 document.getElementById('applications-container').innerHTML = `
@@ -351,4 +364,5 @@
         loadApplications();
     </script>
 </body>
+
 </html>
