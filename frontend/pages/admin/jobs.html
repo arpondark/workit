@@ -280,7 +280,7 @@
     <script>
         // Check admin auth
         if (!auth.isLoggedIn() || auth.getUser().role !== 'admin') {
-            window.location.href = 'login.html';
+            window.location.href = '../auth/login.html';
         }
 
         let currentPage = 1;
@@ -303,7 +303,7 @@
         // Logout
         function handleLogout() {
             auth.logout();
-            window.location.href = 'login.html';
+            window.location.href = '../auth/login.html';
         }
 
         // Load Jobs

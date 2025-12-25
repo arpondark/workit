@@ -262,6 +262,11 @@
             document.getElementById('sidebar-overlay').classList.add('hidden');
         }
 
+        // Check admin auth
+        if (!auth.isLoggedIn() || auth.getUser().role !== 'admin') {
+            window.location.href = '../auth/login.html';
+        }
+
         // Logout
         function handleLogout() {
             auth.logout();
