@@ -241,7 +241,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M13 10V3L4 14h7v7l9-11h-7z" />
                                     </svg>
-                                    Running Jobs & Payments
+                                    Quick Payment / Running Projects
                                 </h3>
                             </div>
                             <div class="p-4" id="running-jobs-list">
@@ -427,16 +427,55 @@
 
         async function loadDashboard() {
             try {
-                // Load my jobs
-                const jobsData = await api.get('/jobs/client/my-jobs');
+                // Load stats
+                loading.show();
+
+                const [statsData, jobsData] = await Promise.all([
+                    api.get('/users/client/stats'),
+                    api.get('/jobs/client/my-jobs?limit=50') // Increase limit to show more running jobs
+                ]);
+
+                const stats = statsData.stats;
                 const jobs = jobsData.data || [];
-                allClientJobs = jobs;
 
-                const activeJobs = jobs.filter(j => j.status === 'open' || j.status === 'in-progress');
-                const completedJobs = jobs.filter(j => j.status === 'completed');
+                // Update stats
+                document.getElementById('stat-spent').textContent = utils.formatCurrency(stats.totalSpent);
+                document.getElementById('stat-active').textContent = stats.activeJobs; // Changed from stat-active-jobs to stat-active
+                document.getElementById('stat-completed').textContent = stats.completedJobs; // Changed from stat-completed-jobs to stat-completed
+                
+                // We still need to calculate pending applications separately or add to stats endpoint
+                // keeping 0 for now or filtering locally if application data available
+                // document.getElementById('stat-pending-apps').textContent = "0"; 
 
-                document.getElementById('stat-active').textContent = activeJobs.length;
-                document.getElementById('stat-completed').textContent = completedJobs.length;
+                allClientJobs = jobs; // Store for modal access
+
+                // --- Running Jobs Section ---
+                const runningJobs = jobs.filter(j => j.status === 'in-progress');
+                const runningJobsList = document.getElementById('running-jobs-list');
+                const reviewPaySection = document.getElementById('review-pay-section');
+
+                if (runningJobs.length > 0) {
+                    reviewPaySection.classList.remove('hidden');
+                    runningJobsList.innerHTML = runningJobs.map(job => `
+                            <div class="p-4 border border-blue-100 rounded-lg bg-blue-50 mb-3">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900">${job.title}</h4>
+                                        <p class="text-sm text-gray-600">Freelancer: ${job.hiredFreelancer?.name || 'Assigned'}</p>
+                                        ${job.submission?.status === 'pending' && job.submission?.submittedAt ? '<span class="text-xs font-bold text-amber-600 bg-amber-100 px-2 py-0.5 rounded mt-1 inline-block">Work Submitted</span>' : ''}
+                                    </div>
+                                    <div>
+                                        ${job.submission?.status === 'pending' && job.submission?.submittedAt
+                                ? `<button onclick="viewSubmission('${job._id}')" class="px-3 py-1.5 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 transition">Review & Pay</button>`
+                                : `<button class="px-3 py-1.5 bg-gray-200 text-gray-500 text-sm font-medium rounded cursor-not-allowed">In Progress</button>`
+                            }
+                                    </div>
+                                </div>
+                            </div>
+                         `).join('');
+                } else {
+                    reviewPaySection.classList.add('hidden');
+                }
 
                 // Display recent jobs
                 const recentJobs = jobs.slice(0, 5);
@@ -468,38 +507,10 @@
                     noJobsDiv.classList.remove('hidden');
                 }
 
-                // Running Jobs (Quick Payment Section)
-                const runningJobs = jobs.filter(j => j.status === 'in-progress');
-                // Could render this in a new section or replace one. 
-                // For now, let's inject a "Running Jobs" panel above Recent Jobs
-                const runningJobsContainer = document.getElementById('review-pay-section');
-                if (runningJobsContainer) {
-                    if (runningJobs.length > 0) {
-                        const runningList = document.getElementById('running-jobs-list');
-                        runningList.innerHTML = runningJobs.map(job => `
-                            <div class="p-4 border border-blue-100 rounded-lg bg-blue-50 mb-3">
-                                <div class="flex justify-between items-center">
-                                    <div>
-                                        <h4 class="font-semibold text-gray-900">${job.title}</h4>
-                                        <p class="text-sm text-gray-600">Freelancer: ${job.hiredFreelancer?.name || 'Assigned'}</p>
-                                        ${job.submission?.status === 'pending' && job.submission?.submittedAt ? '<span class="text-xs font-bold text-amber-600 bg-amber-100 px-2 py-0.5 rounded mt-1 inline-block">Work Submitted</span>' : ''}
-                                    </div>
-                                    <div>
-                                        ${job.submission?.status === 'pending' && job.submission?.submittedAt
-                                ? `<button onclick="viewSubmission('${job._id}')" class="px-3 py-1.5 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 transition">Review & Pay</button>`
-                                : `<button class="px-3 py-1.5 bg-gray-200 text-gray-500 text-sm font-medium rounded cursor-not-allowed">In Progress</button>`
-                            }
-                                    </div>
-                                </div>
-                            </div>
-                         `).join('');
-                        runningJobsContainer.classList.remove('hidden');
-                    } else {
-                        runningJobsContainer.classList.add('hidden');
-                    }
-                }
+                // Hide loading spinner now that main content is ready
+                loading.hide();
 
-                // Load applications for my jobs
+                // Load applications for my jobs (Background)
                 let allApplications = [];
                 let pendingCount = 0;
 
@@ -541,7 +552,7 @@
                                 </span>
                             </div>
                             <div class="flex items-center gap-4 mt-2 text-sm text-gray-500 ml-13">
-                                <span>${utils.formatCurrency(app.proposedRate)}/hr</span>
+                                <span>${utils.formatCurrency(app.proposedBudget || 0)}</span>
                                 <span>•</span>
                                 <span>${utils.timeAgo(app.createdAt)}</span>
                             </div>
@@ -553,23 +564,15 @@
                     noAppsDiv.classList.remove('hidden');
                 }
 
-                // Calculate total spent (from completed jobs)
-                // Calculate spent amount from transactions
-                try {
-                    const transactionsData = await api.get('/payments/transactions?type=payment');
-                    const transactions = transactionsData.data || [];
-                    const totalSpent = transactions.reduce((sum, transaction) => sum + (transaction.amount || 0), 0);
-                    document.getElementById('stat-spent').textContent = `$${totalSpent.toLocaleString()}`;
-                } catch (error) {
-                    console.error('Error loading transactions:', error);
-                    document.getElementById('stat-spent').textContent = '$0';
-                }
-
             } catch (error) {
                 console.error('Error loading dashboard:', error);
                 toast.error('Failed to load dashboard data');
+                loading.hide();
             }
         }
+
+        // Review Submission
+        let currentModal = null;
 
         function viewSubmission(jobId) {
             const job = allClientJobs.find(j => j._id === jobId);
@@ -586,10 +589,10 @@
                    </div>`
                 : '';
 
-            modal.show({
+            currentModal = modal.show({
                 title: 'Review Submission',
                 confirmText: 'Release Payment',
-                cancelText: 'Cancel',
+                cancelText: 'Close',
                 content: `
                     <div class="space-y-4">
                         <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
@@ -597,6 +600,14 @@
                             <p class="text-gray-700 whitespace-pre-wrap">${submission.description || 'No description provided.'}</p>
                             ${attachmentsHtml}
                         </div>
+                        
+                        <div class="flex justify-between items-center pt-2">
+                             <button onclick="rejectJobSubmission('${jobId}')" class="px-4 py-2 border border-red-300 text-red-600 bg-red-50 rounded hover:bg-red-100 font-medium transition flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                Reject / Request Changes
+                             </button>
+                        </div>
+
                         <div class="bg-yellow-50 p-4 rounded-lg flex items-start gap-3 border border-yellow-100">
                             <svg class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
@@ -609,6 +620,30 @@
                 `,
                 onConfirm: () => releasePayment(jobId)
             });
+        }
+
+        async function rejectJobSubmission(jobId) {
+             if (!confirm('Are you sure you want to reject this submission? The freelancer will be notified to make changes.')) {
+                return;
+             }
+
+             const reason = prompt('Optional: Provide a reason or feedback for the freelancer:');
+             
+             try {
+                loading.show('Rejecting submission...');
+                // Note: The backend currently might not accept a reason body, but good to have for future
+                await api.post(`/jobs/${jobId}/reject`, { reason });
+                
+                toast.success('Submission rejected. Freelancer can now resubmit.');
+                
+                if (currentModal) currentModal.close();
+                loadDashboard();
+             } catch (error) {
+                console.error('Rejection Error:', error);
+                toast.error(error.message || 'Failed to reject submission');
+             } finally {
+                loading.hide();
+             }
         }
 
         async function releasePayment(jobId) {

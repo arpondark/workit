@@ -9,7 +9,8 @@ const {
     getStats,
     getProfile,
     updateProfile,
-    changePassword
+    changePassword,
+    getClientDashboardStats
 } = require('../controllers/usersController');
 const multer = require('multer');
 const { storage } = require('../config/cloudinary');
@@ -19,6 +20,11 @@ const upload = multer({ storage });
 // @desc    Get current user profile
 // @access  Private
 router.get('/profile', protect, getProfile);
+
+// @route   GET /api/users/client/stats
+// @desc    Get client dashboard stats
+// @access  Private
+router.get('/client/stats', protect, getClientDashboardStats);
 
 // @route   PUT /api/users/profile
 // @desc    Update user profile

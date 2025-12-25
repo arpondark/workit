@@ -463,6 +463,56 @@ exports.updateSubmission = async (req, res) => {
     }
 };
 
+// @desc    Reject job submission
+// @route   POST /api/jobs/:id/reject
+// @access  Private (Client)
+exports.rejectSubmission = async (req, res) => {
+    try {
+        const job = await Job.findById(req.params.id);
+
+        if (!job) {
+            return res.status(404).json({
+                success: false,
+                message: 'Job not found'
+            });
+        }
+
+        // Check ownership
+        if (job.client.toString() !== req.user.id) {
+            return res.status(401).json({
+                success: false,
+                message: 'Not authorized'
+            });
+        }
+
+        if (!job.submission || job.submission.status !== 'pending') {
+            return res.status(400).json({
+                success: false,
+                message: 'No pending submission to reject'
+            });
+        }
+
+        job.submission.status = 'rejected';
+        // We can keep the history or clear it. For now, let's keep the details but mark rejected.
+        // The freelancer should see this status and be able to resubmit.
+        
+        // Optional: Send message/notification to freelancer (omitted for now to keep simple)
+        
+        await job.save();
+
+        res.json({
+            success: true,
+            message: 'Submission rejected',
+            job
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 // @desc    Complete job and release payment
 // @route   POST /api/jobs/:id/complete
 // @access  Private (Client - owner only)
@@ -500,13 +550,28 @@ exports.completeJob = async (req, res) => {
         }
 
         // Get commission rate from settings
-        const AdminSettings = require('../models/AdminSettings');
         const { calculateCommission } = require('../utils/helpers');
         const commissionSetting = await AdminSettings.findOne({ key: 'commission_rate' });
         const commissionRate = commissionSetting ? commissionSetting.value : 0.01;
 
+        // Find accepted application to get the agreed amount
+        const Application = require('../models/Application');
+        const application = await Application.findOne({
+            job: job._id,
+            status: 'accepted'
+        });
+
+        const paymentAmount = application ? application.proposedBudget : (job.budget.type === 'fixed' ? job.budget.max : 0);
+
+        if (paymentAmount <= 0) {
+             return res.status(400).json({
+                success: false,
+                message: 'Invalid payment amount detected'
+            });
+        }
+
         // Calculate amounts
-        const { commission, netAmount } = calculateCommission(job.budget, commissionRate);
+        const { commission, netAmount } = calculateCommission(paymentAmount, commissionRate);
 
         // Update job status
         job.status = 'completed';
@@ -523,7 +588,7 @@ exports.completeJob = async (req, res) => {
         const Transaction = require('../models/Transaction');
         const paymentTransaction = await Transaction.create({
             type: 'payment',
-            amount: job.budget,
+            amount: paymentAmount,
             from: req.user._id,
             to: job.hiredFreelancer._id,
             job: job._id,

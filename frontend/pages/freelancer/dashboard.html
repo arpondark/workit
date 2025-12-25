@@ -434,15 +434,6 @@
                 document.getElementById('stat-pending').textContent = pendingApps.length;
                 document.getElementById('stat-active').textContent = activeApps.length;
 
-                // Calculate total earnings from completed jobs (net amount after 1% platform fee)
-                // This matches the calculation in active-jobs.html
-                const totalEarned = completedApps.reduce((sum, app) => {
-                    const budget = app.proposedBudget || 0;
-                    // Earnings are net amount after 1% platform fee
-                    return sum + (budget * 0.99);
-                }, 0);
-
-                document.getElementById('stat-earnings').textContent = utils.formatCurrency(totalEarned);
                 document.getElementById('stat-completed').textContent = completedApps.length;
 
                 // Display recent applications
