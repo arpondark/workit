@@ -346,42 +346,49 @@
         function renderUsers(users) {
             const tbody = document.getElementById('users-table');
 
-            if (users.length === 0) {
+            if (!users || users.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">No users found</td></tr>';
                 return;
             }
 
-            tbody.innerHTML = users.map(u => `
+            tbody.innerHTML = users.map(u => {
+                // Map isSuspended to status if status not provided
+                const status = u.status || (u.isSuspended ? 'suspended' : 'active');
+                const name = u.name || 'Unknown';
+                const email = u.email || '';
+                const role = u.role || 'user';
+
+                return `
                 <tr class="hover:bg-gray-50">
                     <td class="px-6 py-4">
                         <div class="flex items-center">
                             <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-medium mr-3">
-                                ${u.name.charAt(0).toUpperCase()}
+                                ${name.charAt(0).toUpperCase()}
                             </div>
                             <div>
-                                <p class="font-medium text-gray-800">${u.name}</p>
-                                <p class="text-gray-500 text-sm">${u.email}</p>
+                                <p class="font-medium text-gray-800">${name}</p>
+                                <p class="text-gray-500 text-sm">${email}</p>
                             </div>
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                        <span class="px-3 py-1 text-xs font-medium rounded-full ${u.role === 'client' ? 'bg-indigo-100 text-indigo-700' :
-                    u.role === 'freelancer' ? 'bg-green-100 text-green-700' :
-                        'bg-gray-100 text-gray-700'
-                }">
-                            ${u.role.charAt(0).toUpperCase() + u.role.slice(1)}
+                        <span class="px-3 py-1 text-xs font-medium rounded-full ${role === 'client' ? 'bg-indigo-100 text-indigo-700' :
+                        role === 'freelancer' ? 'bg-green-100 text-green-700' :
+                            'bg-gray-100 text-gray-700'
+                    }">
+                            ${role.charAt(0).toUpperCase() + role.slice(1)}
                         </span>
                     </td>
                     <td class="px-6 py-4">
-                        <span class="px-3 py-1 text-xs font-medium rounded-full ${u.status === 'active' ? 'bg-green-100 text-green-700' :
-                    u.status === 'suspended' ? 'bg-red-100 text-red-700' :
-                        'bg-yellow-100 text-yellow-700'
-                }">
-                            ${u.status.charAt(0).toUpperCase() + u.status.slice(1)}
+                        <span class="px-3 py-1 text-xs font-medium rounded-full ${status === 'active' ? 'bg-green-100 text-green-700' :
+                        status === 'suspended' ? 'bg-red-100 text-red-700' :
+                            'bg-yellow-100 text-yellow-700'
+                    }">
+                            ${status.charAt(0).toUpperCase() + status.slice(1)}
                         </span>
                     </td>
                     <td class="px-6 py-4 text-gray-500 text-sm">
-                        ${new Date(u.createdAt).toLocaleDateString()}
+                        ${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A'}
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex space-x-2">
@@ -391,7 +398,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                 </svg>
                             </button>
-                            ${u.status === 'active' ? `
+                            ${status === 'active' ? `
                                 <button onclick="suspendUser('${u._id}')" class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition" title="Suspend">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
@@ -407,7 +414,8 @@
                         </div>
                     </td>
                 </tr>
-            `).join('');
+            `;
+            }).join('');
         }
 
         function renderPagination(total, page, pages) {
@@ -524,7 +532,7 @@
             if (!confirm('Are you sure you want to suspend this user?')) return;
 
             try {
-                await api.put(`/admin/users/${userId}/status`, { status: 'suspended' });
+                await api.put(`/admin/users/${userId}/suspend`, { suspend: true, reason: 'Suspended by admin' });
                 toast.success('User suspended successfully');
                 loadUsers(currentPage);
             } catch (error) {
@@ -534,7 +542,7 @@
 
         async function activateUser(userId) {
             try {
-                await api.put(`/admin/users/${userId}/status`, { status: 'active' });
+                await api.put(`/admin/users/${userId}/suspend`, { suspend: false });
                 toast.success('User activated successfully');
                 loadUsers(currentPage);
             } catch (error) {

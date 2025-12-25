@@ -18,10 +18,15 @@ const {
     getJobs,
     deleteJob,
     getCommissions,
+    getTransactions,
+    getTransactionStats,
     getSettings,
     updateSettings,
     resetQuizAttempts,
-    clearAllMessages
+    clearAllMessages,
+    getWithdrawalRequests,
+    approveWithdrawal,
+    rejectWithdrawal
 } = require('../controllers/adminController');
 
 const {
@@ -128,6 +133,18 @@ router.delete('/jobs/:id', adminOnly, deleteJob);
 // @access  Private (Admin)
 router.get('/commissions', adminOnly, getCommissions);
 
+// ==================== TRANSACTIONS ====================
+
+// @route   GET /api/admin/transactions/stats
+// @desc    Get transaction stats
+// @access  Private (Admin)
+router.get('/transactions/stats', adminOnly, getTransactionStats);
+
+// @route   GET /api/admin/transactions
+// @desc    Get all transactions
+// @access  Private (Admin)
+router.get('/transactions', adminOnly, getTransactions);
+
 // ==================== SETTINGS ====================
 
 // @route   GET /api/admin/settings
@@ -173,5 +190,22 @@ router.put('/learning-resources/:id', adminOnly, updateLearningResource);
 // @desc    Delete a learning resource
 // @access  Private (Admin)
 router.delete('/learning-resources/:id', adminOnly, deleteLearningResource);
+
+// ==================== WITHDRAWALS ====================
+
+// @route   GET /api/admin/withdrawals
+// @desc    Get all withdrawal requests
+// @access  Private (Admin)
+router.get('/withdrawals', adminOnly, getWithdrawalRequests);
+
+// @route   PUT /api/admin/withdrawals/:id/approve
+// @desc    Approve a withdrawal request
+// @access  Private (Admin)
+router.put('/withdrawals/:id/approve', adminOnly, approveWithdrawal);
+
+// @route   PUT /api/admin/withdrawals/:id/reject
+// @desc    Reject a withdrawal request
+// @access  Private (Admin)
+router.put('/withdrawals/:id/reject', adminOnly, rejectWithdrawal);
 
 module.exports = router;

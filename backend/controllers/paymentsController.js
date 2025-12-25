@@ -166,32 +166,32 @@ exports.withdrawFunds = async (req, res) => {
             });
         }
 
-        // Create withdrawal transaction
+        // Create withdrawal transaction with PENDING status - requires admin approval
         const transaction = await Transaction.create({
             type: 'withdrawal',
             amount,
             from: req.user._id,
-            description: `Withdrawal to ${paymentMethod}`,
+            description: `Withdrawal request to ${paymentMethod}`,
             paymentMethod,
-            status: 'completed', // Dummy - instant completion
-            completedAt: new Date()
+            status: 'pending', // Pending admin approval
+            metadata: {
+                bankDetails: JSON.stringify(req.body.bankDetails || {})
+            }
         });
 
-        // Update user balance
-        await User.findByIdAndUpdate(req.user._id, {
-            $inc: { availableBalance: -amount }
-        });
+        // DO NOT update user balance here - only update when admin approves
 
         res.json({
             success: true,
-            message: 'Withdrawal successful',
+            message: 'Withdrawal request submitted. Pending admin approval.',
             transaction: {
                 transactionId: transaction.transactionId,
                 amount,
-                newBalance: req.user.availableBalance - amount
+                status: 'pending'
             }
         });
     } catch (error) {
+        console.error('Withdrawal Error:', error.message, error.stack);
         res.status(500).json({
             success: false,
             message: error.message

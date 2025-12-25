@@ -68,21 +68,18 @@ const transactionSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Calculate commission and net amount before saving
-transactionSchema.pre('save', function(next) {
+// Calculate commission and net amount, and generate transaction ID before saving
+transactionSchema.pre('save', async function () {
+    // Calculate commission for payment type
     if (this.type === 'payment' && this.isModified('amount')) {
         this.commission = this.amount * this.commissionRate;
         this.netAmount = this.amount - this.commission;
     }
-    next();
-});
 
-// Generate unique transaction ID
-transactionSchema.pre('save', function(next) {
+    // Generate unique transaction ID
     if (!this.transactionId) {
         this.transactionId = `TXN-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
     }
-    next();
 });
 
 module.exports = mongoose.model('Transaction', transactionSchema);

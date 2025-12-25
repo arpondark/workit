@@ -689,6 +689,94 @@ exports.getCommissions = async (req, res) => {
     }
 };
 
+// ==================== TRANSACTIONS ====================
+
+// @desc    Get all transactions
+// @route   GET /api/admin/transactions
+// @access  Private (Admin)
+exports.getTransactions = async (req, res) => {
+    try {
+        const { type, status, page = 1, limit = 20 } = req.query;
+
+        const query = {};
+        if (type) query.type = type;
+        if (status) query.status = status;
+
+        const { skip, limit: limitNum } = paginate(page, limit);
+
+        const transactions = await Transaction.find(query)
+            .populate('from', 'name email')
+            .populate('to', 'name email')
+            .populate('job', 'title')
+            .sort('-createdAt')
+            .skip(skip)
+            .limit(limitNum);
+
+        const total = await Transaction.countDocuments(query);
+
+        res.json({
+            success: true,
+            transactions,
+            total,
+            page: parseInt(page),
+            pages: Math.ceil(total / limitNum)
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Get transaction stats
+// @route   GET /api/admin/transactions/stats
+// @access  Private (Admin)
+exports.getTransactionStats = async (req, res) => {
+    try {
+        // Total volume
+        const volumeResult = await Transaction.aggregate([
+            { $match: { status: 'completed' } },
+            { $group: { _id: null, total: { $sum: '$amount' } } }
+        ]);
+        const totalVolume = volumeResult[0]?.total || 0;
+
+        // Platform revenue (commissions)
+        const revenueResult = await Transaction.aggregate([
+            { $match: { type: 'commission', status: 'completed' } },
+            { $group: { _id: null, total: { $sum: '$amount' } } }
+        ]);
+        const platformRevenue = revenueResult[0]?.total || 0;
+
+        // This month volume
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+
+        const monthlyResult = await Transaction.aggregate([
+            { $match: { status: 'completed', createdAt: { $gte: startOfMonth } } },
+            { $group: { _id: null, total: { $sum: '$amount' } } }
+        ]);
+        const monthlyVolume = monthlyResult[0]?.total || 0;
+
+        // Total transactions
+        const totalTransactions = await Transaction.countDocuments();
+
+        res.json({
+            success: true,
+            totalVolume,
+            platformRevenue,
+            monthlyVolume,
+            totalTransactions
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 // ==================== SETTINGS ====================
 
 // @desc    Get all admin settings
@@ -777,6 +865,141 @@ exports.clearAllMessages = async (req, res) => {
         res.json({
             success: true,
             message: 'All messages have been cleared'
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// ==================== WITHDRAWAL REQUESTS ====================
+
+// @desc    Get all pending withdrawal requests
+// @route   GET /api/admin/withdrawals
+// @access  Private (Admin)
+exports.getWithdrawalRequests = async (req, res) => {
+    try {
+        const { status = 'pending', page = 1, limit = 20 } = req.query;
+
+        const query = { type: 'withdrawal' };
+        if (status && status !== 'all') {
+            query.status = status;
+        }
+
+        const { skip, limit: limitNum } = paginate(page, limit);
+
+        const withdrawals = await Transaction.find(query)
+            .populate('from', 'name email')
+            .sort('-createdAt')
+            .skip(skip)
+            .limit(limitNum);
+
+        const total = await Transaction.countDocuments(query);
+        const pendingCount = await Transaction.countDocuments({ type: 'withdrawal', status: 'pending' });
+
+        res.json({
+            success: true,
+            ...paginationResponse(withdrawals, page, limitNum, total),
+            pendingCount
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Approve a withdrawal request
+// @route   PUT /api/admin/withdrawals/:id/approve
+// @access  Private (Admin)
+exports.approveWithdrawal = async (req, res) => {
+    try {
+        const transaction = await Transaction.findById(req.params.id).populate('from', 'name email availableBalance');
+
+        if (!transaction) {
+            return res.status(404).json({
+                success: false,
+                message: 'Withdrawal request not found'
+            });
+        }
+
+        if (transaction.type !== 'withdrawal') {
+            return res.status(400).json({
+                success: false,
+                message: 'This is not a withdrawal request'
+            });
+        }
+
+        if (transaction.status !== 'pending') {
+            return res.status(400).json({
+                success: false,
+                message: `Withdrawal already ${transaction.status}`
+            });
+        }
+
+        // Mark as completed
+        transaction.status = 'completed';
+        transaction.completedAt = new Date();
+        await transaction.save();
+
+        // Note: Balance tracking is now handled via completed jobs calculation
+        // No need to update user.availableBalance since we calculate from completed apps
+
+        res.json({
+            success: true,
+            message: 'Withdrawal approved successfully',
+            transaction
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Reject a withdrawal request
+// @route   PUT /api/admin/withdrawals/:id/reject
+// @access  Private (Admin)
+exports.rejectWithdrawal = async (req, res) => {
+    try {
+        const { reason } = req.body;
+        const transaction = await Transaction.findById(req.params.id);
+
+        if (!transaction) {
+            return res.status(404).json({
+                success: false,
+                message: 'Withdrawal request not found'
+            });
+        }
+
+        if (transaction.type !== 'withdrawal') {
+            return res.status(400).json({
+                success: false,
+                message: 'This is not a withdrawal request'
+            });
+        }
+
+        if (transaction.status !== 'pending') {
+            return res.status(400).json({
+                success: false,
+                message: `Withdrawal already ${transaction.status}`
+            });
+        }
+
+        // Mark as failed/rejected
+        transaction.status = 'failed';
+        transaction.failedAt = new Date();
+        transaction.failureReason = reason || 'Rejected by admin';
+        await transaction.save();
+
+        res.json({
+            success: true,
+            message: 'Withdrawal rejected',
+            transaction
         });
     } catch (error) {
         res.status(500).json({
