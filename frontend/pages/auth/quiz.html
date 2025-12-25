@@ -387,7 +387,23 @@
                 showQuestion();
             } catch (error) {
                 document.getElementById('loading-state').classList.add('hidden');
-                toast.error(error.message || 'Failed to start quiz');
+                
+                // Check if it's a cooldown error
+                if (error.data && error.data.cooldown) {
+                    const hours = error.data.cooldown.hoursLeft;
+                    const message = `You must wait ${hours} hour${hours !== 1 ? 's' : ''} before retrying this quiz.`;
+                    
+                    modal.alert('Cooldown Active', `
+                        <div class="text-center">
+                            <div class="text-3xl mb-4">⏳</div>
+                            <p class="mb-4">${message}</p>
+                            <p class="text-sm text-gray-500">Please prepare with our learning resources while you wait.</p>
+                            <a href="../public/learning-resources.html" class="inline-block mt-4 text-indigo-600 hover:text-indigo-800 font-medium">Browse Learning Resources &rarr;</a>
+                        </div>
+                    `);
+                } else {
+                    toast.error(error.message || 'Failed to start quiz');
+                }
             }
         }
 

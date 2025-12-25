@@ -59,8 +59,9 @@ exports.startQuiz = async (req, res) => {
             });
         }
 
-        // Check for 24-hour cooldown after failed attempt
-        const cooldownHours = 24;
+        // Check for cooldown after failed attempt
+        const retryWaitSetting = await AdminSettings.findOne({ key: 'quizRetryWait' });
+        const cooldownHours = retryWaitSetting ? parseInt(retryWaitSetting.value) : 24;
         const cooldownTime = new Date(Date.now() - cooldownHours * 60 * 60 * 1000);
 
         const recentFailedAttempt = await QuizAttempt.findOne({
@@ -84,10 +85,12 @@ exports.startQuiz = async (req, res) => {
                 }
             });
         }
-
+// ...
         // Get quiz settings
-        const questionsCountSetting = await AdminSettings.findOne({ key: 'quiz_questions_count' });
+        const questionsCountSetting = await AdminSettings.findOne({ key: 'quizQuestionCount' });
         const questionsCount = questionsCountSetting ? questionsCountSetting.value : 10;
+// ...
+
 
         // Get random questions for this skill
         const questions = await Question.aggregate([
@@ -154,7 +157,7 @@ exports.submitQuiz = async (req, res) => {
         }
 
         // Get quiz settings
-        const passScoreSetting = await AdminSettings.findOne({ key: 'quiz_pass_score' });
+        const passScoreSetting = await AdminSettings.findOne({ key: 'quizPassScore' });
         const tokenValiditySetting = await AdminSettings.findOne({ key: 'quiz_token_validity' });
         let passScore = passScoreSetting ? passScoreSetting.value : 7;
         const tokenValidityHours = tokenValiditySetting ? tokenValiditySetting.value : 24;
@@ -289,7 +292,7 @@ exports.addSkill = async (req, res) => {
         }
 
         // Get quiz settings
-        const passScoreSetting = await AdminSettings.findOne({ key: 'quiz_pass_score' });
+        const passScoreSetting = await AdminSettings.findOne({ key: 'quizPassScore' });
         let passScore = passScoreSetting ? passScoreSetting.value : 7;
 
         // Dynamic pass score adjustment
@@ -426,7 +429,8 @@ exports.checkCooldown = async (req, res) => {
             });
         }
 
-        const cooldownHours = 24;
+        const retryWaitSetting = await AdminSettings.findOne({ key: 'quizRetryWait' });
+        const cooldownHours = retryWaitSetting ? parseInt(retryWaitSetting.value) : 24;
         const cooldownTime = new Date(Date.now() - cooldownHours * 60 * 60 * 1000);
 
         const query = {

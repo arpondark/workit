@@ -10,8 +10,8 @@ const { generateToken, sanitizeUser } = require('../utils/helpers');
 exports.getAuthConfig = async (req, res) => {
     try {
         const quizEnabledSetting = await AdminSettings.findOne({ key: 'quiz_enabled' });
-        const quizQuestionsCountSetting = await AdminSettings.findOne({ key: 'quiz_questions_count' });
-        const quizPassScoreSetting = await AdminSettings.findOne({ key: 'quiz_pass_score' });
+        const quizQuestionsCountSetting = await AdminSettings.findOne({ key: 'quizQuestionCount' });
+        const quizPassScoreSetting = await AdminSettings.findOne({ key: 'quizPassScore' });
 
         res.json({
             success: true,
