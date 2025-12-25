@@ -10,6 +10,7 @@ const {
     getMyJobs,
     getJobApplications,
     submitWork,
+    updateSubmission,
     completeJob
 } = require('../controllers/jobsController');
 
@@ -52,6 +53,11 @@ router.get('/:id/applications', protect, authorize('client'), getJobApplications
 // @desc    Submit work for a job
 // @access  Private (Freelancer - hired only)
 router.post('/:id/submit', protect, authorize('freelancer'), submitWork);
+
+// @route   PUT /api/jobs/:id/submit
+// @desc    Update work submission for a job
+// @access  Private (Freelancer - hired only)
+router.put('/:id/submit', protect, authorize('freelancer'), updateSubmission);
 
 // @route   POST /api/jobs/:id/complete
 // @desc    Complete job and release payment

@@ -29,7 +29,7 @@ const io = new Server(server, {
 // Connect to database and run seeds
 const initializeDB = async () => {
     await connectDB();
-    await runAllSeeds();
+    // await runAllSeeds(); // Comment out seeding for now
 };
 
 initializeDB();

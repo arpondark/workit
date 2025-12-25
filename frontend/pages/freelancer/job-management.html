@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Management - WorkIT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="../../js/utils.js"></script>
+    <style>
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .job-card {
+            transition: all 0.3s ease;
+        }
+
+        .job-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .notification-badge {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .draft-indicator {
+            background: linear-gradient(45deg, #fbbf24, #f59e0b);
+        }
+
+        .milestone-progress {
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar"
+            class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform z-50">
+            <div class="flex flex-col h-full">
+                <div class="p-6 border-b">
+                    <a href="/" class="flex items-center">
+                        <span
+                            class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Work</span>
+                        <span class="text-2xl font-bold text-gray-800">IT</span>
+                    </a>
+                </div>
+                <nav class="flex-1 p-4 space-y-2">
+                    <a href="dashboard.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                            </path>
+                        </svg>
+                        Dashboard
+                    </a>
+                    <a href="find-jobs.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        Find Jobs
+                    </a>
+                    <a href="my-applications.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        My Applications
+                    </a>
+                    <a href="active-jobs.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
+                            </path>
+                        </svg>
+                        Active Jobs
+                    </a>
+                    <a href="job-management.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg bg-indigo-50 text-indigo-600 font-medium">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                            </path>
+                        </svg>
+                        Job Management
+                    </a>
+                    <a href="earnings.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                            </path>
+                        </svg>
+                        Earnings
+                    </a>
+                    <a href="../messages.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                            </path>
+                        </svg>
+                        Messages
+                        <span id="unread-badge"
+                            class="hidden ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">0</span>
+                    </a>
+                    <a href="../profile.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        Profile
+                    </a>
+                </nav>
+
+                <!-- User Info -->
+                <div class="p-4 border-t">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold"
+                            id="sidebar-avatar"></div>
+                        <div class="flex-1 min-w-0">
+                            <div class="font-medium text-gray-900 truncate" id="sidebar-name"></div>
+                            <div class="text-sm text-gray-500">Freelancer</div>
+                        </div>
+                        <button id="logout-btn" class="text-gray-400 hover:text-red-500 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <!-- Mobile sidebar overlay -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 lg:hidden hidden"></div>
+
+        <!-- Mobile menu button -->
+        <button id="menu-toggle" class="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-md">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
+                </path>
+            </svg>
+        </button>
+
+        <!-- Main Content -->
+        <main class="flex-1 lg:ml-64 min-h-screen">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <!-- Page Header -->
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900">Job Management</h1>
+                    <p class="mt-2 text-gray-600">Manage your active jobs, track progress, and handle work submissions
+                    </p>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-blue-100 rounded-full">
+                                <i class="fas fa-briefcase text-blue-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Active Jobs</p>
+                                <p id="active-jobs-count" class="text-2xl font-semibold text-gray-900">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-green-100 rounded-full">
+                                <i class="fas fa-check-circle text-green-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Completed Jobs</p>
+                                <p id="completed-jobs-count" class="text-2xl font-semibold text-gray-900">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-yellow-100 rounded-full">
+                                <i class="fas fa-clock text-yellow-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Pending Review</p>
+                                <p id="pending-review-count" class="text-2xl font-semibold text-gray-900">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-purple-100 rounded-full">
+                                <i class="fas fa-redo text-purple-600"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Revisions</p>
+                                <p id="revisions-count" class="text-2xl font-semibold text-gray-900">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters and Search -->
+                <div class="bg-white rounded-lg shadow mb-6 p-4">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+                        <div class="flex flex-1 items-center space-x-4">
+                            <div class="relative flex-1 max-w-md">
+                                <input type="text" id="search-input" placeholder="Search jobs..."
+                                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                            </div>
+                            <select id="status-filter"
+                                class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                <option value="">All Status</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="submitted">Submitted</option>
+                                <option value="completed">Completed</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                            <select id="sort-filter"
+                                class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="deadline">Deadline</option>
+                                <option value="amount">Amount</option>
+                            </select>
+                        </div>
+                        <button id="refresh-btn"
+                            class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                            <i class="fas fa-sync-alt mr-2"></i>Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="border-b border-gray-200">
+                        <nav class="flex -mb-px">
+                            <button
+                                class="tab-btn px-6 py-3 border-b-2 border-indigo-500 text-indigo-600 font-medium text-sm"
+                                data-tab="all-jobs">
+                                <i class="fas fa-list mr-2"></i>All Jobs
+                            </button>
+                            <button
+                                class="tab-btn px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm"
+                                data-tab="active-jobs">
+                                <i class="fas fa-play-circle mr-2"></i>Active Jobs
+                            </button>
+                        </nav>
+                    </div>
+
+                    <!-- All Jobs Tab -->
+                    <div id="all-jobs" class="tab-content active p-6">
+                        <div id="all-jobs-container" class="space-y-4">
+                            <!-- Jobs will be loaded here -->
+                            <div class="text-center py-12">
+                                <i class="fas fa-spinner fa-spin text-4xl text-indigo-600"></i>
+                                <p class="mt-4 text-gray-600">Loading jobs...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Jobs Tab -->
+                    <div id="active-jobs" class="tab-content p-6">
+                        <div id="active-jobs-container" class="space-y-4">
+                            <!-- Active jobs will be loaded here -->
+                            <div class="text-center py-12">
+                                <i class="fas fa-spinner fa-spin text-4xl text-indigo-600"></i>
+                                <p class="mt-4 text-gray-600">Loading active jobs...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </main>
+
+        <!-- Work Submission Modal -->
+        <div id="submission-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-900">Submit Work</h3>
+                        <button onclick="closeSubmissionModal()"
+                            class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <form id="submission-form">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Job Title</label>
+                                <input type="text" id="submission-job-title" readonly
+                                    class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Work Description</label>
+                                <textarea id="submission-description" rows="4"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    placeholder="Describe the work completed..."></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Deliverables/Links</label>
+                                <div id="attachments-container">
+                                    <input type="text" id="attachment-0"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent mb-2"
+                                        placeholder="Enter URL or attachment link...">
+                                </div>
+                                <button type="button" onclick="addAttachmentField()"
+                                    class="mt-2 text-indigo-600 hover:text-indigo-700 text-sm">
+                                    <i class="fas fa-plus mr-1"></i>Add Another Link
+                                </button>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <input type="checkbox" id="save-draft" class="mr-2">
+                                    Save as Draft
+                                </label>
+                            </div>
+                            <div class="flex justify-end space-x-4">
+                                <button type="button" onclick="closeSubmissionModal()"
+                                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                                    Cancel
+                                </button>
+                                <button type="button" onclick="saveDraft()"
+                                    class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">
+                                    <i class="fas fa-save mr-2"></i>Save Draft
+                                </button>
+                                <button type="submit"
+                                    class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                                    <i class="fas fa-paper-plane mr-2"></i>Submit Work
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Client Review Modal -->
+        <div id="review-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-900">Client Review</h3>
+                        <button onclick="closeReviewModal()"
+                            class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    <div id="review-content" class="p-6">
+                        <!-- Review content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast"
+            class="fixed bottom-4 right-4 transform translate-x-full transition-transform duration-300 z-50">
+            <div class="bg-white rounded-lg shadow-lg p-4 flex items-center space-x-3">
+                <div id="toast-icon"></div>
+                <div>
+                    <p id="toast-title" class="font-medium text-gray-900"></p>
+                    <p id="toast-message" class="text-sm text-gray-600"></p>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            // Auth check
+            if (!auth.isLoggedIn() || auth.getUser().role !== 'freelancer') {
+                window.location.href = '../auth/login.html';
+            }
+
+            const user = auth.getUser();
+
+            // Set user info in sidebar
+            document.getElementById('sidebar-avatar').textContent = user.name?.charAt(0)?.toUpperCase() || 'U';
+            document.getElementById('sidebar-name').textContent = user.name || 'User';
+
+            // Mobile menu toggle
+            document.getElementById('menu-toggle')?.addEventListener('click', () => {
+                document.getElementById('sidebar').classList.toggle('-translate-x-full');
+                document.getElementById('sidebar-overlay').classList.toggle('hidden');
+            });
+            document.getElementById('sidebar-overlay')?.addEventListener('click', () => {
+                document.getElementById('sidebar').classList.add('-translate-x-full');
+                document.getElementById('sidebar-overlay').classList.add('hidden');
+            });
+
+            // Logout
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                auth.logout();
+                window.location.href = '../auth/login.html';
+            });
+
+            // Global variables
+            let currentJobId = null;
+            let allJobsData = [];
+            let activeJobsData = [];
+            let submissionDrafts = {};
+
+            // Initialize
+            document.addEventListener('DOMContentLoaded', function () {
+                setupEventListeners();
+                loadJobsData();
+            });
+
+            // Setup event listeners
+            function setupEventListeners() {
+                // Tab switching
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        switchTab(this.dataset.tab);
+                    });
+                });
+
+                // Form submission
+                document.getElementById('submission-form').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    submitWork();
+                });
+
+                // Search and filters
+                document.getElementById('search-input').addEventListener('input', filterJobs);
+                document.getElementById('status-filter').addEventListener('change', filterJobs);
+                document.getElementById('sort-filter').addEventListener('change', filterJobs);
+                const refreshBtn = document.getElementById('refresh-btn');
+                if (refreshBtn) {
+                    refreshBtn.addEventListener('click', loadJobsData);
+                }
+            }
+
+            // Load user data
+            async function loadUserData() {
+                try {
+                    const response = await api.get('/users/profile');
+                    const user = response.data.data;
+                    document.getElementById('user-name').textContent = user.name;
+                } catch (error) {
+                    console.error('Error loading user data:', error);
+                }
+            }
+
+            // Switch tabs
+            function switchTab(tabName) {
+                // Update tab buttons
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('border-indigo-500', 'text-indigo-600');
+                    btn.classList.add('border-transparent', 'text-gray-500');
+                });
+
+                const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
+                activeBtn.classList.remove('border-transparent', 'text-gray-500');
+                activeBtn.classList.add('border-indigo-500', 'text-indigo-600');
+
+                // Update tab content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabName).classList.add('active');
+            }
+
+            // Load jobs data
+            async function loadJobsData() {
+                try {
+                    // Load applications with populated job data
+                    const response = await api.get('/applications/my');
+                    // Handle both response structures
+                    const applications = response.data || response.applications || [];
+
+                    // Process jobs data - include accepted applications where job is in-progress or completed
+                    allJobsData = applications.filter(app => app.status === 'accepted');
+                    // Active jobs are accepted applications where the job is NOT completed
+                    activeJobsData = allJobsData.filter(app => app.job?.status !== 'completed' && app.job?.status !== 'cancelled');
+
+                    // Update stats
+                    updateJobStats();
+
+                    // Render jobs
+                    renderAllJobs();
+                    renderActiveJobs();
+
+                } catch (error) {
+                    console.error('Error loading jobs data:', error);
+                    showToast('Error loading jobs', 'Please try again', 'error');
+                }
+            }
+
+            // Update job statistics
+            function updateJobStats() {
+                const activeJobs = activeJobsData.length;
+                // Completed jobs are those where the JOB status is 'completed' (not application status)
+                const completedJobs = allJobsData.filter(app => app.job?.status === 'completed').length;
+                const pendingReview = allJobsData.filter(app => app.job?.status !== 'completed' && app.job?.submission?.status === 'pending').length;
+                const revisions = allJobsData.filter(app => app.job?.submission?.status === 'rejected').length;
+
+                document.getElementById('active-jobs-count').textContent = activeJobs;
+                document.getElementById('completed-jobs-count').textContent = completedJobs;
+                document.getElementById('pending-review-count').textContent = pendingReview;
+                document.getElementById('revisions-count').textContent = revisions;
+            }
+
+            // Render all jobs
+            function renderAllJobs() {
+                const container = document.getElementById('all-jobs-container');
+
+                if (allJobsData.length === 0) {
+                    container.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-briefcase text-4xl text-gray-400"></i>
+                        <p class="mt-4 text-gray-600">No jobs found</p>
+                    </div>
+                `;
+                    return;
+                }
+
+                container.innerHTML = allJobsData.map(app => {
+                    const job = app.job || {};
+                    const submission = job.submission || {};
+                    const statusColors = {
+                        'in-progress': 'bg-blue-100 text-blue-800',
+                        'submitted': 'bg-yellow-100 text-yellow-800',
+                        'completed': 'bg-green-100 text-green-800',
+                        'rejected': 'bg-red-100 text-red-800'
+                    };
+
+                    return `
+                    <div class="job-card bg-white border border-gray-200 rounded-lg p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-gray-900">${job.title || 'Untitled Job'}</h3>
+                                <p class="text-gray-600 mt-1">${job.description ? job.description.substring(0, 150) + '...' : 'No description'}</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-xs font-medium ${statusColors[job.status] || 'bg-gray-100 text-gray-800'}">
+                                ${job.status ? job.status.replace('-', ' ').toUpperCase() : 'UNKNOWN'}
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div>
+                                <p class="text-sm text-gray-500">Budget</p>
+                                <p class="font-semibold text-gray-900">$${(job.budget || 0).toLocaleString()}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Deadline</p>
+                                <p class="font-semibold text-gray-900">${job.deadline ? new Date(job.deadline).toLocaleDateString() : 'Not set'}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Completion Date</p>
+                                <p class="font-semibold text-gray-900">${submission.completedAt ? new Date(submission.completedAt).toLocaleDateString() : 'Not completed'}</p>
+                            </div>
+                        </div>
+
+                        ${submission ? `
+                            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                <h4 class="font-medium text-gray-900 mb-2">Work Submission</h4>
+                                <p class="text-sm text-gray-600 mb-2">${submission.description || 'No description provided'}</p>
+                                ${submission.attachments && submission.attachments.length > 0 ? `
+                                    <div class="flex flex-wrap gap-2">
+                                        ${submission.attachments.map(att => `
+                                            <a href="${att}" target="_blank" class="text-indigo-600 hover:text-indigo-700 text-sm">
+                                                <i class="fas fa-link mr-1"></i>View Attachment
+                                            </a>
+                                        `).join('')}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+
+                        ${submission.clientReview ? `
+                            <div class="bg-blue-50 rounded-lg p-4 mb-4">
+                                <h4 class="font-medium text-gray-900 mb-2">Client Review</h4>
+                                <div class="flex items-center mb-2">
+                                    ${generateStars(submission.clientReview.rating)}
+                                    <span class="ml-2 text-sm text-gray-600">(${submission.clientReview.rating}/5)</span>
+                                </div>
+                                <p class="text-sm text-gray-600">${submission.clientReview.comment}</p>
+                            </div>
+                        ` : ''}
+
+                        <div class="flex justify-between items-center">
+                            <div class="text-sm text-gray-500">
+                                <i class="fas fa-clock mr-1"></i>
+                                Updated ${job.updatedAt ? new Date(job.updatedAt).toLocaleDateString() : 'Unknown'}
+                            </div>
+                            <div class="space-x-2">
+                                ${job.status !== 'completed' && !submission ? `
+                                    <button onclick="openSubmissionModal('${app._id}')" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm">
+                                        <i class="fas fa-paper-plane mr-2"></i>Submit Work
+                                    </button>
+                                ` : ''}
+                                ${submission && submission.status === 'rejected' ? `
+                                    <button onclick="openSubmissionModal('${app._id}')" class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 text-sm">
+                                        <i class="fas fa-redo mr-2"></i>Resubmit
+                                    </button>
+                                ` : ''}
+                                <button onclick="viewJobDetails('${app._id}')" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                }).join('');
+            }
+
+            // Render active jobs
+            function renderActiveJobs() {
+                const container = document.getElementById('active-jobs-container');
+
+                if (activeJobsData.length === 0) {
+                    container.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-play-circle text-4xl text-gray-400"></i>
+                        <p class="mt-4 text-gray-600">No active jobs</p>
+                    </div>
+                `;
+                    return;
+                }
+
+                container.innerHTML = activeJobsData.map(app => {
+                    const job = app.job || {};
+                    const submission = job.submission || {};
+                    const milestones = job.milestones || [];
+                    const completedMilestones = milestones.filter(m => m.completed).length;
+                    const progressPercentage = milestones.length > 0 ? (completedMilestones / milestones.length) * 100 : 0;
+
+                    return `
+                    <div class="job-card bg-white border border-gray-200 rounded-lg p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-gray-900">${job.title || 'Untitled Job'}</h3>
+                                <p class="text-gray-600 mt-1">${job.description ? job.description.substring(0, 150) + '...' : 'No description'}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    ACTIVE
+                                </span>
+                                ${submission && submission.status === 'draft' ? `
+                                    <span class="ml-2 px-3 py-1 rounded-full text-xs font-medium draft-indicator text-white">
+                                        DRAFT
+                                    </span>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Progress Section -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="font-medium text-gray-900">Job Progress</h4>
+                                <span class="text-sm text-gray-600">${Math.round(progressPercentage)}% Complete</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="milestone-progress bg-indigo-600 h-2 rounded-full" style="width: ${progressPercentage}%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Milestones -->
+                        ${milestones.length > 0 ? `
+                            <div class="mb-6">
+                                <h4 class="font-medium text-gray-900 mb-3">Milestones</h4>
+                                <div class="space-y-2">
+                                    ${milestones.map((milestone, index) => `
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                            <div class="flex items-center">
+                                                <div class="w-6 h-6 rounded-full ${milestone.completed ? 'bg-green-500' : 'bg-gray-300'} flex items-center justify-center">
+                                                    ${milestone.completed ? '<i class="fas fa-check text-white text-xs"></i>' : ''}
+                                                </div>
+                                                <span class="ml-3 text-sm ${milestone.completed ? 'text-gray-900 line-through' : 'text-gray-700'}">${milestone.title}</span>
+                                            </div>
+                                            ${milestone.deadline ? `
+                                                <span class="text-xs text-gray-500">${new Date(milestone.deadline).toLocaleDateString()}</span>
+                                            ` : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <!-- Deadlines -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <p class="text-sm text-gray-500">Next Milestone</p>
+                                <p class="font-semibold text-gray-900">${getNextMilestoneDeadline(milestones)}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Final Deadline</p>
+                                <p class="font-semibold text-gray-900">${job.deadline ? new Date(job.deadline).toLocaleDateString() : 'Not set'}</p>
+                            </div>
+                        </div>
+
+                        <!-- Submission Status -->
+                        ${submission ? `
+                            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                <h4 class="font-medium text-gray-900 mb-2">Current Submission</h4>
+                                <p class="text-sm text-gray-600 mb-2">${submission.description || 'No description'}</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="px-3 py-1 rounded-full text-xs font-medium ${getSubmissionStatusClass(submission.status)}">
+                                        ${submission.status.toUpperCase()}
+                                    </span>
+                                    ${submission.status === 'rejected' ? `
+                                        <span class="text-sm text-red-600">${submission.clientReview?.comment || 'Client requested revisions'}</span>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <!-- Action Buttons -->
+                        <div class="flex justify-between items-center">
+                            <div class="text-sm text-gray-500">
+                                <i class="fas fa-clock mr-1"></i>
+                                ${getTimeRemaining(job.deadline)}
+                            </div>
+                            <div class="space-x-2">
+                                ${!submission || submission.status === 'rejected' ? `
+                                    <button onclick="openSubmissionModal('${app._id}')" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm">
+                                        <i class="fas fa-paper-plane mr-2"></i>${submission.status === 'rejected' ? 'Resubmit' : 'Submit'} Work
+                                    </button>
+                                ` : submission.status === 'draft' ? `
+                                    <button onclick="openSubmissionModal('${app._id}')" class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 text-sm">
+                                        <i class="fas fa-edit mr-2"></i>Edit Draft
+                                    </button>
+                                ` : ''}
+                                <button onclick="viewJobDetails('${app._id}')" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                }).join('');
+            }
+
+            // Helper functions
+            function generateStars(rating) {
+                let stars = '';
+                for (let i = 1; i <= 5; i++) {
+                    stars += `<i class="fas fa-star ${i <= rating ? 'text-yellow-400' : 'text-gray-300'}"></i>`;
+                }
+                return stars;
+            }
+
+            function getSubmissionStatusClass(status) {
+                const classes = {
+                    'draft': 'bg-yellow-100 text-yellow-800',
+                    'pending': 'bg-blue-100 text-blue-800',
+                    'approved': 'bg-green-100 text-green-800',
+                    'rejected': 'bg-red-100 text-red-800'
+                };
+                return classes[status] || 'bg-gray-100 text-gray-800';
+            }
+
+            function getNextMilestoneDeadline(milestones) {
+                const incompleteMilestones = milestones.filter(m => !m.completed);
+                if (incompleteMilestones.length === 0) return 'All milestones completed';
+
+                const nextMilestone = incompleteMilestones.sort((a, b) => new Date(a.deadline) - new Date(b.deadline))[0];
+                return nextMilestone ? new Date(nextMilestone.deadline).toLocaleDateString() : 'No deadline set';
+            }
+
+            function getTimeRemaining(deadline) {
+                if (!deadline) return 'No deadline set';
+
+                const now = new Date();
+                const end = new Date(deadline);
+                const diff = end - now;
+
+                if (diff < 0) return 'Overdue';
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                if (days > 0) return `${days} days remaining`;
+
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                if (hours > 0) return `${hours} hours remaining`;
+
+                return 'Less than 1 hour remaining';
+            }
+
+            // Filter jobs
+            function filterJobs() {
+                const searchTerm = document.getElementById('search-input').value.toLowerCase();
+                const statusFilter = document.getElementById('status-filter').value;
+                const sortFilter = document.getElementById('sort-filter').value;
+
+                let filteredJobs = [...allJobsData];
+
+                // Apply search filter
+                if (searchTerm) {
+                    filteredJobs = filteredJobs.filter(app =>
+                        app.job?.title?.toLowerCase().includes(searchTerm) ||
+                        app.job?.description?.toLowerCase().includes(searchTerm)
+                    );
+                }
+
+                // Apply status filter
+                if (statusFilter) {
+                    filteredJobs = filteredJobs.filter(app =>
+                        app.job?.status === statusFilter
+                    );
+                }
+
+                // Apply sorting
+                filteredJobs.sort((a, b) => {
+                    switch (sortFilter) {
+                        case 'newest':
+                            return new Date(b.job?.createdAt || 0) - new Date(a.job?.createdAt || 0);
+                        case 'oldest':
+                            return new Date(a.job?.createdAt || 0) - new Date(b.job?.createdAt || 0);
+                        case 'deadline':
+                            return new Date(a.job?.deadline || '9999-12-31') - new Date(b.job?.deadline || '9999-12-31');
+                        case 'amount':
+                            return (b.job?.budget || 0) - (a.job?.budget || 0);
+                        default:
+                            return 0;
+                    }
+                });
+
+                // Update display
+                renderFilteredJobs(filteredJobs);
+            }
+
+            function renderFilteredJobs(jobs) {
+                // For simplicity, re-render the active tab
+                const activeTab = document.querySelector('.tab-content.active').id;
+                if (activeTab === 'all-jobs') {
+                    // Temporarily store original data and render filtered
+                    const originalData = allJobsData;
+                    allJobsData = jobs;
+                    renderAllJobs();
+                    allJobsData = originalData;
+                }
+            }
+
+            // Submission modal functions
+            function openSubmissionModal(applicationId) {
+                currentJobId = applicationId;
+                const app = allJobsData.find(a => a._id === applicationId);
+
+                if (!app) return;
+
+                // Load draft if exists
+                const draft = submissionDrafts[applicationId];
+                if (draft) {
+                    document.getElementById('submission-description').value = draft.description || '';
+                    // Load attachments
+                    const container = document.getElementById('attachments-container');
+                    container.innerHTML = '';
+                    draft.attachments.forEach((att, index) => {
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.className = 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent mb-2';
+                        input.placeholder = 'Enter URL or attachment link...';
+                        input.value = att;
+                        input.id = `attachment-${index}`;
+                        container.appendChild(input);
+                    });
+                    addAttachmentField();
+                }
+
+                document.getElementById('submission-job-title').value = app.job?.title || '';
+                document.getElementById('submission-modal').classList.remove('hidden');
+            }
+
+            function closeSubmissionModal() {
+                document.getElementById('submission-modal').classList.add('hidden');
+                document.getElementById('submission-form').reset();
+                currentJobId = null;
+            }
+
+            function addAttachmentField() {
+                const container = document.getElementById('attachments-container');
+                const inputs = container.querySelectorAll('input');
+                const index = inputs.length;
+
+                const newInput = document.createElement('input');
+                newInput.type = 'text';
+                newInput.className = 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent mb-2';
+                newInput.placeholder = 'Enter URL or attachment link...';
+                newInput.id = `attachment-${index}`;
+                container.appendChild(newInput);
+            }
+
+            // Save draft
+            async function saveDraft() {
+                if (!currentJobId) return;
+
+                const description = document.getElementById('submission-description').value;
+                const attachments = Array.from(document.querySelectorAll('#attachments-container input'))
+                    .map(input => input.value)
+                    .filter(val => val.trim() !== '');
+
+                submissionDrafts[currentJobId] = {
+                    description,
+                    attachments,
+                    savedAt: new Date()
+                };
+
+                localStorage.setItem('submission-drafts', JSON.stringify(submissionDrafts));
+                showToast('Draft Saved', 'Your work draft has been saved', 'success');
+            }
+
+            // Submit work
+            async function submitWork() {
+                if (!currentJobId) return;
+
+                const description = document.getElementById('submission-description').value;
+                const attachments = Array.from(document.querySelectorAll('#attachments-container input'))
+                    .map(input => input.value)
+                    .filter(val => val.trim() !== '');
+
+                const isDraft = document.getElementById('save-draft').checked;
+
+                try {
+                    if (isDraft) {
+                        await saveDraft();
+                        closeSubmissionModal();
+                        return;
+                    }
+
+                    const app = allJobsData.find(a => a._id === currentJobId);
+                    if (!app || !app.job) return;
+
+                    await api.post(`/jobs/${app.job._id}/submit`, {
+                        description,
+                        attachments
+                    });
+
+                    // Clear draft
+                    delete submissionDrafts[currentJobId];
+                    localStorage.setItem('submission-drafts', JSON.stringify(submissionDrafts));
+
+                    closeSubmissionModal();
+                    showToast('Work Submitted', 'Your work has been submitted for review', 'success');
+                    loadJobsData();
+
+                } catch (error) {
+                    console.error('Error submitting work:', error);
+                    showToast('Submission Failed', error.response?.data?.message || 'Please try again', 'error');
+                }
+            }
+
+            // View job details
+            function viewJobDetails(applicationId) {
+                const app = allJobsData.find(a => a._id === applicationId);
+                if (!app) return;
+
+                const job = app.job || {};
+                const submission = job.submission || {};
+
+                const content = `
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-medium text-gray-900 mb-2">Job Details</h4>
+                        <p class="text-gray-600">${job.description || 'No description available'}</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-500">Budget</p>
+                            <p class="font-semibold">$${(job.budget || 0).toLocaleString()}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Posted</p>
+                            <p class="font-semibold">${job.createdAt ? new Date(job.createdAt).toLocaleDateString() : 'Unknown'}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Deadline</p>
+                            <p class="font-semibold">${job.deadline ? new Date(job.deadline).toLocaleDateString() : 'Not set'}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Status</p>
+                            <p class="font-semibold">${job.status || 'Unknown'}</p>
+                        </div>
+                    </div>
+                    
+                    ${submission ? `
+                        <div>
+                            <h4 class="font-medium text-gray-900 mb-2">Submission Details</h4>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="text-gray-600 mb-2">${submission.description}</p>
+                                <p class="text-sm text-gray-500">Submitted: ${submission.createdAt ? new Date(submission.createdAt).toLocaleString() : 'Unknown'}</p>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${submission.clientReview ? `
+                        <div>
+                            <h4 class="font-medium text-gray-900 mb-2">Client Review</h4>
+                            <div class="bg-blue-50 rounded-lg p-4">
+                                <div class="flex items-center mb-2">
+                                    ${generateStars(submission.clientReview.rating)}
+                                    <span class="ml-2 text-sm text-gray-600">(${submission.clientReview.rating}/5)</span>
+                                </div>
+                                <p class="text-gray-600">${submission.clientReview.comment}</p>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+                document.getElementById('review-content').innerHTML = content;
+                document.getElementById('review-modal').classList.remove('hidden');
+            }
+
+            function closeReviewModal() {
+                document.getElementById('review-modal').classList.add('hidden');
+            }
+
+            // Notification functions
+            async function loadNotifications() {
+                try {
+                    const response = await api.get('/notifications');
+                    const notifications = response.data.data || [];
+
+                    // Update notification count
+                    const unreadCount = notifications.filter(n => !n.read).length;
+                    const countElement = document.getElementById('notification-count');
+
+                    if (unreadCount > 0) {
+                        countElement.classList.remove('hidden');
+                        countElement.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                    } else {
+                        countElement.classList.add('hidden');
+                    }
+
+                } catch (error) {
+                    console.error('Error loading notifications:', error);
+                }
+            }
+
+            function showNotifications() {
+                // Simple notification display - can be enhanced
+                showToast('Notifications', 'You have new notifications!', 'info');
+            }
+
+            // Toast notification
+            function showToast(title, message, type = 'info') {
+                const toast = document.getElementById('toast');
+                const toastTitle = document.getElementById('toast-title');
+                const toastMessage = document.getElementById('toast-message');
+                const toastIcon = document.getElementById('toast-icon');
+
+                toastTitle.textContent = title;
+                toastMessage.textContent = message;
+
+                // Set icon based on type
+                const icons = {
+                    success: '<i class="fas fa-check-circle text-green-500 text-xl"></i>',
+                    error: '<i class="fas fa-exclamation-circle text-red-500 text-xl"></i>',
+                    info: '<i class="fas fa-info-circle text-blue-500 text-xl"></i>',
+                    warning: '<i class="fas fa-exclamation-triangle text-yellow-500 text-xl"></i>'
+                };
+
+                toastIcon.innerHTML = icons[type] || icons.info;
+
+                // Show toast
+                toast.classList.remove('translate-x-full');
+
+                // Hide after 3 seconds
+                setTimeout(() => {
+                    toast.classList.add('translate-x-full');
+                }, 3000);
+            }
+
+            // Load drafts from localStorage
+            function loadDrafts() {
+                const drafts = localStorage.getItem('submission-drafts');
+                if (drafts) {
+                    submissionDrafts = JSON.parse(drafts);
+                }
+            }
+
+            // Initialize drafts
+            loadDrafts();
+        </script>
+    </div>
+    </main>
+    </div>
+
+    <!-- Mobile menu toggle script -->
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.getElementById('sidebar');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth < 1024 &&
+                !sidebar.contains(e.target) &&
+                !menuToggle.contains(e.target) &&
+                !sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+    </script>
+</body>
+
+</html>

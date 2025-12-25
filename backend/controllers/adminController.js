@@ -42,12 +42,26 @@ exports.getDashboardStats = async (req, res) => {
             QuizAttempt.countDocuments({ passed: true })
         ]);
 
-        // Total revenue (commission)
+        // Total revenue from commission transactions
         const revenueResult = await Transaction.aggregate([
             { $match: { type: 'commission', status: 'completed' } },
             { $group: { _id: null, total: { $sum: '$amount' } } }
         ]);
-        const totalRevenue = revenueResult[0]?.total || 0;
+        let totalRevenue = revenueResult[0]?.total || 0;
+
+        // If no transaction-based revenue, calculate from completed jobs (1% platform fee)
+        if (totalRevenue === 0 && completedJobs > 0) {
+            const completedJobsWithApps = await Application.find({ status: 'accepted' })
+                .populate('job', 'status budget');
+
+            totalRevenue = completedJobsWithApps.reduce((sum, app) => {
+                if (app.job?.status === 'completed') {
+                    const budget = app.proposedBudget || app.job?.budget?.max || 0;
+                    return sum + (budget * 0.01); // 1% platform fee
+                }
+                return sum;
+            }, 0);
+        }
 
         // Calculate pass rate
         const quizPassRate = totalQuizAttempts > 0
@@ -236,7 +250,21 @@ exports.getQuestions = async (req, res) => {
 
         const total = await Question.countDocuments(query);
 
-        const paginated = paginationResponse(questions, page, limitNum, total);
+        // Convert to frontend format (strings array + correctAnswer index)
+        const frontendQuestions = questions.map(q => {
+            const questionObj = q.toObject();
+            const optionsArray = questionObj.options || [];
+            const options = optionsArray.map(opt => opt.text);
+            const correctAnswer = optionsArray.findIndex(opt => opt.isCorrect);
+
+            return {
+                ...questionObj,
+                options,
+                correctAnswer
+            };
+        });
+
+        const paginated = paginationResponse(frontendQuestions, page, limitNum, total);
 
         res.json({
             success: true,
@@ -277,10 +305,18 @@ exports.createQuestion = async (req, res) => {
         const populatedQuestion = await Question.findById(newQuestion._id)
             .populate('skill', 'name icon');
 
+        // Convert to frontend format
+        const optionsArray = populatedQuestion.toObject().options || [];
+        const frontendQuestion = {
+            ...populatedQuestion.toObject(),
+            options: optionsArray.map(opt => opt.text),
+            correctAnswer: optionsArray.findIndex(opt => opt.isCorrect)
+        };
+
         res.status(201).json({
             success: true,
             message: 'Question created successfully',
-            question: populatedQuestion
+            question: frontendQuestion
         });
     } catch (error) {
         res.status(500).json({
@@ -330,10 +366,18 @@ exports.updateQuestion = async (req, res) => {
             });
         }
 
+        // Convert to frontend format
+        const optionsArray = updatedQuestion.toObject().options || [];
+        const frontendQuestion = {
+            ...updatedQuestion.toObject(),
+            options: optionsArray.map(opt => opt.text),
+            correctAnswer: optionsArray.findIndex(opt => opt.isCorrect)
+        };
+
         res.json({
             success: true,
             message: 'Question updated successfully',
-            question: updatedQuestion
+            question: frontendQuestion
         });
     } catch (error) {
         res.status(500).json({

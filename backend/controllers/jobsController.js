@@ -268,6 +268,7 @@ exports.getMyJobs = async (req, res) => {
         const jobs = await Job.find(query)
             .populate('skill', 'name icon')
             .populate('hiredFreelancer', 'name avatar')
+            .populate('submission')
             .sort('-createdAt')
             .skip(skip)
             .limit(limitNum);
@@ -405,12 +406,69 @@ exports.submitWork = async (req, res) => {
     }
 };
 
+// @desc    Update work submission
+// @route   PUT /api/jobs/:id/submit
+// @access  Private (Freelancer - hired only)
+exports.updateSubmission = async (req, res) => {
+    try {
+        const { description, attachments } = req.body;
+
+        const job = await Job.findById(req.params.id);
+
+        if (!job) {
+            return res.status(404).json({
+                success: false,
+                message: 'Job not found'
+            });
+        }
+
+        // Verify authentication
+        if (job.hiredFreelancer.toString() !== req.user._id.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to update work for this job'
+            });
+        }
+
+        if (job.status !== 'in-progress') {
+            return res.status(400).json({
+                success: false,
+                message: 'Job is not in progress'
+            });
+        }
+
+        if (!job.submission || job.submission.status !== 'pending') {
+            return res.status(400).json({
+                success: false,
+                message: 'No pending submission to edit'
+            });
+        }
+
+        // Update submission
+        job.submission.description = description;
+        job.submission.attachments = attachments || [];
+
+        await job.save();
+
+        res.json({
+            success: true,
+            message: 'Submission updated successfully',
+            job
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 // @desc    Complete job and release payment
 // @route   POST /api/jobs/:id/complete
 // @access  Private (Client - owner only)
 exports.completeJob = async (req, res) => {
     try {
-        const job = await Job.findById(req.params.id);
+        const job = await Job.findById(req.params.id).populate('hiredFreelancer');
 
         if (!job) {
             return res.status(404).json({
@@ -434,12 +492,21 @@ exports.completeJob = async (req, res) => {
             });
         }
 
-        if (job.submission.status !== 'pending' && !req.query.force) {
-            // Optional: require submission first? 
-            // The prompt implies "verify and release".
-            // If no submission, maybe client can still complete? 
-            // Logic: If submission exists, approve it.
+        if (job.submission?.status !== 'pending' && !req.query.force) {
+            return res.status(400).json({
+                success: false,
+                message: 'No pending submission to approve'
+            });
         }
+
+        // Get commission rate from settings
+        const AdminSettings = require('../models/AdminSettings');
+        const { calculateCommission } = require('../utils/helpers');
+        const commissionSetting = await AdminSettings.findOne({ key: 'commission_rate' });
+        const commissionRate = commissionSetting ? commissionSetting.value : 0.01;
+
+        // Calculate amounts
+        const { commission, netAmount } = calculateCommission(job.budget, commissionRate);
 
         // Update job status
         job.status = 'completed';
@@ -452,10 +519,54 @@ exports.completeJob = async (req, res) => {
 
         await job.save();
 
+        // Create payment transaction
+        const Transaction = require('../models/Transaction');
+        const paymentTransaction = await Transaction.create({
+            type: 'payment',
+            amount: job.budget,
+            from: req.user._id,
+            to: job.hiredFreelancer._id,
+            job: job._id,
+            description: `Payment for job: ${job.title}`,
+            commission,
+            commissionRate,
+            netAmount,
+            paymentMethod: 'platform',
+            status: 'completed',
+            completedAt: new Date()
+        });
+
+        // Create commission transaction
+        await Transaction.create({
+            type: 'commission',
+            amount: commission,
+            from: job.hiredFreelancer._id,
+            job: job._id,
+            description: `Platform commission (${commissionRate * 100}%) for job: ${job.title}`,
+            status: 'completed',
+            completedAt: new Date()
+        });
+
+        // Update freelancer earnings and stats
+        const User = require('../models/User');
+        await User.findByIdAndUpdate(job.hiredFreelancer._id, {
+            $inc: {
+                totalEarnings: netAmount,
+                availableBalance: netAmount,
+                completedJobs: 1
+            }
+        });
+
         res.json({
             success: true,
             message: 'Job completed and payment released',
-            job
+            job,
+            payment: {
+                amount: job.budget,
+                commission,
+                netAmount,
+                freelancerReceives: netAmount
+            }
         });
     } catch (error) {
         res.status(500).json({

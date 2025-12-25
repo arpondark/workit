@@ -1,6 +1,7 @@
 const Transaction = require('../models/Transaction');
 const Job = require('../models/Job');
 const User = require('../models/User');
+const Application = require('../models/Application');
 const AdminSettings = require('../models/AdminSettings');
 const { calculateCommission, paginate, paginationResponse } = require('../utils/helpers');
 
@@ -123,10 +124,45 @@ exports.withdrawFunds = async (req, res) => {
             });
         }
 
-        if (amount > req.user.availableBalance) {
+        // Calculate available balance from completed jobs
+        const completedApps = await Application.find({
+            freelancer: req.user._id,
+            status: 'accepted'
+        }).populate('job', 'status budget');
+
+        // Calculate total earned from completed jobs (99% after 1% platform fee)
+        const totalEarned = completedApps.reduce((sum, app) => {
+            if (app.job?.status === 'completed') {
+                const budget = app.proposedBudget || 0;
+                return sum + (budget * 0.99);
+            }
+            return sum;
+        }, 0);
+
+        // Get total already withdrawn
+        const totalWithdrawn = await Transaction.aggregate([
+            {
+                $match: {
+                    from: req.user._id,
+                    type: 'withdrawal',
+                    status: 'completed'
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total: { $sum: '$amount' }
+                }
+            }
+        ]);
+
+        const withdrawnAmount = totalWithdrawn[0]?.total || 0;
+        const availableBalance = totalEarned - withdrawnAmount;
+
+        if (amount > availableBalance) {
             return res.status(400).json({
                 success: false,
-                message: 'Insufficient balance'
+                message: `Insufficient balance. Available: $${availableBalance.toFixed(2)}`
             });
         }
 

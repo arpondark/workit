@@ -554,8 +554,16 @@
                 }
 
                 // Calculate total spent (from completed jobs)
-                // This would typically come from payment data
-                document.getElementById('stat-spent').textContent = '$0';
+                // Calculate spent amount from transactions
+                try {
+                    const transactionsData = await api.get('/payments/transactions?type=payment');
+                    const transactions = transactionsData.data || [];
+                    const totalSpent = transactions.reduce((sum, transaction) => sum + (transaction.amount || 0), 0);
+                    document.getElementById('stat-spent').textContent = `$${totalSpent.toLocaleString()}`;
+                } catch (error) {
+                    console.error('Error loading transactions:', error);
+                    document.getElementById('stat-spent').textContent = '$0';
+                }
 
             } catch (error) {
                 console.error('Error loading dashboard:', error);

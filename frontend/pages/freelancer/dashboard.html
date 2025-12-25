@@ -74,6 +74,15 @@
                         </svg>
                         Active Jobs
                     </a>
+                    <a href="job-management.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                            </path>
+                        </svg>
+                        Job Management
+                    </a>
                     <a href="../messages.html"
                         class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -408,19 +417,33 @@
                     skillsContainer.innerHTML = '<span class="text-gray-400 text-sm">No skills added</span>';
                 }
 
-                // Update stats
+                // Update initial stats from profile
                 document.getElementById('stat-earnings').textContent = utils.formatCurrency(profile.totalEarnings || 0);
                 document.getElementById('stat-completed').textContent = profile.completedJobs || 0;
 
-                // Load applications
-                const appsData = await api.get('/applications/freelancer/my-applications');
+                // Load applications - this is the source of truth for job data
+                const appsData = await api.get('/applications/my');
                 const applications = appsData.data || [];
 
                 const pendingApps = applications.filter(app => app.status === 'pending');
-                const activeApps = applications.filter(app => app.status === 'accepted');
+                // Active apps are accepted AND job not completed
+                const activeApps = applications.filter(app => app.status === 'accepted' && app.job?.status !== 'completed' && app.job?.status !== 'cancelled');
+                // Completed apps are accepted AND job is completed
+                const completedApps = applications.filter(app => app.status === 'accepted' && app.job?.status === 'completed');
 
                 document.getElementById('stat-pending').textContent = pendingApps.length;
                 document.getElementById('stat-active').textContent = activeApps.length;
+
+                // Calculate total earnings from completed jobs (net amount after 1% platform fee)
+                // This matches the calculation in active-jobs.html
+                const totalEarned = completedApps.reduce((sum, app) => {
+                    const budget = app.proposedBudget || 0;
+                    // Earnings are net amount after 1% platform fee
+                    return sum + (budget * 0.99);
+                }, 0);
+
+                document.getElementById('stat-earnings').textContent = utils.formatCurrency(totalEarned);
+                document.getElementById('stat-completed').textContent = completedApps.length;
 
                 // Display recent applications
                 const recentApps = applications.slice(0, 5);

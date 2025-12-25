@@ -323,10 +323,19 @@
             });
 
             try {
-                const data = await api.get(`/admin/users?${params}`);
-                renderUsers(data.users || []);
-                renderPagination(data.total || 0, data.page || 1, data.pages || 1);
-                updateStats(data);
+                const response = await api.get(`/admin/users?${params}`);
+                // Backend returns: { success, data, pagination, totalClients, totalFreelancers, totalSuspended }
+                const users = response.data || [];
+                const pagination = response.pagination || {};
+
+                renderUsers(users);
+                renderPagination(pagination.totalItems || 0, pagination.currentPage || 1, pagination.totalPages || 1);
+                updateStats({
+                    total: pagination.totalItems || 0,
+                    totalClients: response.totalClients || 0,
+                    totalFreelancers: response.totalFreelancers || 0,
+                    totalSuspended: response.totalSuspended || 0
+                });
             } catch (error) {
                 console.error('Error loading users:', error);
                 document.getElementById('users-table').innerHTML =
