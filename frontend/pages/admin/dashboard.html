@@ -405,7 +405,10 @@
         }
 
         const user = auth.getUser();
-        document.getElementById('admin-name').textContent = user.name;
+        const adminNameEl = document.getElementById('admin-name');
+        if (adminNameEl && user) {
+            adminNameEl.textContent = user.name;
+        }
 
         // Mobile sidebar toggle
         document.getElementById('open-sidebar').addEventListener('click', () => {
@@ -431,15 +434,26 @@
         let userGrowthChart, revenueChart, userDistChart;
 
         function initCharts() {
+            // Destroy existing charts if they exist
+            if (userGrowthChart) {
+                userGrowthChart.destroy();
+            }
+            if (revenueChart) {
+                revenueChart.destroy();
+            }
+            if (userDistChart) {
+                userDistChart.destroy();
+            }
+
             // User Growth Chart
             const userCtx = document.getElementById('userGrowthChart').getContext('2d');
             userGrowthChart = new Chart(userCtx, {
                 type: 'line',
                 data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    labels: [],
                     datasets: [{
                         label: 'Users',
-                        data: [10, 25, 45, 80, 120, 180],
+                        data: [],
                         borderColor: '#6366f1',
                         backgroundColor: 'rgba(99, 102, 241, 0.1)',
                         fill: true,
@@ -460,10 +474,10 @@
             revenueChart = new Chart(revCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    labels: [],
                     datasets: [{
                         label: 'Revenue',
-                        data: [120, 250, 380, 520, 680, 850],
+                        data: [],
                         backgroundColor: '#10b981',
                         borderRadius: 8
                     }]
@@ -501,9 +515,14 @@
         async function loadDashboardStats() {
             try {
                 const response = await api.get('/admin/dashboard');
-                const stats = response.dashboard?.stats || {};
-                const recentUsers = response.dashboard?.recentUsers || [];
-                const recentJobs = response.dashboard?.recentJobs || [];
+                console.log('Dashboard response:', response);
+
+                // Handle both response formats
+                const stats = response.dashboard?.stats || response.stats || {};
+                const recentUsers = response.dashboard?.recentUsers || response.recentUsers || [];
+                const recentJobs = response.dashboard?.recentJobs || response.recentJobs || [];
+
+                console.log('Stats:', stats);
 
                 // Update stats cards
                 document.getElementById('stat-users').textContent = stats.totalUsers || 0;
@@ -519,8 +538,23 @@
                 document.getElementById('dist-freelancers').textContent = stats.totalFreelancers || 0;
 
                 if (userDistChart) {
-                    userDistChart.data.datasets[0].data = [stats.totalClients || 1, stats.totalFreelancers || 1];
+                    userDistChart.data.datasets[0].data = [stats.totalClients || 0, stats.totalFreelancers || 0];
                     userDistChart.update();
+                }
+
+                // Update charts with real data if available
+                const charts = response.dashboard?.charts || {};
+
+                if (userGrowthChart && charts.userGrowth) {
+                    userGrowthChart.data.labels = charts.labels || [];
+                    userGrowthChart.data.datasets[0].data = charts.userGrowth;
+                    userGrowthChart.update();
+                }
+
+                if (revenueChart && charts.revenue) {
+                    revenueChart.data.labels = charts.labels || [];
+                    revenueChart.data.datasets[0].data = charts.revenue;
+                    revenueChart.update();
                 }
 
                 // Load recent users inline
@@ -530,7 +564,7 @@
                 loadRecentJobsData(recentJobs);
             } catch (error) {
                 console.error('Error loading stats:', error);
-                // Use mock data if API fails
+                toast.error('Failed to load dashboard data');
             }
         }
 
@@ -583,11 +617,6 @@
                     </tr>
                 `;
             }).join('');
-        } catch (error) {
-            console.error('Error loading users:', error);
-            document.getElementById('recent-users').innerHTML =
-                '<tr><td colspan="4" class="py-8 text-center text-gray-500">Error loading users</td></tr>';
-        }
         }
 
         // Load Recent Jobs (from dashboard data)
@@ -618,11 +647,9 @@
                             </span>
                         </div>
                     </div>
-            }).join('');
+            `).join('');
         }
 
-        // Initialize
-        initCharts();
         // Consolidate refresh logic
         async function refreshData() {
             await loadDashboardStats();

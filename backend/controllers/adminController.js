@@ -15,32 +15,32 @@ const { paginate, paginationResponse } = require('../utils/helpers');
 // @route   GET /api/admin/dashboard
 // @access  Private (Admin)
 exports.getDashboardStats = async (req, res) => {
+    console.log('Admin Dashboard Stats Requested');
     try {
-        const [
-            totalUsers,
-            totalFreelancers,
-            totalClients,
-            totalJobs,
-            openJobs,
-            completedJobs,
-            totalApplications,
-            totalTransactions,
-            suspendedUsers,
-            totalQuizAttempts,
-            totalPassedQuizzes
-        ] = await Promise.all([
-            User.countDocuments({ role: { $ne: 'admin' } }),
-            User.countDocuments({ role: 'freelancer' }),
-            User.countDocuments({ role: 'client' }),
-            Job.countDocuments(),
-            Job.countDocuments({ status: 'open' }),
-            Job.countDocuments({ status: 'completed' }),
-            Application.countDocuments(),
-            Transaction.countDocuments({ type: 'payment', status: 'completed' }),
-            User.countDocuments({ isSuspended: true }),
-            QuizAttempt.countDocuments(),
-            QuizAttempt.countDocuments({ passed: true })
-        ]);
+        // 1. User Stats
+        const totalUsers = await User.countDocuments({ role: { $ne: 'admin' } });
+        const totalFreelancers = await User.countDocuments({ role: 'freelancer' });
+        const totalClients = await User.countDocuments({ role: 'client' });
+        const suspendedUsers = await User.countDocuments({ isSuspended: true });
+
+        // 2. Job Stats
+        const totalJobs = await Job.countDocuments();
+        const openJobs = await Job.countDocuments({ status: 'open' });
+        const completedJobs = await Job.countDocuments({ status: 'completed' });
+
+        // 3. Other Stats
+        const totalApplications = await Application.countDocuments();
+        const totalTransactions = await Transaction.countDocuments({ type: 'payment', status: 'completed' });
+        const totalQuizAttempts = await QuizAttempt.countDocuments();
+        const totalPassedQuizzes = await QuizAttempt.countDocuments({ passed: true });
+
+        // Calculate new users this week
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        const newUsersThisWeek = await User.countDocuments({
+            role: { $ne: 'admin' },
+            createdAt: { $gte: oneWeekAgo }
+        });
 
         // Total revenue from commission transactions
         const revenueResult = await Transaction.aggregate([
@@ -68,6 +68,60 @@ exports.getDashboardStats = async (req, res) => {
             ? Math.round((totalPassedQuizzes / totalQuizAttempts) * 100)
             : 0;
 
+        console.log('Dashboard Data Calculated:', {
+            totalUsers,
+            totalJobs,
+            totalRevenue,
+            completedJobs
+        });
+
+        // Chart Data: User Growth & Revenue (Last 6 Months)
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
+        sixMonthsAgo.setDate(1);
+        sixMonthsAgo.setHours(0, 0, 0, 0);
+
+        const [userGrowthRaw, revenueGrowthRaw] = await Promise.all([
+            User.aggregate([
+                { $match: { role: { $ne: 'admin' }, createdAt: { $gte: sixMonthsAgo } } },
+                {
+                    $group: {
+                        _id: { month: { $month: "$createdAt" }, year: { $year: "$createdAt" } },
+                        count: { $sum: 1 }
+                    }
+                }
+            ]),
+            Transaction.aggregate([
+                { $match: { type: 'commission', status: 'completed', createdAt: { $gte: sixMonthsAgo } } },
+                {
+                    $group: {
+                        _id: { month: { $month: "$createdAt" }, year: { $year: "$createdAt" } },
+                        total: { $sum: "$amount" }
+                    }
+                }
+            ])
+        ]);
+
+        const labels = [];
+        const userGrowthData = [];
+        const revenueData = [];
+
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date();
+            d.setMonth(d.getMonth() - i);
+            const monthName = d.toLocaleString('default', { month: 'short' });
+            const monthNum = d.getMonth() + 1;
+            const year = d.getFullYear();
+
+            labels.push(monthName);
+
+            const userStat = userGrowthRaw.find(u => u._id.month === monthNum && u._id.year === year);
+            userGrowthData.push(userStat ? userStat.count : 0);
+
+            const revStat = revenueGrowthRaw.find(r => r._id.month === monthNum && r._id.year === year);
+            revenueData.push(revStat ? revStat.total : 0);
+        }
+
         // Recent activity
         const recentJobs = await Job.find()
             .populate('client', 'name')
@@ -76,7 +130,7 @@ exports.getDashboardStats = async (req, res) => {
             .limit(5);
 
         const recentUsers = await User.find({ role: { $ne: 'admin' } })
-            .select('name email role createdAt')
+            .select('name email role isSuspended createdAt')
             .sort('-createdAt')
             .limit(5);
 
@@ -94,7 +148,13 @@ exports.getDashboardStats = async (req, res) => {
                     totalRevenue,
                     suspendedUsers,
                     totalQuizAttempts,
-                    quizPassRate
+                    quizPassRate,
+                    newUsersThisWeek
+                },
+                charts: {
+                    labels,
+                    userGrowth: userGrowthData,
+                    revenue: revenueData
                 },
                 recentJobs,
                 recentUsers
@@ -899,10 +959,28 @@ exports.getWithdrawalRequests = async (req, res) => {
         const total = await Transaction.countDocuments(query);
         const pendingCount = await Transaction.countDocuments({ type: 'withdrawal', status: 'pending' });
 
+        // Calculate total pending amount
+        const pendingAmountResult = await Transaction.aggregate([
+            { $match: { type: 'withdrawal', status: 'pending' } },
+            { $group: { _id: null, total: { $sum: '$amount' } } }
+        ]);
+        const totalPendingAmount = pendingAmountResult[0]?.total || 0;
+
+        // Count approved today
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const approvedToday = await Transaction.countDocuments({
+            type: 'withdrawal',
+            status: 'completed',
+            updatedAt: { $gte: today }
+        });
+
         res.json({
             success: true,
             ...paginationResponse(withdrawals, page, limitNum, total),
-            pendingCount
+            pendingCount,
+            totalPendingAmount,
+            approvedToday
         });
     } catch (error) {
         res.status(500).json({

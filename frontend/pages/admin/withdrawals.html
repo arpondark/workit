@@ -255,15 +255,19 @@
 
             try {
                 const response = await api.get(`/admin/withdrawals?status=${status}&page=${page}&limit=${limit}`);
+                console.log('Withdrawals API Response:', response);
+
                 const withdrawals = response.data || [];
                 const pagination = response.pagination || {};
 
-                // Update stats
-                document.getElementById('stat-pending').textContent = response.pendingCount || 0;
+                // Update stats - log values for debugging
+                console.log('Pending Count:', response.pendingCount);
+                console.log('Total Pending Amount:', response.totalPendingAmount);
+                console.log('Approved Today:', response.approvedToday);
 
-                // Calculate total requested amount from pending
-                const totalRequested = withdrawals.reduce((sum, w) => w.status === 'pending' ? sum + w.amount : sum, 0);
-                document.getElementById('stat-total').textContent = `$${totalRequested.toLocaleString()}`;
+                document.getElementById('stat-pending').textContent = response.pendingCount || 0;
+                document.getElementById('stat-total').textContent = `$${(response.totalPendingAmount || 0).toLocaleString()}`;
+                document.getElementById('stat-approved').textContent = response.approvedToday || 0;
 
                 // Update pending badge (if element exists)
                 const badge = document.getElementById('pending-badge');

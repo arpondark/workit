@@ -15,6 +15,12 @@ const setupSocket = require('./socket');
 const app = express();
 const server = http.createServer(app);
 
+// Global Error Logging
+process.on('uncaughtException', (err) => {
+    console.error('CRITICAL ERROR (Uncaught Exception):', err);
+    console.error(err.stack);
+});
+
 // Initialize Socket.IO
 const io = new Server(server, {
     cors: {
