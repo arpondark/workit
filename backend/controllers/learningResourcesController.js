@@ -1,5 +1,32 @@
 const LearningResource = require('../models/LearningResource');
 
+// @desc    Get all learning resources (Public)
+// @route   GET /api/public/learning-resources
+// @access  Public
+exports.getPublicLearningResources = async (req, res) => {
+    try {
+        const { category } = req.query;
+
+        const query = { isActive: true };
+        if (category && category !== 'all') query.category = category;
+
+        const resources = await LearningResource.find(query)
+            .select('title url description category createdAt')
+            .sort('-createdAt');
+
+        res.json({
+            success: true,
+            count: resources.length,
+            resources
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 // @desc    Get all learning resources
 // @route   GET /api/admin/learning-resources
 // @access  Private (Admin)

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Resources - WorkIT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../../css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        'primary-dark': '#4f46e5',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 flex flex-col min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white/95 backdrop-blur-md shadow-sm fixed w-full z-50 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center">
+                        <span
+                            class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Work</span>
+                        <span class="text-2xl font-bold text-gray-800">IT</span>
+                    </a>
+                    <div class="hidden md:flex items-center space-x-6 ml-10">
+                        <a href="/" class="text-gray-700 hover:text-indigo-600 font-medium transition">Home</a>
+                        <a href="/pages/public/jobs.html"
+                            class="text-gray-700 hover:text-indigo-600 font-medium transition">Browse Jobs</a>
+                        <a href="/pages/public/freelancers.html"
+                            class="text-gray-700 hover:text-indigo-600 font-medium transition">Find Talent</a>
+                        <a href="/pages/public/learning-resources.html"
+                            class="text-indigo-600 font-medium transition">Learning Resources</a>
+                    </div>
+                </div>
+
+                <!-- Right side: Auth buttons OR User menu -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <div class="hidden md:flex items-center space-x-8">
+                        <!-- Auth buttons for logged out users -->
+                        <div id="auth-buttons" class="flex items-center space-x-4">
+                            <a href="/pages/auth/login.html"
+                                class="text-gray-700 hover:text-indigo-600 font-medium transition">Login</a>
+                            <a href="/pages/auth/quiz.html"
+                                class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-5 py-2.5 rounded-xl font-medium hover:from-indigo-700 hover:to-purple-700 transition shadow-lg shadow-indigo-200">Become
+                                a Freelancer</a>
+                        </div>
+
+                        <!-- User menu for logged in users -->
+                        <div id="user-menu" class="hidden flex items-center space-x-6">
+                            <a href="#" id="nav-dashboard-link"
+                                class="text-gray-700 hover:text-indigo-600 font-medium transition flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                                    </path>
+                                </svg>
+                                <span>Dashboard</span>
+                            </a>
+                            <div class="relative">
+                                <button id="user-menu-btn"
+                                    class="flex items-center space-x-3 focus:outline-none bg-gray-50 hover:bg-gray-100 rounded-full pl-3 pr-2 py-1.5 transition">
+                                    <span class="text-sm font-medium text-gray-700" id="user-name-display">User</span>
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold shadow-md"
+                                        id="user-avatar"></div>
+                                </button>
+                                <div id="dropdown-menu"
+                                    class="dropdown-menu absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl py-2 hidden z-50 border border-gray-100">
+                                    <button id="logout-btn"
+                                        class="w-full flex items-center gap-3 px-4 py-2.5 text-red-600 hover:bg-red-50 transition">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                                            </path>
+                                        </svg>
+                                        Logout
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <div class="px-4 py-4 space-y-3">
+                <a href="/" class="block text-gray-700 hover:text-indigo-600 font-medium">Home</a>
+                <a href="/pages/public/jobs.html" class="block text-gray-700 hover:text-indigo-600 font-medium">Browse
+                    Jobs</a>
+                <a href="/pages/public/freelancers.html"
+                    class="block text-gray-700 hover:text-indigo-600 font-medium">Find Talent</a>
+                <a href="/pages/public/learning-resources.html" class="block text-indigo-600 font-medium">Learning
+                    Resources</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow pt-28 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Learning Resources</h1>
+            <p class="text-xl text-gray-600">Upgrade your skills with our curated collection of resources</p>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="mb-8 flex flex-col md:flex-row gap-4 justify-between items-center">
+            <div class="relative w-full md:w-96">
+                <input type="text" id="search-input" placeholder="Search resources..."
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </div>
+            <div class="flex gap-2 overflow-x-auto pb-2 w-full md:w-auto" id="category-filters">
+                <button
+                    class="filter-btn active px-4 py-2 bg-indigo-600 text-white rounded-full text-sm font-medium transition"
+                    data-category="all">All</button>
+                <button
+                    class="filter-btn px-4 py-2 bg-white text-gray-700 border border-gray-200 rounded-full text-sm font-medium hover:bg-gray-50 transition"
+                    data-category="course">Courses</button>
+                <button
+                    class="filter-btn px-4 py-2 bg-white text-gray-700 border border-gray-200 rounded-full text-sm font-medium hover:bg-gray-50 transition"
+                    data-category="tutorial">Tutorials</button>
+                <button
+                    class="filter-btn px-4 py-2 bg-white text-gray-700 border border-gray-200 rounded-full text-sm font-medium hover:bg-gray-50 transition"
+                    data-category="documentation">Docs</button>
+                <button
+                    class="filter-btn px-4 py-2 bg-white text-gray-700 border border-gray-200 rounded-full text-sm font-medium hover:bg-gray-50 transition"
+                    data-category="video">Videos</button>
+            </div>
+        </div>
+
+        <!-- Resources Grid -->
+        <div id="resources-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Resources will be loaded here -->
+            <div class="col-span-full text-center py-12">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+                <p class="mt-4 text-gray-500">Loading resources...</p>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden text-center py-16">
+            <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                </path>
+            </svg>
+            <h3 class="text-xl font-medium text-gray-900">No resources found</h3>
+            <p class="text-gray-500 mt-2">Try adjusting your search or filters</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <span class="text-2xl font-bold text-white">Work</span>
+                    <span class="text-2xl font-bold text-indigo-400">IT</span>
+                </div>
+                <div class="flex gap-8 text-gray-400 text-sm">
+                    <a href="/" class="hover:text-white transition">Home</a>
+                    <a href="/pages/public/jobs.html" class="hover:text-white transition">Jobs</a>
+                    <a href="/pages/public/learning-resources.html" class="hover:text-white transition">Resources</a>
+                    <a href="/pages/auth/quiz.html" class="hover:text-white transition">Skill Test</a>
+                </div>
+                <div class="mt-4 md:mt-0 text-gray-500 text-sm">
+                    &copy; 2025 WorkIT. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../../js/utils.js"></script>
+    <script>
+        let allResources = [];
+        let currentCategory = 'all';
+
+        // Update Nav Logic
+        function updateNav() {
+            const user = auth.getUser();
+            const authButtons = document.getElementById('auth-buttons');
+            const userMenu = document.getElementById('user-menu');
+
+            if (user) {
+                authButtons.classList.add('hidden');
+                userMenu.classList.remove('hidden');
+
+                document.getElementById('user-avatar').textContent = user.name.charAt(0).toUpperCase();
+                document.getElementById('user-name-display').textContent = user.name.split(' ')[0];
+
+                const dashboardUrl = user.role === 'admin'
+                    ? '/pages/admin/dashboard.html'
+                    : `/pages/${user.role}/dashboard.html`;
+
+                document.getElementById('nav-dashboard-link').href = dashboardUrl;
+            }
+        }
+
+        // Fetch Resources
+        async function loadResources() {
+            try {
+                // Determine API endpoint - use public endpoint if available, or fall back 
+                // Currently using existing admin endpoint but filtered, ideally should have public endpoint
+                let resources = [];
+                try {
+                    // Try to fetch from a public endpoint if implemented
+                    const response = await api.get('/learning-resources');
+                    resources = response.resources || [];
+                } catch (e) {
+                    // Fallback mock data if API fails or needs auth
+                    console.log('Using fallback data');
+                    resources = [
+                        { title: 'MDN Web Docs', category: 'documentation', url: 'https://developer.mozilla.org', description: 'Resources for developers, by developers.' },
+                        { title: 'FreeCodeCamp', category: 'course', url: 'https://www.freecodecamp.org', description: 'Learn to code for free.' },
+                        { title: 'JavaScript.info', category: 'tutorial', url: 'https://javascript.info', description: 'Modern JavaScript Tutorial.' },
+                        { title: 'React Documentation', category: 'documentation', url: 'https://react.dev', description: 'The library for web and native user interfaces.' },
+                        { title: 'Figma Crash Course', category: 'video', url: 'https://www.youtube.com', description: 'Learn Figma in 30 minutes.' }
+                    ];
+                }
+
+                allResources = resources;
+                renderResources();
+            } catch (error) {
+                console.error('Error loading resources:', error);
+                document.getElementById('resources-grid').innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <p class="text-red-500">Failed to load resources. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderResources() {
+            const container = document.getElementById('resources-grid');
+            const search = document.getElementById('search-input').value.toLowerCase();
+
+            const filtered = allResources.filter(r => {
+                const matchesCategory = currentCategory === 'all' || r.category === currentCategory;
+                const matchesSearch = r.title.toLowerCase().includes(search) ||
+                    (r.description && r.description.toLowerCase().includes(search));
+                return matchesCategory && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                container.classList.add('hidden');
+                document.getElementById('empty-state').classList.remove('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+            document.getElementById('empty-state').classList.add('hidden');
+
+            container.innerHTML = filtered.map(r => `
+                <a href="${r.url}" target="_blank" class="group bg-white rounded-xl shadow-sm hover:shadow-md border border-gray-100 transition p-6 flex flex-col h-full">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="p-3 bg-indigo-50 rounded-lg group-hover:bg-indigo-100 transition">
+                            ${getIconForCategory(r.category)}
+                        </div>
+                        <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${getCategoryColor(r.category)}">
+                            ${capitalize(r.category)}
+                        </span>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 group-hover:text-indigo-600 transition mb-2">${r.title}</h3>
+                    <p class="text-gray-600 text-sm flex-grow mb-4 line-clamp-2">${r.description || 'No description available.'}</p>
+                    <div class="flex items-center text-indigo-600 text-sm font-medium">
+                        Visit Resource
+                        <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                        </svg>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        function getCategoryColor(category) {
+            const colors = {
+                course: 'bg-blue-100 text-blue-800',
+                tutorial: 'bg-green-100 text-green-800',
+                documentation: 'bg-purple-100 text-purple-800',
+                video: 'bg-red-100 text-red-800',
+                article: 'bg-yellow-100 text-yellow-800',
+                other: 'bg-gray-100 text-gray-800'
+            };
+            return colors[category] || colors.other;
+        }
+
+        function getIconForCategory(category) {
+            const icons = {
+                course: '<svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>',
+                video: '<svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>',
+                default: '<svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>'
+            };
+            return icons[category] || icons.default;
+        }
+
+        function capitalize(str) {
+            return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateNav();
+            loadResources();
+
+            // Filter Buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => {
+                        b.classList.remove('bg-indigo-600', 'text-white');
+                        b.classList.add('bg-white', 'text-gray-700');
+                    });
+                    btn.classList.remove('bg-white', 'text-gray-700');
+                    btn.classList.add('bg-indigo-600', 'text-white');
+
+                    currentCategory = btn.dataset.category;
+                    renderResources();
+                });
+            });
+
+            // Search Input
+            document.getElementById('search-input').addEventListener('input', renderResources);
+
+            // Mobile menu toggle
+            document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.toggle('hidden');
+            });
+
+            // Logout
+            document.getElementById('logout-btn')?.addEventListener('click', () => {
+                auth.logout();
+                window.location.reload();
+            });
+
+            // Dropdown
+            const userMenuBtn = document.getElementById('user-menu-btn');
+            const dropdownMenu = document.getElementById('dropdown-menu');
+            if (userMenuBtn && dropdownMenu) {
+                userMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    dropdownMenu.classList.remove('hidden');
+                });
+                document.addEventListener('click', (e) => {
+                    if (!dropdownMenu.contains(e.target) && e.target !== userMenuBtn) {
+                        dropdownMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
