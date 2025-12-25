@@ -412,8 +412,13 @@
                     return sum + (budget * 0.99);
                 }, 0);
 
-                // Available balance is same as total earned (simplified)
-                const availableBalance = totalEarned;
+                // Get total completed withdrawals to calculate available balance
+                const txData = await api.get('/payments/transactions?type=withdrawal');
+                const withdrawals = (txData.data || []).filter(tx => tx.status === 'completed');
+                const totalWithdrawn = withdrawals.reduce((sum, tx) => sum + (tx.amount || 0), 0);
+
+                // Available balance = total earned - withdrawals already approved
+                const availableBalance = totalEarned - totalWithdrawn;
 
                 // Update stats - format as numbers (HTML already has $ prefix)
                 document.getElementById('total-earnings').textContent = totalEarned.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
