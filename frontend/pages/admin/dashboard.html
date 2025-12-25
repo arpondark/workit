@@ -543,40 +543,46 @@
                 return;
             }
 
-            tbody.innerHTML = users.map(user => `
+            tbody.innerHTML = users.map(user => {
+                const name = user.name || 'Unknown';
+                const email = user.email || '';
+                const role = user.role || 'user';
+                const status = user.status || (user.isSuspended ? 'suspended' : 'active');
+                return `
                     <tr>
                         <td class="py-3">
                             <div class="flex items-center">
                                 <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-medium text-sm mr-3">
-                                    ${user.name.charAt(0).toUpperCase()}
+                                    ${name.charAt(0).toUpperCase()}
                                 </div>
                                 <div>
-                                    <p class="font-medium text-gray-800">${user.name}</p>
-                                    <p class="text-gray-500 text-sm">${user.email}</p>
+                                    <p class="font-medium text-gray-800">${name}</p>
+                                    <p class="text-gray-500 text-sm">${email}</p>
                                 </div>
                             </div>
                         </td>
                         <td class="py-3">
-                            <span class="px-2 py-1 text-xs font-medium rounded-full ${user.role === 'client' ? 'bg-indigo-100 text-indigo-700' :
-                    user.role === 'freelancer' ? 'bg-green-100 text-green-700' :
-                        'bg-gray-100 text-gray-700'
-                }">
-                                ${user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                            <span class="px-2 py-1 text-xs font-medium rounded-full ${role === 'client' ? 'bg-indigo-100 text-indigo-700' :
+                        role === 'freelancer' ? 'bg-green-100 text-green-700' :
+                            'bg-gray-100 text-gray-700'
+                    }">
+                                ${role.charAt(0).toUpperCase() + role.slice(1)}
                             </span>
                         </td>
                         <td class="py-3">
-                            <span class="px-2 py-1 text-xs font-medium rounded-full ${user.status === 'active' ? 'bg-green-100 text-green-700' :
-                    user.status === 'suspended' ? 'bg-red-100 text-red-700' :
-                        'bg-yellow-100 text-yellow-700'
-                }">
-                                ${user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                            <span class="px-2 py-1 text-xs font-medium rounded-full ${status === 'active' ? 'bg-green-100 text-green-700' :
+                        status === 'suspended' ? 'bg-red-100 text-red-700' :
+                            'bg-yellow-100 text-yellow-700'
+                    }">
+                                ${status.charAt(0).toUpperCase() + status.slice(1)}
                             </span>
                         </td>
                         <td class="py-3 text-gray-500 text-sm">
-                            ${new Date(user.createdAt).toLocaleDateString()}
+                            ${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
                         </td>
                     </tr>
-                `).join('');
+                `;
+            }).join('');
         } catch (error) {
             console.error('Error loading users:', error);
             document.getElementById('recent-users').innerHTML =
