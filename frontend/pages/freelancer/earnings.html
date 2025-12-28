@@ -391,42 +391,25 @@
         // Load earnings data
         async function loadEarnings() {
             try {
-                // Load applications - source of truth for job data (same as active-jobs.html)
-                const appsData = await api.get('/applications/my');
-                const applications = appsData.data || [];
+                // Fetch earnings logic from backend (single source of truth)
+                const earningsData = await api.get('/payments/earnings');
+                const earnings = earningsData.earnings || {};
 
-                // Filter completed jobs (accepted AND job.status === 'completed')
-                const completedApps = applications.filter(app => app.status === 'accepted' && app.job?.status === 'completed');
-                const activeApps = applications.filter(app => app.status === 'accepted' && app.job?.status !== 'completed' && app.job?.status !== 'cancelled');
-
-                // Calculate total earnings from completed jobs (net amount after 1% platform fee)
-                const totalEarned = completedApps.reduce((sum, app) => {
-                    const budget = app.proposedBudget || 0;
-                    // Earnings are net amount after 1% platform fee
-                    return sum + (budget * 0.99);
-                }, 0);
-
-                // Calculate pending (active jobs that haven't been paid yet)
-                const pendingAmount = activeApps.reduce((sum, app) => {
-                    const budget = app.proposedBudget || 0;
-                    return sum + (budget * 0.99);
-                }, 0);
-
-                // Get total completed withdrawals to calculate available balance
-                const txData = await api.get('/payments/transactions?type=withdrawal');
-                const withdrawals = (txData.data || []).filter(tx => tx.status === 'completed');
-                const totalWithdrawn = withdrawals.reduce((sum, tx) => sum + (tx.amount || 0), 0);
-
-                // Available balance = total earned - withdrawals already approved
-                const availableBalance = totalEarned - totalWithdrawn;
+                // Use robust backend values
+                const totalEarned = earnings.totalEarned || 0;
+                const availableBalance = earnings.availableBalance || 0;
+                const pendingAmount = earnings.pendingPayments || 0;
+                const completedJobsCount = earnings.completedJobs || 0;
 
                 // Update stats - format as numbers (HTML already has $ prefix)
                 document.getElementById('total-earnings').textContent = totalEarned.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 document.getElementById('pending-earnings').textContent = pendingAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 document.getElementById('available-balance').textContent = availableBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                document.getElementById('completed-jobs').textContent = completedApps.length;
+                document.getElementById('completed-jobs').textContent = completedJobsCount;
 
                 // This month earnings - filter by current month
+                // This is still an estimation based on visible apps, but better than nothing for a specific metric.
+                // Ideally backend provides this, but we'll leave it as best-effort for now.
                 const currentMonth = new Date().getMonth();
                 const currentYear = new Date().getFullYear();
                 const thisMonthCompleted = completedApps.filter(app => {
@@ -434,7 +417,7 @@
                     return completedDate.getMonth() === currentMonth && completedDate.getFullYear() === currentYear;
                 });
                 const monthEarnings = thisMonthCompleted.reduce((sum, app) => sum + ((app.proposedBudget || 0) * 0.99), 0);
-                document.getElementById('month-earnings').textContent = monthEarnings.toLocaleString();
+                document.getElementById('month-earnings').textContent = monthEarnings.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
                 // Update chart with earnings by month
                 if (earningsChart && totalEarned > 0) {
@@ -551,22 +534,9 @@
             }
 
             try {
-                // Calculate available balance from applications (same as loadEarnings)
-                const appsData = await api.get('/applications/my');
-                const applications = appsData.data || [];
-                const completedApps = applications.filter(app => app.status === 'accepted' && app.job?.status === 'completed');
-
-                // Get total already withdrawn (completed withdrawals)
-                const txData = await api.get('/payments/transactions?type=withdrawal&status=completed');
-                const withdrawals = txData.data || [];
-                const totalWithdrawn = withdrawals.reduce((sum, tx) => sum + (tx.amount || 0), 0);
-
-                // Calculate total earnings (available balance) from completed jobs minus withdrawn
-                const totalEarned = completedApps.reduce((sum, app) => {
-                    const budget = app.proposedBudget || 0;
-                    return sum + (budget * 0.99);
-                }, 0);
-                const availableBalance = totalEarned - totalWithdrawn;
+                // Fetch fresh earnings data to check balance
+                const earningsData = await api.get('/payments/earnings');
+                const availableBalance = earningsData.earnings?.availableBalance || 0;
 
                 if (parseFloat(amount) > availableBalance) {
                     toast.error(`Insufficient balance. Available: $${availableBalance.toFixed(2)}`);

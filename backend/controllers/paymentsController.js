@@ -262,12 +262,13 @@ exports.getEarnings = async (req, res) => {
             }
         ]);
 
+        // Total withdrawn (Completed AND Pending) to show accurate available balance
         const totalWithdrawn = await Transaction.aggregate([
             {
                 $match: {
                     from: req.user._id,
                     type: 'withdrawal',
-                    status: 'completed'
+                    status: { $in: ['completed', 'pending'] }
                 }
             },
             {
@@ -277,6 +278,14 @@ exports.getEarnings = async (req, res) => {
                 }
             }
         ]);
+
+        const withdrawnAmount = totalWithdrawn[0]?.total || 0;
+        
+        // Use User model's totalEarnings (Lifetime)
+        const lifetimeEarnings = req.user.totalEarnings || 0;
+        
+        // Calculate available balance
+        const availableBalance = lifetimeEarnings - withdrawnAmount;
 
         const pendingPayments = await Transaction.aggregate([
             {
@@ -323,11 +332,11 @@ exports.getEarnings = async (req, res) => {
         res.json({
             success: true,
             earnings: {
-                totalEarned: totalEarned[0]?.total || 0,
-                completedJobs: totalEarned[0]?.count || 0,
-                totalWithdrawn: totalWithdrawn[0]?.total || 0,
+                totalEarned: lifetimeEarnings, // Use lifetime from User model
+                completedJobs: req.user.completedJobs || 0,
+                totalWithdrawn: withdrawnAmount,
                 pendingPayments: pendingPayments[0]?.total || 0,
-                availableBalance: req.user.availableBalance,
+                availableBalance: availableBalance, // Calculated on the fly
                 monthlyEarnings
             }
         });
