@@ -2,23 +2,38 @@
 <html lang="en">
 
 <head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              fontFamily: {
+                'inter': ['Inter', 'sans-serif'],
+              },
+              colors: {
+                primary: {
+                  DEFAULT: '#6366f1',
+                  dark: '#4f46e5',
+                  light: '#818cf8'
+                },
+                secondary: '#0ea5e9',
+                success: '#22c55e',
+                warning: '#f59e0b',
+                danger: '#ef4444',
+                dark: '#1e293b',
+                gray: '#64748b',
+                light: '#f8fafc'
+              }
+            }
+          }
+        }
+      </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Freelancer Sign Up - WorkIT</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    
     <link rel="stylesheet" href="../../css/styles.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#6366f1',
-                        'primary-dark': '#4f46e5',
-                    }
-                }
-            }
-        }
-    </script>
+    
 </head>
 
 <body class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">

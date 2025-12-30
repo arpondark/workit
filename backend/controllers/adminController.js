@@ -1023,8 +1023,12 @@ exports.approveWithdrawal = async (req, res) => {
         transaction.completedAt = new Date();
         await transaction.save();
 
-        // Note: Balance tracking is now handled via completed jobs calculation
-        // No need to update user.availableBalance since we calculate from completed apps
+        // Update user's availableBalance (deduct withdrawal amount)
+        await User.findByIdAndUpdate(transaction.from._id, {
+            $inc: {
+                availableBalance: -transaction.amount
+            }
+        });
 
         res.json({
             success: true,

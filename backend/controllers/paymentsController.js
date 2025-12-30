@@ -124,45 +124,30 @@ exports.withdrawFunds = async (req, res) => {
             });
         }
 
-        // Calculate available balance from completed jobs
-        const completedApps = await Application.find({
-            freelancer: req.user._id,
-            status: 'accepted'
-        }).populate('job', 'status budget');
+        // Get current user data for accurate balance
+        const user = await User.findById(req.user._id);
+        
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
 
-        // Calculate total earned from completed jobs (99% after 1% platform fee)
-        const totalEarned = completedApps.reduce((sum, app) => {
-            if (app.job?.status === 'completed') {
-                const budget = app.proposedBudget || 0;
-                return sum + (budget * 0.99);
-            }
-            return sum;
-        }, 0);
-
-        // Get total already withdrawn
-        const totalWithdrawn = await Transaction.aggregate([
-            {
-                $match: {
-                    from: req.user._id,
-                    type: 'withdrawal',
-                    status: 'completed'
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    total: { $sum: '$amount' }
-                }
-            }
-        ]);
-
-        const withdrawnAmount = totalWithdrawn[0]?.total || 0;
-        const availableBalance = totalEarned - withdrawnAmount;
+        // Use User model's availableBalance as single source of truth
+        const availableBalance = user.availableBalance || 0;
 
         if (amount > availableBalance) {
             return res.status(400).json({
                 success: false,
                 message: `Insufficient balance. Available: $${availableBalance.toFixed(2)}`
+            });
+        }
+
+        if (amount <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Amount must be greater than 0'
             });
         }
 
@@ -284,8 +269,8 @@ exports.getEarnings = async (req, res) => {
         // Use User model's totalEarnings (Lifetime)
         const lifetimeEarnings = req.user.totalEarnings || 0;
         
-        // Calculate available balance
-        const availableBalance = lifetimeEarnings - withdrawnAmount;
+        // Use User model's availableBalance (single source of truth)
+        const availableBalance = req.user.availableBalance || 0;
 
         const pendingPayments = await Transaction.aggregate([
             {

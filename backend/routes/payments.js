@@ -24,8 +24,8 @@ router.post('/withdraw', protect, authorize('freelancer'), withdrawFunds);
 router.get('/transactions', protect, getTransactions);
 
 // @route   GET /api/payments/earnings
-// @desc    Get freelancer earnings summary
-// @access  Private (Freelancer)
-router.get('/earnings', protect, authorize('freelancer'), getEarnings);
+// @desc    Get user earnings summary
+// @access  Private
+router.get('/earnings', protect, getEarnings);
 
 module.exports = router;

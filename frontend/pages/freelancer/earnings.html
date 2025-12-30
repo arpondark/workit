@@ -2,24 +2,39 @@
 <html lang="en">
 
 <head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              fontFamily: {
+                'inter': ['Inter', 'sans-serif'],
+              },
+              colors: {
+                primary: {
+                  DEFAULT: '#6366f1',
+                  dark: '#4f46e5',
+                  light: '#818cf8'
+                },
+                secondary: '#0ea5e9',
+                success: '#22c55e',
+                warning: '#f59e0b',
+                danger: '#ef4444',
+                dark: '#1e293b',
+                gray: '#64748b',
+                light: '#f8fafc'
+              }
+            }
+          }
+        }
+      </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Earnings - WorkIT</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="../../css/styles.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#6366f1',
-                        'primary-dark': '#4f46e5',
-                    }
-                }
-            }
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    
 </head>
 
 <body class="bg-gray-50">
@@ -391,8 +406,17 @@
         // Load earnings data
         async function loadEarnings() {
             try {
+                // Check if user is logged in first
+                if (!auth.isLoggedIn()) {
+                    console.error('User not logged in');
+                    window.location.href = '/pages/auth/login.html';
+                    return;
+                }
+
+                console.log('Loading earnings data...');
                 // Fetch earnings logic from backend (single source of truth)
                 const earningsData = await api.get('/payments/earnings');
+                console.log('Earnings data received:', earningsData);
                 const earnings = earningsData.earnings || {};
 
                 // Use robust backend values
@@ -407,16 +431,18 @@
                 document.getElementById('available-balance').textContent = availableBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 document.getElementById('completed-jobs').textContent = completedJobsCount;
 
-                // This month earnings - filter by current month
-                // This is still an estimation based on visible apps, but better than nothing for a specific metric.
-                // Ideally backend provides this, but we'll leave it as best-effort for now.
+                // Use backend monthly earnings data if available
+                const monthlyEarnings = earnings.monthlyEarnings || [];
+                let monthEarnings = 0;
+                
+                // Calculate current month earnings
                 const currentMonth = new Date().getMonth();
                 const currentYear = new Date().getFullYear();
-                const thisMonthCompleted = completedApps.filter(app => {
-                    const completedDate = new Date(app.job?.completedAt || app.updatedAt);
-                    return completedDate.getMonth() === currentMonth && completedDate.getFullYear() === currentYear;
-                });
-                const monthEarnings = thisMonthCompleted.reduce((sum, app) => sum + ((app.proposedBudget || 0) * 0.99), 0);
+                const currentMonthData = monthlyEarnings.find(item => 
+                    item._id.month === currentMonth + 1 && item._id.year === currentYear
+                );
+                monthEarnings = currentMonthData ? currentMonthData.total : 0;
+                
                 document.getElementById('month-earnings').textContent = monthEarnings.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
                 // Update chart with earnings by month
@@ -424,10 +450,12 @@
                     const chartLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                     const chartData = new Array(12).fill(0);
 
-                    completedApps.forEach(app => {
-                        const completedDate = new Date(app.job?.completedAt || app.updatedAt);
-                        const month = completedDate.getMonth();
-                        chartData[month] += (app.proposedBudget || 0) * 0.99;
+                    // Use backend monthly data
+                    monthlyEarnings.forEach(item => {
+                        const monthIndex = item._id.month - 1; // Convert 1-12 to 0-11
+                        if (monthIndex >= 0 && monthIndex < 12) {
+                            chartData[monthIndex] = item.total;
+                        }
                     });
 
                     // Show last 6 months
@@ -439,7 +467,15 @@
 
             } catch (error) {
                 console.error('Error loading earnings:', error);
-                toast.error('Failed to load earnings data');
+                console.error('Error details:', error.message);
+                if (error.message.includes('Not authorized')) {
+                    toast.error('Please log in to view earnings');
+                    setTimeout(() => {
+                        window.location.href = '/pages/auth/login.html';
+                    }, 2000);
+                } else {
+                    toast.error('Failed to load earnings data: ' + error.message);
+                }
             }
         }
 
