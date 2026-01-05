@@ -80,6 +80,16 @@
                         </svg>
                         My Applications
                     </a>
+                    <a href="invitations.html"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        Job Invitations
+                        <span id="sidebar-invitations-badge" class="hidden ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">0</span>
+                    </a>
                     <a href="active-jobs.html"
                         class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -258,7 +268,28 @@
 
                 <div class="grid lg:grid-cols-3 gap-8">
                     <!-- Recent Applications -->
-                    <div class="lg:col-span-2">
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Job Invitations -->
+                        <div class="bg-white rounded-xl shadow-sm">
+                            <div class="p-6 border-b flex items-center justify-between">
+                                <h3 class="font-semibold text-gray-900">Job Invitations</h3>
+                                <div class="flex items-center gap-2">
+                                    <span id="invitations-count" class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full text-sm font-medium">0 new</span>
+                                    <a href="invitations.html" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">View All</a>
+                                </div>
+                            </div>
+                            <div id="invitations-list" class="divide-y">
+                                <!-- Invitations will be loaded here -->
+                            </div>
+                            <div id="no-invitations" class="hidden p-8 text-center">
+                                <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                                <p class="text-gray-500 mb-4">No job invitations yet</p>
+                                <p class="text-sm text-gray-400">Clients will send invitations when they're interested in working with you</p>
+                            </div>
+                        </div>
+
                         <div class="bg-white rounded-xl shadow-sm">
                             <div class="p-6 border-b flex items-center justify-between">
                                 <h3 class="font-semibold text-gray-900">Recent Applications</h3>
@@ -407,6 +438,19 @@
             auth.logout();
         });
 
+        // Scroll to invitations section
+        function scrollToInvitations() {
+            const invitationsSection = document.getElementById('invitations-list').closest('.bg-white');
+            if (invitationsSection) {
+                invitationsSection.scrollIntoView({ behavior: 'smooth' });
+                // Highlight the section briefly
+                invitationsSection.classList.add('ring-2', 'ring-indigo-500');
+                setTimeout(() => {
+                    invitationsSection.classList.remove('ring-2', 'ring-indigo-500');
+                }, 2000);
+            }
+        }
+
         // Load dashboard data
         async function loadDashboard() {
             try {
@@ -435,6 +479,9 @@
                 // Update initial stats from profile
                 document.getElementById('stat-earnings').textContent = utils.formatCurrency(profile.totalEarnings || 0);
                 document.getElementById('stat-completed').textContent = profile.completedJobs || 0;
+
+                // Load job invitations
+                await loadInvitations();
 
                 // Load applications - this is the source of truth for job data
                 const appsData = await api.get('/applications/my');
@@ -487,6 +534,103 @@
             }
         }
 
+        // Load job invitations
+        async function loadInvitations() {
+            try {
+                const response = await api.get('/jobs/invites');
+                const invitations = response.data || [];
+                
+                const pendingInvitations = invitations.filter(inv => inv.status === 'pending');
+                
+                // Update invitations count
+                const countElement = document.getElementById('invitations-count');
+                countElement.textContent = `${pendingInvitations.length} new`;
+                
+                // Update sidebar badge
+                const sidebarBadge = document.getElementById('sidebar-invitations-badge');
+                if (pendingInvitations.length > 0) {
+                    sidebarBadge.textContent = pendingInvitations.length;
+                    sidebarBadge.classList.remove('hidden');
+                } else {
+                    sidebarBadge.classList.add('hidden');
+                }
+                
+                const invitationsList = document.getElementById('invitations-list');
+                const noInvitationsDiv = document.getElementById('no-invitations');
+                
+                if (pendingInvitations.length > 0) {
+                    invitationsList.innerHTML = pendingInvitations.map(inv => `
+                        <div class="p-4 hover:bg-gray-50 transition">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-medium text-gray-900 truncate">${inv.job?.title || 'Job Title'}</h4>
+                                    <p class="text-sm text-gray-500 mt-1">from ${inv.job?.client?.name || 'Client'}</p>
+                                    ${inv.message ? `<p class="text-sm text-gray-600 mt-2 italic">"${inv.message}"</p>` : ''}
+                                </div>
+                                <span class="ml-4 px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">
+                                    New
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-4 mt-3 text-sm text-gray-500">
+                                <span>Budget: $${inv.job?.budget?.min || 0}-${inv.job?.budget?.max || 0}</span>
+                                <span>•</span>
+                                <span>Duration: ${inv.job?.duration || 'Not specified'}</span>
+                                <span>•</span>
+                                <span>${utils.timeAgo(inv.invitedAt)}</span>
+                            </div>
+                            <div class="flex gap-2 mt-3">
+                                <button onclick="respondToInvite('${inv.job?._id}', '${inv._id}', 'accepted')" 
+                                    class="px-3 py-1.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition">
+                                    Accept
+                                </button>
+                                <button onclick="respondToInvite('${inv.job?._id}', '${inv._id}', 'declined')" 
+                                    class="px-3 py-1.5 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300 transition">
+                                    Decline
+                                </button>
+                                <a href="/pages/jobs/job-details.html?id=${inv.job?._id}" 
+                                    class="px-3 py-1.5 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition">
+                                    View Job
+                                </a>
+                            </div>
+                        </div>
+                    `).join('');
+                    noInvitationsDiv.classList.add('hidden');
+                } else {
+                    invitationsList.innerHTML = '';
+                    noInvitationsDiv.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error loading invitations:', error);
+                // Don't show error toast for invitations as it's not critical
+            }
+        }
+
+        // Respond to job invitation
+        async function respondToInvite(jobId, inviteId, response) {
+            try {
+                const result = await api.put(`/jobs/${jobId}/invite/${inviteId}`, { 
+                    response: response 
+                });
+                
+                if (response === 'accepted') {
+                    toast.success('Invitation accepted! You can now apply to this job.');
+                } else {
+                    toast.info('Invitation declined');
+                }
+                
+                // Reload invitations
+                await loadInvitations();
+                
+                // If accepted, open the job application page
+                if (response === 'accepted') {
+                    window.open(`/pages/jobs/job-details.html?id=${jobId}`, '_blank');
+                }
+            } catch (error) {
+                console.error('Error responding to invitation:', error);
+                toast.error(error.response?.data?.message || 'Failed to respond to invitation');
+            }
+        }
+
         function getStatusClass(status) {
             const classes = {
                 pending: 'bg-amber-100 text-amber-700',
@@ -505,6 +649,21 @@
                 const current = parseInt(badge.textContent) || 0;
                 badge.textContent = current + 1;
                 badge.classList.remove('hidden');
+            });
+
+            // Listen for new job invitations
+            socketClient.on('newInvitation', (data) => {
+                // Show toast notification
+                toast.success(`New job invitation: ${data.jobTitle} from ${data.clientName}`);
+                
+                // Reload invitations to update the UI
+                loadInvitations();
+                
+                // Play notification sound if available
+                if (window.audioContext) {
+                    // Simple notification sound could be played here
+                    console.log('New invitation received:', data);
+                }
             });
         }
 

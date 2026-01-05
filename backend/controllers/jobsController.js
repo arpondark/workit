@@ -64,6 +64,8 @@ exports.getJobs = async (req, res) => {
 exports.inviteFreelancer = async (req, res) => {
     try {
         const { freelancerId, message } = req.body;
+        
+        console.log('Invite request:', { jobId: req.params.id, freelancerId, message, user: req.user._id });
 
         const job = await Job.findById(req.params.id);
 
@@ -133,6 +135,11 @@ exports.inviteFreelancer = async (req, res) => {
             });
         }
 
+        // Initialize invites array if it doesn't exist
+        if (!job.invites) {
+            job.invites = [];
+        }
+        
         // Add invite
         job.invites.push({
             freelancer: freelancerId,

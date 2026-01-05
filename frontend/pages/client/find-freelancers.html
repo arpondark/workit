@@ -500,7 +500,9 @@
         // Load client's jobs for invite modal
         async function loadMyJobs() {
             try {
+                console.log('Loading jobs...');
                 const data = await api.get('/jobs/client/my-jobs?status=open');
+                console.log('Jobs data:', data);
                 myJobs = data.data || [];
                 
                 const jobSelect = document.getElementById('job-select');
@@ -558,16 +560,20 @@
             }
             
             try {
+                console.log('Sending invite:', { jobId, freelancerId: currentFreelancerId, message });
                 const response = await api.post(`/jobs/${jobId}/invite`, {
                     freelancerId: currentFreelancerId,
                     message: message
                 });
                 
+                console.log('Invite response:', response);
                 toast.success('Invitation sent successfully!');
                 closeInviteModal();
             } catch (error) {
                 console.error('Error sending invite:', error);
-                toast.error(error.response?.data?.message || 'Failed to send invitation');
+                console.error('Error response:', error.response);
+                console.error('Error message:', error.message);
+                toast.error(error.response?.data?.message || error.message || 'Failed to send invitation');
             }
         }
 
