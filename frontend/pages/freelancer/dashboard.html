@@ -80,15 +80,21 @@
                         </svg>
                         My Applications
                     </a>
-                    <a href="invitations.html"
-                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
-                            </path>
-                        </svg>
-                        Job Invitations
-                        <span id="sidebar-invitations-badge" class="hidden ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">0</span>
+                    <a href="invitations.html" id="sidebar-invitations-link"
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition relative">
+                        <div class="relative">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                            <span id="sidebar-invitations-dot" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-medium">Client Requests</div>
+                            <div class="text-xs text-gray-400">Job invitations from clients</div>
+                        </div>
+                        <span id="sidebar-invitations-badge" class="hidden bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium">0</span>
                     </a>
                     <a href="active-jobs.html"
                         class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition">
@@ -272,7 +278,7 @@
                         <!-- Job Invitations -->
                         <div class="bg-white rounded-xl shadow-sm">
                             <div class="p-6 border-b flex items-center justify-between">
-                                <h3 class="font-semibold text-gray-900">Job Invitations</h3>
+                                <h3 class="font-semibold text-gray-900">Client Job Requests</h3>
                                 <div class="flex items-center gap-2">
                                     <span id="invitations-count" class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full text-sm font-medium">0 new</span>
                                     <a href="invitations.html" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">View All</a>
@@ -285,8 +291,8 @@
                                 <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                 </svg>
-                                <p class="text-gray-500 mb-4">No job invitations yet</p>
-                                <p class="text-sm text-gray-400">Clients will send invitations when they're interested in working with you</p>
+                                <p class="text-gray-500 mb-4">No client job requests yet</p>
+                                <p class="text-sm text-gray-400">Clients will send job invitations when they're interested in working with you</p>
                             </div>
                         </div>
 
@@ -538,7 +544,26 @@
         async function loadInvitations() {
             try {
                 const response = await api.get('/jobs/invites');
-                const invitations = response.data || [];
+                // Backend returns jobs array, we need to flatten the invites
+                const jobsWithInvites = response.invites || [];
+                const invitations = [];
+                
+                jobsWithInvites.forEach(job => {
+                    if (job.invites && job.invites.length > 0) {
+                        job.invites.forEach(invite => {
+                            invitations.push({
+                                ...invite,
+                                job: {
+                                    _id: job._id,
+                                    title: job.title,
+                                    budget: job.budget,
+                                    duration: job.duration,
+                                    client: job.client
+                                }
+                            });
+                        });
+                    }
+                });
                 
                 const pendingInvitations = invitations.filter(inv => inv.status === 'pending');
                 
@@ -546,13 +571,26 @@
                 const countElement = document.getElementById('invitations-count');
                 countElement.textContent = `${pendingInvitations.length} new`;
                 
-                // Update sidebar badge
+                // Update sidebar badge and highlight
                 const sidebarBadge = document.getElementById('sidebar-invitations-badge');
+                const sidebarDot = document.getElementById('sidebar-invitations-dot');
+                const sidebarLink = document.getElementById('sidebar-invitations-link');
+                
                 if (pendingInvitations.length > 0) {
                     sidebarBadge.textContent = pendingInvitations.length;
                     sidebarBadge.classList.remove('hidden');
+                    sidebarDot.classList.remove('hidden');
+                    
+                    // Highlight the menu item
+                    sidebarLink.classList.remove('text-gray-600');
+                    sidebarLink.classList.add('bg-indigo-50', 'text-indigo-600', 'font-medium');
                 } else {
                     sidebarBadge.classList.add('hidden');
+                    sidebarDot.classList.add('hidden');
+                    
+                    // Remove highlight
+                    sidebarLink.classList.remove('bg-indigo-50', 'text-indigo-600', 'font-medium');
+                    sidebarLink.classList.add('text-gray-600');
                 }
                 
                 const invitationsList = document.getElementById('invitations-list');
@@ -666,6 +704,17 @@
                 }
             });
         }
+
+        // Handle sidebar invitations click to mark as viewed
+        document.getElementById('sidebar-invitations-link').addEventListener('click', function() {
+            const sidebarDot = document.getElementById('sidebar-invitations-dot');
+            const sidebarLink = document.getElementById('sidebar-invitations-link');
+            
+            // Remove visual indicators when clicked
+            sidebarDot.classList.add('hidden');
+            sidebarLink.classList.remove('bg-indigo-50', 'text-indigo-600', 'font-medium');
+            sidebarLink.classList.add('text-gray-600');
+        });
 
         // Load dashboard on page load
         document.addEventListener('DOMContentLoaded', loadDashboard);

@@ -197,7 +197,26 @@
         async function loadInvitations() {
             try {
                 const response = await api.get('/jobs/invites');
-                allInvitations = response.data || [];
+                // Backend returns jobs array, we need to flatten the invites
+                const jobsWithInvites = response.invites || [];
+                allInvitations = [];
+                
+                jobsWithInvites.forEach(job => {
+                    if (job.invites && job.invites.length > 0) {
+                        job.invites.forEach(invite => {
+                            allInvitations.push({
+                                ...invite,
+                                job: {
+                                    _id: job._id,
+                                    title: job.title,
+                                    budget: job.budget,
+                                    duration: job.duration,
+                                    client: job.client
+                                }
+                            });
+                        });
+                    }
+                });
                 
                 updateStats();
                 renderInvitations();
@@ -298,25 +317,25 @@
                                     class="px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition">
                                     Decline
                                 </button>
-                                <a href="/pages/jobs/job-details.html?id=${inv.job?._id}" 
-                                    class="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">
+                                <a href="/pages/freelancer/job-details.html?id=${inv.job?._id}" 
+                                    class="px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition">
                                     View Job Details
                                 </a>
                             </div>
                         ` : inv.status === 'accepted' ? `
                             <div class="flex gap-3">
-                                <a href="/pages/jobs/job-details.html?id=${inv.job?._id}" 
+                                <a href="/pages/freelancer/job-details.html?id=${inv.job?._id}" 
                                     class="px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition">
                                     Apply Now
                                 </a>
-                                <a href="/pages/jobs/job-details.html?id=${inv.job?._id}" 
+                                <a href="/pages/freelancer/job-details.html?id=${inv.job?._id}" 
                                     class="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">
                                     View Job Details
                                 </a>
                             </div>
                         ` : `
                             <div class="flex gap-3">
-                                <a href="/pages/jobs/job-details.html?id=${inv.job?._id}" 
+                                <a href="/pages/freelancer/job-details.html?id=${inv.job?._id}" 
                                     class="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition">
                                     View Job Details
                                 </a>
@@ -341,7 +360,7 @@
         async function respondToInvite(jobId, inviteId, response) {
             try {
                 const result = await api.put(`/jobs/${jobId}/invite/${inviteId}`, { 
-                    response: response 
+                    status: response 
                 });
                 
                 if (response === 'accepted') {
@@ -355,7 +374,7 @@
                 
                 // If accepted, open the job application page
                 if (response === 'accepted') {
-                    window.open(`/pages/jobs/job-details.html?id=${jobId}`, '_blank');
+                    window.open(`/pages/freelancer/job-details.html?id=${jobId}`, '_blank');
                 }
             } catch (error) {
                 console.error('Error responding to invitation:', error);

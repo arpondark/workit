@@ -11,7 +11,6 @@ const {
     getJobApplications,
     submitWork,
     updateSubmission,
-    getMyClientJobs,
     completeJob,
     rejectSubmission,
     inviteFreelancer,
@@ -28,6 +27,11 @@ router.get('/', getJobs);
 // @desc    Get all jobs posted by current client
 // @access  Private (Client)
 router.get('/client/my-jobs', protect, authorize('client'), getMyJobs);
+
+// @route   GET /api/jobs/invites
+// @desc    Get job invites for current freelancer
+// @access  Private (Freelancer)
+router.get('/invites', protect, authorize('freelancer'), getJobInvites);
 
 // @route   GET /api/jobs/:id
 // @desc    Get single job
@@ -78,11 +82,6 @@ router.post('/:id/reject', protect, authorize('client'), rejectSubmission);
 // @desc    Invite freelancer to a job
 // @access  Private (Client - job owner only)
 router.post('/:id/invite', protect, authorize('client'), inviteFreelancer);
-
-// @route   GET /api/jobs/invites
-// @desc    Get job invites for current freelancer
-// @access  Private (Freelancer)
-router.get('/invites', protect, authorize('freelancer'), getJobInvites);
 
 // @route   PUT /api/jobs/:id/invite/:inviteId
 // @desc    Respond to job invite
