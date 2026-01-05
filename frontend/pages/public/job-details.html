@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              fontFamily: {
+                'inter': ['Inter', 'sans-serif'],
+              },
+              colors: {
+                primary: {
+                  DEFAULT: '#6366f1',
+                  dark: '#4f46e5',
+                  light: '#818cf8'
+                },
+                secondary: '#0ea5e9',
+                success: '#22c55e',
+                warning: '#f59e0b',
+                danger: '#ef4444',
+                dark: '#1e293b',
+                gray: '#64748b',
+                light: '#f8fafc'
+              }
+            }
+          }
+        }
+      </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Details - WorkIT</title>
+    
+    <link rel="stylesheet" href="../../css/styles.css">
+    
+</head>
+
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center">
+                        <span
+                            class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Work</span>
+                        <span class="text-2xl font-bold text-gray-800">IT</span>
+                    </a>
+                    <div class="hidden md:flex items-center space-x-6 ml-10">
+                        <a href="/" class="text-gray-700 hover:text-indigo-600 font-medium transition">Home</a>
+                        <a href="/pages/public/jobs.html" class="text-gray-700 hover:text-indigo-600 font-medium transition">Browse Jobs</a>
+                        <a href="/pages/public/freelancers.html"
+                            class="text-gray-700 hover:text-indigo-600 font-medium transition">Find Talent</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/pages/auth/login.html"
+                        class="text-gray-700 hover:text-indigo-600 font-medium transition">Login</a>
+                    <a href="/pages/auth/login.html"
+                        class="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Back Button -->
+        <div class="mb-6">
+            <a href="/pages/public/jobs.html"
+                class="inline-flex items-center text-gray-600 hover:text-indigo-600 font-medium transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Jobs
+            </a>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" class="flex justify-center items-center h-64">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="hidden bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <svg class="w-12 h-12 text-red-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+            <h3 class="text-lg font-semibold text-red-800 mb-2">Failed to Load Job</h3>
+            <p class="text-red-600 mb-4" id="error-message">An error occurred while loading the job details.</p>
+            <button onclick="window.location.reload()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                Try Again
+            </button>
+        </div>
+
+        <!-- Job Content -->
+        <div id="job-content" class="hidden">
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Main Content -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Job Header -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-start justify-between gap-4">
+                            <div class="flex-1">
+                                <h1 id="job-title" class="text-2xl font-bold text-gray-900 mb-2"></h1>
+                                <div class="flex items-center gap-4 text-sm text-gray-600">
+                                    <div class="flex items-center gap-2">
+                                        <div id="client-avatar" class="w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-medium"></div>
+                                        <span id="client-name"></span>
+                                    </div>
+                                    <span>•</span>
+                                    <span id="job-posted"></span>
+                                    <span>•</span>
+                                    <span id="job-applications"></span>
+                                </div>
+                            </div>
+                            <div id="job-status" class="px-3 py-1 text-xs font-medium rounded-full"></div>
+                        </div>
+                    </div>
+
+                    <!-- Job Description -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">Job Description</h2>
+                        <div id="job-description" class="prose prose-sm max-w-none text-gray-700"></div>
+                    </div>
+
+                    <!-- Requirements -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">Requirements</h2>
+                        <ul id="job-requirements" class="space-y-2"></ul>
+                    </div>
+
+                    <!-- Skills -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">Required Skills</h2>
+                        <div id="job-skills" class="flex flex-wrap gap-2"></div>
+                    </div>
+
+                    <!-- Attachments (if any) -->
+                    <div id="attachments-section" class="bg-white rounded-xl shadow-sm p-6 hidden">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">Attachments</h2>
+                        <div id="job-attachments" class="space-y-2"></div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="space-y-6">
+                    <!-- Job Details Card -->
+                    <div class="bg-white rounded-xl shadow-sm p-6 sticky top-24">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Job Details</h3>
+                        
+                        <div class="space-y-4">
+                            <!-- Budget -->
+                            <div>
+                                <p class="text-sm text-gray-500 mb-1">Budget</p>
+                                <p id="job-budget" class="text-lg font-semibold text-gray-900"></p>
+                            </div>
+
+                            <!-- Duration -->
+                            <div>
+                                <p class="text-sm text-gray-500 mb-1">Duration</p>
+                                <p id="job-duration" class="text-lg font-semibold text-gray-900"></p>
+                            </div>
+
+                            <!-- Experience Level -->
+                            <div>
+                                <p class="text-sm text-gray-500 mb-1">Experience Level</p>
+                                <p id="job-experience" class="text-lg font-semibold text-gray-900"></p>
+                            </div>
+
+                            <!-- Location -->
+                            <div>
+                                <p class="text-sm text-gray-500 mb-1">Location</p>
+                                <p id="job-location" class="text-lg font-semibold text-gray-900"></p>
+                            </div>
+                        </div>
+
+                        <!-- CTA Button -->
+                        <div class="mt-6 pt-6 border-t">
+                            <div id="cta-container">
+                                <a href="/pages/auth/login.html"
+                                    class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold text-center block hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
+                                    Login to Apply
+                                </a>
+                            </div>
+                            <p class="text-xs text-gray-500 text-center mt-3">
+                                By applying, you agree to our Terms of Service
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- About Client -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">About the Client</h3>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div id="client-avatar-large" class="w-12 h-12 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white font-medium"></div>
+                            <div>
+                                <p id="client-name-large" class="font-semibold text-gray-900"></p>
+                                <p id="client-joined" class="text-sm text-gray-500"></p>
+                            </div>
+                        </div>
+                        <p id="client-company" class="text-sm text-gray-600 mb-2"></p>
+                        <div class="flex items-center gap-4 text-sm text-gray-500">
+                            <span id="client-jobs-posted"></span>
+                            <span>•</span>
+                            <span id="client-jobs-filled"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../../js/utils.js"></script>
+    <script>
+        // Get job ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const jobId = urlParams.get('id');
+
+        if (!jobId) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error').classList.remove('hidden');
+            document.getElementById('error-message').textContent = 'Job ID is missing. Please go back and try again.';
+        }
+
+        // Load job details
+        async function loadJobDetails() {
+            try {
+                const response = await api.get(`/jobs/${jobId}`);
+                const job = response.data;
+
+                if (!job) {
+                    throw new Error('Job not found');
+                }
+
+                // Update page title
+                document.title = `${job.title} - WorkIT`;
+
+                // Hide loading, show content
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('job-content').classList.remove('hidden');
+
+                // Fill job details
+                document.getElementById('job-title').textContent = job.title;
+                document.getElementById('job-description').innerHTML = job.description.replace(/\n/g, '<br>');
+                document.getElementById('job-posted').textContent = `Posted ${utils.timeAgo(job.createdAt)}`;
+                document.getElementById('job-applications').textContent = `${job.applicationsCount || 0} applications`;
+
+                // Client info
+                const clientName = job.client?.name || 'Anonymous Client';
+                document.getElementById('client-name').textContent = clientName;
+                document.getElementById('client-name-large').textContent = clientName;
+                document.getElementById('client-avatar').textContent = clientName.charAt(0);
+                document.getElementById('client-avatar-large').textContent = clientName.charAt(0);
+                document.getElementById('client-company').textContent = job.client?.company || '';
+                document.getElementById('client-joined').textContent = `Joined ${utils.timeAgo(job.client?.createdAt)}`;
+                
+                // Budget
+                if (job.budget?.type === 'fixed') {
+                    document.getElementById('job-budget').textContent = `$${job.budget.min}`;
+                } else {
+                    document.getElementById('job-budget').textContent = `$${job.budget?.min || 0}-${job.budget?.max || 0}/hr`;
+                }
+
+                // Duration
+                document.getElementById('job-duration').textContent = job.duration || 'Not specified';
+
+                // Experience
+                document.getElementById('job-experience').textContent = job.experienceLevel || 'Not specified';
+
+                // Location
+                document.getElementById('job-location').textContent = job.location || 'Remote';
+
+                // Status
+                const statusEl = document.getElementById('job-status');
+                statusEl.textContent = job.status;
+                statusEl.className = `px-3 py-1 text-xs font-medium rounded-full ${getStatusClass(job.status)}`;
+
+                // Requirements
+                const requirementsEl = document.getElementById('job-requirements');
+                if (job.requirements && job.requirements.length > 0) {
+                    requirementsEl.innerHTML = job.requirements.map(req => `
+                        <li class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span class="text-gray-700">${req}</span>
+                        </li>
+                    `).join('');
+                } else {
+                    requirementsEl.innerHTML = '<li class="text-gray-500">No specific requirements listed</li>';
+                }
+
+                // Skills
+                const skillsEl = document.getElementById('job-skills');
+                if (job.skill && job.skill.name) {
+                    skillsEl.innerHTML = `
+                        <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium">
+                            ${job.skill.name}
+                        </span>
+                    `;
+                } else {
+                    skillsEl.innerHTML = '<span class="text-gray-500">No skills specified</span>';
+                }
+
+                // Attachments
+                if (job.attachments && job.attachments.length > 0) {
+                    document.getElementById('attachments-section').classList.remove('hidden');
+                    document.getElementById('job-attachments').innerHTML = job.attachments.map(attachment => `
+                        <div class="flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50">
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                            </svg>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-900">${attachment.name}</p>
+                                <p class="text-sm text-gray-500">${attachment.type || 'File'}</p>
+                            </div>
+                            <a href="${attachment.url}" target="_blank" class="text-indigo-600 hover:text-indigo-700 font-medium text-sm">
+                                View
+                            </a>
+                        </div>
+                    `).join('');
+                }
+
+                // Client stats (placeholder - would need API endpoint)
+                document.getElementById('client-jobs-posted').textContent = '0 jobs posted';
+                document.getElementById('client-jobs-filled').textContent = '0 hired';
+
+            } catch (error) {
+                console.error('Error loading job:', error);
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('error').classList.remove('hidden');
+                document.getElementById('error-message').textContent = error.message || 'Failed to load job details';
+            }
+        }
+
+        // Get status class helper
+        function getStatusClass(status) {
+            switch (status) {
+                case 'open': return 'bg-green-100 text-green-800';
+                case 'in-progress': return 'bg-blue-100 text-blue-800';
+                case 'completed': return 'bg-gray-100 text-gray-800';
+                case 'cancelled': return 'bg-red-100 text-red-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        // Load job on page load
+        if (jobId) {
+            loadJobDetails();
+        }
+    </script>
+</body>
+
+</html>

@@ -424,7 +424,7 @@
             // Determine CTA based on login status
             let ctaButton;
             if (user && user.role === 'freelancer') {
-                ctaButton = `<a href="/pages/freelancer/job-details.html?id=${job._id}" class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition">View & Apply</a>`;
+                ctaButton = `<a href="/pages/public/job-details.html?id=${job._id}" class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition">View & Apply</a>`;
             } else if (user && user.role === 'client') {
                 ctaButton = `<a href="/pages/client/find-freelancers.html" class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition">Hire Talent</a>`;
             } else {
@@ -437,7 +437,12 @@
                     <div class="p-6">
                         <div class="flex items-start justify-between gap-4 mb-4">
                             <div class="flex-1 min-w-0">
-                                <h3 class="text-xl font-bold text-gray-900 mb-2">${job.title}</h3>
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">
+                                    <a href="/pages/public/job-details.html?id=${job._id}" 
+                                       class="hover:text-indigo-600 transition-colors">
+                                        ${job.title}
+                                    </a>
+                                </h3>
                                 <div class="flex items-center gap-2">
                                     <div class="w-6 h-6 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-medium">
                                         ${job.client?.name?.charAt(0) || 'C'}
