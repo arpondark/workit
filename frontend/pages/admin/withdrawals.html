@@ -276,6 +276,7 @@
                 const pagination = response.pagination || {};
 
                 // Update stats - log values for debugging
+                console.log('Full Response:', response);
                 console.log('Pending Count:', response.pendingCount);
                 console.log('Total Pending Amount:', response.totalPendingAmount);
                 console.log('Approved Today:', response.approvedToday);
