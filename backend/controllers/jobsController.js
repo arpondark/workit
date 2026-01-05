@@ -58,6 +58,215 @@ exports.getJobs = async (req, res) => {
     }
 };
 
+// @desc    Invite freelancer to a job
+// @route   POST /api/jobs/:id/invite
+// @access  Private (Client - job owner only)
+exports.inviteFreelancer = async (req, res) => {
+    try {
+        const { freelancerId, message } = req.body;
+
+        const job = await Job.findById(req.params.id);
+
+        if (!job) {
+            return res.status(404).json({
+                success: false,
+                message: 'Job not found'
+            });
+        }
+
+        // Check ownership
+        if (job.client.toString() !== req.user._id.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to invite freelancers to this job'
+            });
+        }
+
+        if (job.status !== 'open') {
+            return res.status(400).json({
+                success: false,
+                message: 'Can only invite freelancers to open jobs'
+            });
+        }
+
+        // Check if freelancer exists and is actually a freelancer
+        const User = require('../models/User');
+        const freelancer = await User.findById(freelancerId);
+        
+        if (!freelancer) {
+            return res.status(404).json({
+                success: false,
+                message: 'Freelancer not found'
+            });
+        }
+
+        if (freelancer.role !== 'freelancer') {
+            return res.status(400).json({
+                success: false,
+                message: 'User is not a freelancer'
+            });
+        }
+
+        // Check if already invited
+        const existingInvite = job.invites.find(invite => 
+            invite.freelancer.toString() === freelancerId.toString()
+        );
+
+        if (existingInvite) {
+            return res.status(400).json({
+                success: false,
+                message: 'Freelancer already invited'
+            });
+        }
+
+        // Check if freelancer already applied
+        const Application = require('../models/Application');
+        const existingApplication = await Application.findOne({
+            job: job._id,
+            freelancer: freelancerId
+        });
+
+        if (existingApplication) {
+            return res.status(400).json({
+                success: false,
+                message: 'Freelancer has already applied to this job'
+            });
+        }
+
+        // Add invite
+        job.invites.push({
+            freelancer: freelancerId,
+            message,
+            status: 'pending'
+        });
+
+        await job.save();
+
+        // Populate freelancer info for response
+        await job.populate('invites.freelancer', 'name avatar email');
+
+        res.json({
+            success: true,
+            message: 'Freelancer invited successfully',
+            invite: job.invites[job.invites.length - 1]
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Get job invites for current freelancer
+// @route   GET /api/jobs/invites
+// @access  Private (Freelancer)
+exports.getJobInvites = async (req, res) => {
+    try {
+        const { status } = req.query;
+
+        // Build query
+        const query = {
+            'invites.freelancer': req.user._id
+        };
+
+        if (status) {
+            query['invites.status'] = status;
+        }
+
+        const jobs = await Job.find(query)
+            .populate('client', 'name avatar')
+            .populate('skill', 'name icon')
+            .populate('invites.freelancer', 'name avatar')
+            .sort('-createdAt');
+
+        // Filter invites to only show those for current user
+        const userInvites = jobs.map(job => {
+            const jobObj = job.toObject();
+            jobObj.invites = jobObj.invites.filter(invite => 
+                invite.freelancer._id.toString() === req.user._id.toString()
+            );
+            return jobObj;
+        });
+
+        res.json({
+            success: true,
+            count: userInvites.length,
+            invites: userInvites
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Respond to job invite
+// @route   PUT /api/jobs/:id/invite/:inviteId
+// @access  Private (Freelancer)
+exports.respondToInvite = async (req, res) => {
+    try {
+        const { status } = req.body; // 'accepted' or 'declined'
+
+        if (!['accepted', 'declined'].includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid status. Must be accepted or declined'
+            });
+        }
+
+        const job = await Job.findById(req.params.id);
+
+        if (!job) {
+            return res.status(404).json({
+                success: false,
+                message: 'Job not found'
+            });
+        }
+
+        // Find the invite
+        const invite = job.invites.id(req.params.inviteId);
+
+        if (!invite) {
+            return res.status(404).json({
+                success: false,
+                message: 'Invite not found'
+            });
+        }
+
+        // Check if invite belongs to current user
+        if (invite.freelancer.toString() !== req.user._id.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: 'Not authorized to respond to this invite'
+            });
+        }
+
+        if (invite.status !== 'pending') {
+            return res.status(400).json({
+                success: false,
+                message: 'Invite already responded'
+            });
+        }
+
+        // Update invite status
+        invite.status = status;
+        await job.save();
+
+        res.json({
+            success: true,
+            message: `Invite ${status} successfully`,
+            invite
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 // @desc    Get single job
 // @route   GET /api/jobs/:id
 // @access  Public

@@ -214,6 +214,51 @@
         </div>
     </div>
 
+    <!-- Invite Freelancer Modal -->
+    <div id="invite-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-xl max-w-md w-full">
+            <div class="p-6 border-b border-gray-200">
+                <h2 class="text-xl font-bold text-gray-900">Invite Freelancer to Job</h2>
+                <p class="text-sm text-gray-600 mt-1">Select a job to send an invitation</p>
+            </div>
+            <div class="p-6">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Freelancer</label>
+                    <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div class="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                            <span id="invite-freelancer-initial">F</span>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900" id="invite-freelancer-name">Freelancer Name</p>
+                            <p class="text-sm text-gray-500">Selected freelancer</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Job</label>
+                    <select id="job-select" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">Loading your jobs...</option>
+                    </select>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Message (Optional)</label>
+                    <textarea id="invite-message" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Add a personal message to your invitation..."></textarea>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button onclick="closeInviteModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                        Cancel
+                    </button>
+                    <button onclick="sendInvite()" class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                        Send Invitation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="../../js/utils.js"></script>
     <script>
         // Auth check
@@ -357,9 +402,14 @@
                                 <span class="text-lg font-bold text-gray-900">$${f.hourlyRate || 25}</span>
                                 <span class="text-gray-500 text-sm">/hr</span>
                             </div>
-                            <button onclick="viewProfile('${f._id}')" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm font-medium">
-                                View Profile
-                            </button>
+                            <div class="flex gap-2">
+                                <button onclick="openInviteModal('${f._id}', '${f.name}')" class="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm font-medium">
+                                    Invite
+                                </button>
+                                <button onclick="viewProfile('${f._id}')" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition text-sm font-medium">
+                                    View Profile
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -401,7 +451,7 @@
                             <p class="text-sm text-gray-500">Hourly Rate</p>
                         </div>
                         <div class="p-4 bg-gray-50 rounded-lg text-center">
-                            <p class="text-2xl font-bold text-gray-900">${f.quizScore ? f.quizScore + '/' + (globalQuizSettings.questionsCount || 10) : 'N/A'}</p>
+                            <p class="text-2xl font-bold text-gray-900">${f.skills && f.skills.length > 0 ? Math.max(...f.skills.map(s => s.quizScore || 0)) + '/' + (globalQuizSettings.questionsCount || 10) : 'N/A'}</p>
                             <p class="text-sm text-gray-500">Quiz Score</p>
                         </div>
                         <div class="p-4 bg-gray-50 rounded-lg text-center">
@@ -444,8 +494,88 @@
             document.getElementById('profile-modal').classList.add('hidden');
         }
 
+        let currentFreelancerId = null;
+        let myJobs = [];
+
+        // Load client's jobs for invite modal
+        async function loadMyJobs() {
+            try {
+                const data = await api.get('/jobs/client/my-jobs?status=open');
+                myJobs = data.data || [];
+                
+                const jobSelect = document.getElementById('job-select');
+                if (myJobs.length === 0) {
+                    jobSelect.innerHTML = '<option value="">No open jobs available</option>';
+                } else {
+                    jobSelect.innerHTML = '<option value="">Select a job...</option>';
+                    myJobs.forEach(job => {
+                        jobSelect.innerHTML += `<option value="${job._id}">${job.title} ($${job.budget.min}-${job.budget.max})</option>`;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading jobs:', error);
+                document.getElementById('job-select').innerHTML = '<option value="">Error loading jobs</option>';
+            }
+        }
+
+        function openInviteModal(freelancerId, freelancerName) {
+            currentFreelancerId = freelancerId;
+            
+            // Set freelancer info in modal
+            document.getElementById('invite-freelancer-name').textContent = freelancerName;
+            document.getElementById('invite-freelancer-initial').textContent = freelancerName?.charAt(0)?.toUpperCase() || 'F';
+            
+            // Load jobs if not already loaded
+            if (myJobs.length === 0) {
+                loadMyJobs();
+            }
+            
+            // Reset form
+            document.getElementById('job-select').value = '';
+            document.getElementById('invite-message').value = '';
+            
+            // Show modal
+            document.getElementById('invite-modal').classList.remove('hidden');
+        }
+
+        function closeInviteModal() {
+            document.getElementById('invite-modal').classList.add('hidden');
+            currentFreelancerId = null;
+        }
+
+        async function sendInvite() {
+            const jobId = document.getElementById('job-select').value;
+            const message = document.getElementById('invite-message').value;
+            
+            if (!jobId) {
+                toast.error('Please select a job');
+                return;
+            }
+            
+            if (!currentFreelancerId) {
+                toast.error('Freelancer not selected');
+                return;
+            }
+            
+            try {
+                const response = await api.post(`/jobs/${jobId}/invite`, {
+                    freelancerId: currentFreelancerId,
+                    message: message
+                });
+                
+                toast.success('Invitation sent successfully!');
+                closeInviteModal();
+            } catch (error) {
+                console.error('Error sending invite:', error);
+                toast.error(error.response?.data?.message || 'Failed to send invitation');
+            }
+        }
+
         function inviteToJob(freelancerId) {
-            toast.info('Job invitation feature coming soon!');
+            const f = allFreelancers.find(fr => fr._id === freelancerId);
+            if (f) {
+                openInviteModal(freelancerId, f.name);
+            }
         }
 
         function startChat(freelancerId) {

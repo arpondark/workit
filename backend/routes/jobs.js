@@ -13,7 +13,10 @@ const {
     updateSubmission,
     getMyClientJobs,
     completeJob,
-    rejectSubmission
+    rejectSubmission,
+    inviteFreelancer,
+    getJobInvites,
+    respondToInvite
 } = require('../controllers/jobsController');
 
 // @route   GET /api/jobs
@@ -70,5 +73,20 @@ router.post('/:id/complete', protect, authorize('client'), completeJob);
 // @desc    Reject work submission
 // @access  Private (Client - owner only)
 router.post('/:id/reject', protect, authorize('client'), rejectSubmission);
+
+// @route   POST /api/jobs/:id/invite
+// @desc    Invite freelancer to a job
+// @access  Private (Client - job owner only)
+router.post('/:id/invite', protect, authorize('client'), inviteFreelancer);
+
+// @route   GET /api/jobs/invites
+// @desc    Get job invites for current freelancer
+// @access  Private (Freelancer)
+router.get('/invites', protect, authorize('freelancer'), getJobInvites);
+
+// @route   PUT /api/jobs/:id/invite/:inviteId
+// @desc    Respond to job invite
+// @access  Private (Freelancer)
+router.put('/:id/invite/:inviteId', protect, authorize('freelancer'), respondToInvite);
 
 module.exports = router;

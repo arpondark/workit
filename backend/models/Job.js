@@ -98,7 +98,23 @@ const jobSchema = new mongoose.Schema({
     views: {
         type: Number,
         default: 0
-    }
+    },
+    invites: [{
+        freelancer: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        invitedAt: {
+            type: Date,
+            default: Date.now
+        },
+        status: {
+            type: String,
+            enum: ['pending', 'accepted', 'declined'],
+            default: 'pending'
+        },
+        message: String
+    }]
 }, {
     timestamps: true
 });
