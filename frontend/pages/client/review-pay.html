@@ -626,24 +626,37 @@
         }
 
         async function requestChanges(jobId) {
-            const feedback = prompt('Please describe the changes needed:');
-            if (!feedback || !feedback.trim()) {
-                toast.error('Please provide feedback for the freelancer');
-                return;
-            }
+            currentModalInstance = modal.show({
+                title: 'Request Changes',
+                confirmText: 'Send Feedback',
+                cancelText: 'Cancel',
+                content: `
+                    <div class="space-y-3">
+                        <p class="text-sm text-gray-600">Please describe what needs to be updated before you can accept this work.</p>
+                        <textarea id="feedback-text" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Share the requested changes..."></textarea>
+                    </div>
+                `,
+                onConfirm: async () => {
+                    const feedbackInput = document.getElementById('feedback-text');
+                    const feedback = feedbackInput ? feedbackInput.value.trim() : '';
+                    if (!feedback) {
+                        toast.error('Please provide feedback for the freelancer');
+                        return;
+                    }
 
-            try {
-                loading.show('Sending feedback...');
-                await api.post(`/jobs/${jobId}/reject`, { reason: feedback });
-                
-                toast.success('Feedback sent! Freelancer can now resubmit.');
-                loadJobs();
-            } catch (error) {
-                console.error('Rejection Error:', error);
-                toast.error(error.message || 'Failed to send feedback');
-            } finally {
-                loading.hide();
-            }
+                    try {
+                        loading.show('Sending feedback...');
+                        await api.post(`/jobs/${jobId}/reject`, { reason: feedback });
+                        toast.success('Feedback sent! Freelancer can now resubmit.');
+                        loadJobs();
+                    } catch (error) {
+                        console.error('Rejection Error:', error);
+                        toast.error(error.message || 'Failed to send feedback');
+                    } finally {
+                        loading.hide();
+                    }
+                }
+            });
         }
 
         function viewJobDetails(jobId) {
