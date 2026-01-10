@@ -30,8 +30,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payments - WorkIT</title>
-    
-    
+    <link rel="stylesheet" href="../../css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-50">
     <div class="flex min-h-screen">
@@ -341,18 +341,25 @@
         }
 
         // Load payment data
+        function getJobAmount(job) {
+            if (typeof job.actualPayment === 'number') return job.actualPayment;
+            if (job.budget && typeof job.budget === 'object') {
+                if (job.budget.type === 'fixed') return Number(job.budget.min) || 0;
+                if (job.budget.type === 'hourly') return Number(job.budget.min) || 0;
+            }
+            return Number(job.budget) || 0;
+        }
+
         async function loadPaymentData() {
             try {
-                // Load jobs to calculate spending
-                const data = await api.get('/jobs/my');
-                const jobs = data.jobs || [];
+                const data = await api.get('/jobs/client/my-jobs?limit=200');
+                const jobs = data.data || data.jobs || [];
                 
                 const activeJobs = jobs.filter(j => j.status === 'in-progress');
                 const completedJobs = jobs.filter(j => j.status === 'completed');
                 
-                // Calculate totals (mock data for demo)
-                const totalSpent = completedJobs.reduce((sum, j) => sum + (j.budget || 0), 0);
-                const escrowAmount = activeJobs.reduce((sum, j) => sum + (j.budget || 0), 0);
+                const totalSpent = completedJobs.reduce((sum, j) => sum + getJobAmount(j), 0);
+                const escrowAmount = activeJobs.reduce((sum, j) => sum + getJobAmount(j), 0);
                 
                 // Update stats
                 document.getElementById('total-spent').textContent = totalSpent.toLocaleString();
@@ -363,7 +370,7 @@
                 const thisMonth = new Date().getMonth();
                 const monthSpent = completedJobs
                     .filter(j => new Date(j.updatedAt).getMonth() === thisMonth)
-                    .reduce((sum, j) => sum + (j.budget || 0), 0);
+                    .reduce((sum, j) => sum + getJobAmount(j), 0);
                 document.getElementById('month-spent').textContent = monthSpent.toLocaleString();
                 
                 // Update chart
@@ -393,6 +400,7 @@
                 
             } catch (error) {
                 console.error('Error loading payment data:', error);
+                toast.error('Failed to load payment data');
             }
         }
 
@@ -416,6 +424,7 @@
 
             container.innerHTML = jobs.map(job => {
                 const isCompleted = job.status === 'completed';
+                const amount = getJobAmount(job);
                 return `
                     <div class="p-4 hover:bg-gray-50 transition">
                         <div class="flex items-center justify-between">
@@ -435,7 +444,7 @@
                             </div>
                             <div class="text-right">
                                 <p class="font-semibold ${isCompleted ? 'text-green-600' : 'text-yellow-600'}">
-                                    ${isCompleted ? '-' : ''}$${(job.budget || 0).toLocaleString()}
+                                    ${isCompleted ? '-' : ''}$${amount.toLocaleString()}
                                 </p>
                                 <span class="text-xs px-2 py-1 ${isCompleted ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'} rounded-full">
                                     ${isCompleted ? 'Completed' : 'In Escrow'}
