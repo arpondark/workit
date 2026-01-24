@@ -35,7 +35,7 @@ const io = new Server(server, {
 // Connect to database and run seeds
 const initializeDB = async () => {
     await connectDB();
-    // await runAllSeeds(); // Comment out seeding for now
+    // await runAllSeeds(); // Comment out seeding - run manually when needed
 };
 
 initializeDB();
