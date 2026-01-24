@@ -5,35 +5,35 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-          theme: {
-            extend: {
-              fontFamily: {
-                'inter': ['Inter', 'sans-serif'],
-              },
-              colors: {
-                primary: {
-                  DEFAULT: '#6366f1',
-                  dark: '#4f46e5',
-                  light: '#818cf8'
-                },
-                secondary: '#0ea5e9',
-                success: '#22c55e',
-                warning: '#f59e0b',
-                danger: '#ef4444',
-                dark: '#1e293b',
-                gray: '#64748b',
-                light: '#f8fafc'
-              }
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            DEFAULT: '#6366f1',
+                            dark: '#4f46e5',
+                            light: '#818cf8'
+                        },
+                        secondary: '#0ea5e9',
+                        success: '#22c55e',
+                        warning: '#f59e0b',
+                        danger: '#ef4444',
+                        dark: '#1e293b',
+                        slate: '#64748b',
+                        light: '#f8fafc'
+                    }
+                }
             }
-          }
         }
-      </script>
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile - WorkIT</title>
-    
+
     <link rel="stylesheet" href="../css/styles.css">
-    
+
 </head>
 
 <body class="min-h-screen bg-gray-50">
@@ -412,10 +412,10 @@
         }
 
         document.getElementById('skill-select').addEventListener('change', function () {
-            if (this.value && !selectedSkills.includes(this.value)) {
-                selectedSkills.push(this.value);
-                renderSelectedSkills();
-                loadSkills(); // Refresh dropdown
+            const skillId = this.value;
+            if (skillId && !selectedSkills.includes(skillId)) {
+                // Redirect to quiz in add_skill mode
+                window.location.href = `auth/quiz.html?mode=add_skill&skillId=${skillId}`;
             }
             this.value = '';
         });

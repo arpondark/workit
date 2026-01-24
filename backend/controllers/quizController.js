@@ -51,12 +51,17 @@ exports.startQuiz = async (req, res) => {
         }
 
         // Check if user already exists with this email
-        const existingUser = await User.findOne({ email: email.toLowerCase() });
-        if (existingUser) {
-            return res.status(400).json({
-                success: false,
-                message: 'An account already exists with this email. Please login instead.'
-            });
+        // If mode is 'add_skill', we skip this check (authenticated user adding skill)
+        const { mode } = req.body;
+
+        if (mode !== 'add_skill') {
+            const existingUser = await User.findOne({ email: email.toLowerCase() });
+            if (existingUser) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'An account already exists with this email. Please login instead.'
+                });
+            }
         }
 
         // Check for cooldown after failed attempt
@@ -85,11 +90,11 @@ exports.startQuiz = async (req, res) => {
                 }
             });
         }
-// ...
+        // ...
         // Get quiz settings
         const questionsCountSetting = await AdminSettings.findOne({ key: 'quizQuestionCount' });
         const questionsCount = questionsCountSetting ? questionsCountSetting.value : 10;
-// ...
+        // ...
 
 
         // Get random questions for this skill
